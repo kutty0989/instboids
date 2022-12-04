@@ -115,6 +115,24 @@ void Game::GameInput(uint64_t dt) {
 
 void Game::GameUpdate(uint64_t dt) {
 
+	{
+		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
+
+		ImGui::Begin("FPS");
+		ImGui::SetNextWindowSize(ImVec2(300, 400));
+		float dlet = dt;
+		dlet =16.666 /dlet;
+		dlet = 60 * dlet;
+		//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
+		ImGui::DragFloat("FPS", &dlet);
+
+		ImGui::End();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+	}
+
+
 	switch (GAME_MODE)
 	{
 	case S_ID_TITLE_INI:
@@ -182,7 +200,7 @@ void Game::GameUpdate(uint64_t dt) {
 		break;
 	}
 
-
+	
 	}
 
 	// ‹ó’†íXV

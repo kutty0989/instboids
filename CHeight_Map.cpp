@@ -248,7 +248,6 @@ void CHeight_Map::Draw() {
 		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
 
 		ImGui::Begin("ground");
-
 		ImGui::SetNextWindowSize(ImVec2(300, 400));
 		//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
 		ImGui::DragFloat("height", &g_hight);

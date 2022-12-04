@@ -33,7 +33,6 @@ const uint32_t		Application::WINDOW_STYLE_WINDOWED = (WS_VISIBLE | WS_CAPTION | 
 const uint32_t		Application::WINDOW_EX_STYLE_WINDOWED = (0);
 const uint32_t		Application::WINDOW_STYLE_FULL_SCREEN = (WS_VISIBLE | WS_POPUP);
 const uint32_t		Application::WINDOW_EX_STYLE_FULL_SCREEN = (0);
-
 const uint32_t		Application::CLIENT_WIDTH = 1920;
 const uint32_t		Application::CLIENT_HEIGHT = 1080;
 
