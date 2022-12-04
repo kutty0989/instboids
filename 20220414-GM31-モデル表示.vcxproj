@@ -186,6 +186,7 @@
     <ClCompile Include="IMgui\imgui_widgets.cpp" />
     <ClCompile Include="instan.cpp" />
     <ClCompile Include="instance.cpp" />
+    <ClCompile Include="instancemodel.cpp" />
     <ClCompile Include="line.cpp" />
     <ClCompile Include="Long_Notes.cpp" />
     <ClCompile Include="mesh.cpp" />
@@ -250,6 +251,7 @@
     <ClInclude Include="ground.h" />
     <ClInclude Include="instan.h" />
     <ClInclude Include="instance.h" />
+    <ClInclude Include="instancemodel.h" />
     <ClInclude Include="MeshData.h" />
     <ClInclude Include="MouseCircle.h" />
     <ClInclude Include="myutil.h" />
@@ -343,6 +345,9 @@
     <None Include="shader\instancevs.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <FileType>Document</FileType>
+    </None>
+    <None Include="shader\instancemodel.hlsl">
       <FileType>Document</FileType>
     </None>
     <FxCompile Include="shader\ps.hlsl">

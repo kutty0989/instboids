@@ -3,11 +3,12 @@
 #include"instan.h"
 #include"instance.h"
 class MouseCircle {
+
 private:
 
 	DXManager* m_texture;//テクスチャ
 
-	bool mIsInstancing = true;
+	
 public:
 	XMFLOAT2 mousepos;
 

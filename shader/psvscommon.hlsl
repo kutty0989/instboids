@@ -119,16 +119,3 @@ struct DS_OUTPUT
    
 };
 
-struct InstancingMatrix
-{
-    float4 Position;
-    float4 TexturePosition;
-    float4 Color;
-    float4 Dummy;
-   
-};
-
-cbuffer SpriteInstancingBuffer : register(b12)
-{
-    InstancingMatrix SpriteInstancingMatrix[1024];
-}

@@ -451,8 +451,6 @@ void CHeight_Map::SetAlpha(float a)
 // 頂点データ更新
 void CHeight_Map::updateVertex(DirectX::XMFLOAT3 color) {
 
-	
-
 		CHeight_Map::Vertex	v[4] = {
 			// 座標													// カラー	// UV	
 			XMFLOAT3(-m_width / 2.0f,	 m_height / 2.0f,0.0f),	XMFLOAT4(color.x,color.y,color.z,m_Alpha),		c_uv[0],

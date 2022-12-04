@@ -3,10 +3,14 @@
 #include"CDirectInput.h"
 #include"BulletMgr.h"
 #include"player.h"
+#include"instancemodel.h"
 const int INTERPOLATENUM = 4;			// 補間数
 
 bool UniqueEnemy_Bomb::Init()
 {
+
+//	m_instancemodel = new InstanceModel();
+//	m_instancemodel->Init("assets/f1/f1.x", "assets/f1/");
 	// 行列初期化
 	DX11MtxIdentity(m_mtx);
 
@@ -45,33 +49,34 @@ bool UniqueEnemy_Bomb::Init()
 
 void UniqueEnemy_Bomb::Draw(std::vector<shared_ptr<Player>>& zonbie_vector)
 {
+//	m_instancemodel->Draw(m_mtx);
 
-	if (um_model->m_assimpfile.animationreset == true)
-	{
-		float desiredseparation = 10;//視野　プレイヤーからの距離
-		if (manime.animecnt == 2)
-		{
-			for (auto& it : zonbie_vector)
-			{
-				if (it != nullptr)
-				{
-					float d = location.distance(it->location);
-					// 現在のボイドが捕食者ではなく、私たちが見ているボイドが
-					// 捕食者、次に大きな分離 Pvector を作成します
-					if ((d > 0) && (d < desiredseparation) && it->predator == true) {
+	//if (um_model->m_assimpfile.animationreset == true)
+	//{
+	//	float desiredseparation = 10;//視野　プレイヤーからの距離
+	//	if (manime.animecnt == 2)
+	//	{
+	//		for (auto& it : zonbie_vector)
+	//		{
+	//			if (it != nullptr)
+	//			{
+	//				float d = location.distance(it->location);
+	//				// 現在のボイドが捕食者ではなく、私たちが見ているボイドが
+	//				// 捕食者、次に大きな分離 Pvector を作成します
+	//				if ((d > 0) && (d < desiredseparation) && it->predator == true) {
 
-						it->hp = 0;
-					}
-				}
-			}
-			manime.animecnt = 0;
-			unique_enemy_anime = UNIQUE_ENEMY_ANIME::IDLE;
-		}
-	}
+	//					it->hp = 0;
+	//				}
+	//			}
+	//		}
+	//		manime.animecnt = 0;
+	//		unique_enemy_anime = UNIQUE_ENEMY_ANIME::IDLE;
+	//	}
+	//}
 
-	//	m_model->Update(animecnt, m_mtx, animereset);
-		// モデル描画
-	um_model->Draw(m_mtx);
+	////	m_model->Update(animecnt, m_mtx, animereset);
+	//	// モデル描画
+	//um_model->Draw(m_mtx);
 
 
 

@@ -4,6 +4,7 @@
 
 class UniqueEnemy_Bomb :public Player
 {
+	//InstanceModel *m_instancemodel;
 
 	XMFLOAT4 axisX;//XŽ²
 	XMFLOAT4 axisY;//YŽ²

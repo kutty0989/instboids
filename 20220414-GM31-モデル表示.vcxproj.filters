@@ -444,6 +444,9 @@
     <ClCompile Include="instan.cpp">
       <Filter>ソース ファイル\system\DX11\Sprite</Filter>
     </ClCompile>
+    <ClCompile Include="instancemodel.cpp">
+      <Filter>ソース ファイル\system\model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dx11mathutil.h">
@@ -755,6 +758,9 @@
     <ClInclude Include="instan.h">
       <Filter>ソース ファイル\system\DX11\Sprite</Filter>
     </ClInclude>
+    <ClInclude Include="instancemodel.h">
+      <Filter>ソース ファイル\system\model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shader\ps.hlsl">
@@ -805,6 +811,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\instancevs.hlsl">
+      <Filter>ソース ファイル\shader</Filter>
+    </None>
+    <None Include="shader\instancemodel.hlsl">
       <Filter>ソース ファイル\shader</Filter>
     </None>
   </ItemGroup>

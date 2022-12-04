@@ -10,6 +10,7 @@ void MouseCircle::Init()
 {
 	m_texture = new DXManager();
 	m_texture->LoadTexture("assets/UI/glow.jpg");
+
 	//m_texture->Init(50,50, XMFLOAT3(1.0f, 1.0f, 1.0f));
 	////ロングノーツの先頭テクスチャをセット
 	//m_texture->SetScale(1.0, 1.0, 1.0f);
@@ -42,7 +43,7 @@ void MouseCircle::Draw()
 	}*/
 
 	//if (mIsInstancing) 
-
+	
 	m_texture->RenderInstancing();
 }
 
