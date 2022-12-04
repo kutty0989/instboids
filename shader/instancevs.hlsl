@@ -15,12 +15,15 @@ Texture2D g_Tex : register(t9); // テクスチャ
 struct VS_IN
 {
     float4 pos : POSITION;
+    float4 color : COLOR;
+    float2 uv : TEXCOORD;
     uint instanceID : SV_InstanceID;
 };
 
 struct VS_OUT
 {
     float4 pos : SV_POSITION;
+    float4 color : COLOR;
     float2 uv:TEXCOORD0;
     uint id : ID;
 };
@@ -48,6 +51,8 @@ VS_OUT VS(VS_IN input)
     
     output.pos = mul(output.pos, View);
     output.pos = mul(output.pos, Projection);
+    output.uv = input.uv;
+    output.color = input.color;
     
     return output;
 };

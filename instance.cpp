@@ -25,7 +25,7 @@ DXManager::DXManager()
 	device = GetDX11Device();
 
 
-	mInstanceNum = 40 * 5;
+	mInstanceNum = 40 * 500;
 
 //	D3D_FEATURE_LEVEL fl = D3D_FEATURE_LEVEL_11_0;
 	//D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &fl, 1, D3D11_SDK_VERSION, &scd, &mSwapChain, &device, NULL, &devcontext);
@@ -77,10 +77,11 @@ DXManager::DXManager()
 
 	//ポリゴンの頂点データの作成とそのバッファの設定
 	
-		VERTEX	v[3] = {
+		VERTEX	v[4] = {
 			// 座標													// カラー	// UV	
-			XMFLOAT3(-1.0f ,-1.0 , 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),	XMFLOAT2(0.0f,1.0f),
-			XMFLOAT3(-1.0 ,	10., 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(0.5f,1.0f),
+			XMFLOAT3(-1.0f ,1.0 , 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),	XMFLOAT2(0.0f,0.0f),
+			XMFLOAT3(-1.0 ,	-1.0f, 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(1.0f,0.0f),
+			XMFLOAT3(1.0 ,1.0 , 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(0.0f,1.0f),
 			XMFLOAT3(1.0 ,-1.0 , 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(1.0f,1.0f),
 			};
 
@@ -166,17 +167,17 @@ DXManager::DXManager()
 
 bool DXManager::Update()
 {
-	ID3D11DeviceContext* devcontext;
-	devcontext = GetDX11DeviceContext();
+	//ID3D11DeviceContext* devcontext;
+	//devcontext = GetDX11DeviceContext();
 
-	// デバイスを取得
-	ID3D11Device* device;
-	device = GetDX11Device();
+	//// デバイスを取得
+	//ID3D11Device* device;
+	//device = GetDX11Device();
 
-	float clearColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
-	devcontext->ClearRenderTargetView(mRenderTargetView.Get(), clearColor);
+	//float clearColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
+	//devcontext->ClearRenderTargetView(mRenderTargetView.Get(), clearColor);
 
-	RenderInstancing();
+	//RenderInstancing();
 
 
 //	mInput->SetPreBuffer();
@@ -223,13 +224,13 @@ void DXManager::RenderInstancing()
 	devcontext->PSSetSamplers(0, 1, CDirectXGraphics::GetInstance()->GetSampState());
 
 	devcontext->Unmap(mPerInstanceBuffer.Get(), 0);
-	devcontext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	devcontext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	devcontext->VSSetShaderResources(8, 1, mShaderResourceView.GetAddressOf());
 	devcontext->PSSetShaderResources(8, 1, mShaderResourceView.GetAddressOf());
 	devcontext->VSSetShaderResources(9, 1, m_srv.GetAddressOf());
 	devcontext->PSSetShaderResources(9, 1, m_srv.GetAddressOf());
 	// 描画実行
-	devcontext->DrawIndexedInstanced(6, mInstanceNum, 0, 0, 0);
+	devcontext->DrawIndexedInstanced(mDrawNum, mInstanceNum, 0, 0, 0);
 }
 
 DXManager::~DXManager() {}
