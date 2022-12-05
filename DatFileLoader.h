@@ -8,7 +8,7 @@
 
 namespace X {
     typedef	int32_t VertexSuu; // 頂点数
-    struct Vertexa {
+    struct Vertex {
         DirectX::XMFLOAT3 m_Pos;		// 位置
         DirectX::XMFLOAT3 m_Normal;		// 法線
         DirectX::XMFLOAT2 m_Tex;		// テクスチャ座標
@@ -18,7 +18,7 @@ namespace X {
     typedef	uint32_t Index;       // インデックス。
 
     typedef	int32_t MaterialSuu;  // マテリアルの数
-    struct Materiala {
+    struct Material {
         float m_Alpha;
         DirectX::XMFLOAT3 m_Diffuse;
         DirectX::XMFLOAT3 m_Specular;
@@ -26,7 +26,7 @@ namespace X {
         DirectX::XMFLOAT3 m_Ambient;
         DirectX::XMFLOAT3 m_Emissive;
 
-        Materiala()
+        Material()
             : m_Alpha(0),
             m_Diffuse(DirectX::XMFLOAT3(0, 0, 0)),
             m_Specular(DirectX::XMFLOAT3(0, 0, 0)),
@@ -38,7 +38,7 @@ namespace X {
     };
 
     typedef	int32_t SubsetSuu;  // サブセットの数
-    struct Subseta {
+    struct Subset {
         // マテリアルテーブルのインデックス。
         // 使わないなら-1。
         int32_t m_MaterialIdx;				// マテリアルのインデックス
@@ -50,7 +50,7 @@ namespace X {
         unsigned int	m_VertexStart;			// 開始頂点
         unsigned int	m_VertexCount;			// 頂点の数
 
-        Subseta()
+        Subset()
             : m_MaterialIdx(-1),
             m_VertexSuu(0)
         {
@@ -58,24 +58,24 @@ namespace X {
     };
 }
 
-class DataFileLoder : private NonCopyable {
+class DatFileLoader : private NonCopyable {
 public:
     X::VertexSuu          m_VertexSuu;
-    X::Vertexa* m_Vertex;
+    X::Vertex* m_Vertex;
 
     X::IndexSuu           m_IndexSuu;
     X::Index* m_Index;
 
     X::MaterialSuu        m_MaterialSuu;
-    X::Materiala* m_Material;
+    X::Material* m_Material;
     std::string* m_DecalTex;     // マテリアル配列と対応。なければ空文字列。
 
     X::SubsetSuu          m_SubsetSuu;
-    X::Subseta* m_Subset;
+    X::Subset* m_Subset;
 
 public:
-    explicit DataFileLoder() {}
-    ~DataFileLoder();
+    explicit DatFileLoader() {}
+    ~DatFileLoader();
     void Serialize(const char* filename);
     void Deserialize(const char* filename);
 };

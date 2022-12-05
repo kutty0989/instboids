@@ -161,11 +161,14 @@
     <ClCompile Include="circle.cpp" />
     <ClCompile Include="CModel.cpp" />
     <ClCompile Include="CHeight_Map.cpp" />
+    <ClCompile Include="CModelInstance.cpp" />
     <ClCompile Include="collision.cpp" />
     <ClCompile Include="CTex.cpp" />
     <ClCompile Include="CWindow.cpp" />
     <ClCompile Include="CWindowCallback.cpp" />
     <ClCompile Include="DataFileLoder.cpp" />
+    <ClCompile Include="DatFile.cpp" />
+    <ClCompile Include="DatFileLoader.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="DIController.cpp" />
     <ClCompile Include="drawaxis.cpp" />
@@ -186,6 +189,7 @@
     <ClCompile Include="IMgui\imgui_widgets.cpp" />
     <ClCompile Include="instan.cpp" />
     <ClCompile Include="instance.cpp" />
+    <ClCompile Include="instancemodel.cpp" />
     <ClCompile Include="line.cpp" />
     <ClCompile Include="Long_Notes.cpp" />
     <ClCompile Include="mesh.cpp" />
@@ -238,18 +242,22 @@
     <ClInclude Include="CBillboardMgr.h" />
     <ClInclude Include="CBox.h" />
     <ClInclude Include="circle.h" />
+    <ClInclude Include="CModelInstance.h" />
     <ClInclude Include="collision.h" />
     <ClInclude Include="ColTrees.h" />
     <ClInclude Include="CTex.h" />
     <ClInclude Include="CTexMgr.h" />
     <ClInclude Include="Data.h" />
     <ClInclude Include="DataFileLoder.h" />
+    <ClInclude Include="DatFile.h" />
+    <ClInclude Include="DatFileLoader.h" />
     <ClInclude Include="DIController.h" />
     <ClInclude Include="ExcePtion.h" />
     <ClInclude Include="granate.h" />
     <ClInclude Include="ground.h" />
     <ClInclude Include="instan.h" />
     <ClInclude Include="instance.h" />
+    <ClInclude Include="instancemodel.h" />
     <ClInclude Include="MeshData.h" />
     <ClInclude Include="MouseCircle.h" />
     <ClInclude Include="myutil.h" />
@@ -344,6 +352,7 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
     <FxCompile Include="shader\ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -368,6 +377,9 @@
     <FxCompile Include="shader\pstexcol.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="shader\psvscommon.fx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="shader\psvscommon.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

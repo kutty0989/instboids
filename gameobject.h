@@ -9,6 +9,7 @@ class GameObject {
 	uint64_t m_id = 0;						// 識別子
 protected:
 	DirectX::XMFLOAT3 m_pos{};				// オブジェクトの位置
+	DirectX::XMFLOAT4 m_rotation{};				// オブジェクトの位置
 	
 	DirectX::XMFLOAT4 m_color{};              //カラー/
 

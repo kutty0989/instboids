@@ -196,6 +196,9 @@
     <Filter Include="ソース ファイル\game\UI\HP">
       <UniqueIdentifier>{8a16f6cd-1fc9-4bde-bdad-5eeceac60e3f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\game\gameobject\enemy\NewFilter1">
+      <UniqueIdentifier>{2b142af1-a53e-4969-bfab-dae48017d3e3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp">
@@ -442,6 +445,18 @@
       <Filter>ソース ファイル\system\DX11\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="instan.cpp">
+      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="instancemodel.cpp">
+      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="CModelInstance.cpp">
+      <Filter>ソース ファイル\system\model\Cmodel</Filter>
+    </ClCompile>
+    <ClCompile Include="DatFile.cpp">
+      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="DatFileLoader.cpp">
       <Filter>ソース ファイル\system\DX11\Sprite</Filter>
     </ClCompile>
   </ItemGroup>
@@ -755,6 +770,18 @@
     <ClInclude Include="instan.h">
       <Filter>ソース ファイル\system\DX11\Sprite</Filter>
     </ClInclude>
+    <ClInclude Include="instancemodel.h">
+      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="CModelInstance.h">
+      <Filter>ソース ファイル\system\model\Cmodel</Filter>
+    </ClInclude>
+    <ClInclude Include="DatFile.h">
+      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="DatFileLoader.h">
+      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shader\ps.hlsl">
@@ -800,6 +827,9 @@
       <Filter>ソース ファイル\shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\vsbillboard.hlsl">
+      <Filter>ソース ファイル\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\psvscommon.fx">
       <Filter>ソース ファイル\shader</Filter>
     </FxCompile>
   </ItemGroup>

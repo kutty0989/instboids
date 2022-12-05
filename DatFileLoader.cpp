@@ -1,8 +1,8 @@
-#include"DataFileLoder.h"
+#include "DatFileLoader.h"
 #include "Exception.h"
 #include "Memory.h"
 
-DataFileLoder::~DataFileLoder() {
+DatFileLoader::~DatFileLoader() {
 	DeleteArray(m_Subset);
 	DeleteArray(m_DecalTex);
 	DeleteArray(m_Material);
@@ -10,7 +10,7 @@ DataFileLoder::~DataFileLoder() {
 	DeleteArray(m_Vertex);
 }
 
-void DataFileLoder::Serialize(const char* filename) {
+void DatFileLoader::Serialize(const char* filename) {
 
 	FILE* fp;
 
@@ -66,7 +66,7 @@ void DataFileLoder::Serialize(const char* filename) {
 	fclose(fp);
 }
 
-void DataFileLoder::Deserialize(const char* filename) {
+void DatFileLoader::Deserialize(const char* filename) {
 
 	FILE* fp;
 
@@ -74,7 +74,7 @@ void DataFileLoder::Deserialize(const char* filename) {
 
 	// 頂点数
 	fscanf_s(fp, "%d\n", &m_VertexSuu);
-	m_Vertex = new X::Vertexa[m_VertexSuu];
+	m_Vertex = new X::Vertex[m_VertexSuu];
 
 	for (int i = 0; i < m_VertexSuu; i++) {
 		fscanf_s(fp, "%f %f %f ", &m_Vertex[i].m_Pos.x, &m_Vertex[i].m_Pos.y, &m_Vertex[i].m_Pos.z);
@@ -93,7 +93,7 @@ void DataFileLoder::Deserialize(const char* filename) {
 	// マテリアル数
 	fscanf_s(fp, "%d", &m_MaterialSuu);
 
-	m_Material = new X::Materiala[m_MaterialSuu];
+	m_Material = new X::Material[m_MaterialSuu];
 
 	m_DecalTex = new std::string[m_MaterialSuu];
 
@@ -120,7 +120,7 @@ void DataFileLoder::Deserialize(const char* filename) {
 	// サブセット数
 	fscanf_s(fp, "%d", &m_SubsetSuu);
 
-	m_Subset = new X::Subseta[m_SubsetSuu];
+	m_Subset = new X::Subset[m_SubsetSuu];
 
 	for (int i = 0; i < m_SubsetSuu; i++) {
 		fscanf_s(fp, "%d ", &m_Subset[i].m_MaterialIdx);

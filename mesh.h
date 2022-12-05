@@ -43,11 +43,12 @@ public:
 	void DrawOBB(std::map<std::string, BONE>& bone);
 	void UpdateOBB(std::map<std::string, BONE>& bone, const XMFLOAT4X4& mtxworld);
 
-private:
-	ID3D11Buffer*  m_VertexBuffer = nullptr;	// 頂点バッファ
-	ID3D11Buffer*  m_IndexBuffer = nullptr;		// インデックスバッファ
-	ID3D11Buffer*  m_cbmtrl = nullptr;			// マテリアル用コンスタントバッファ
+	ID3D11Buffer* m_VertexBuffer = nullptr;	// 頂点バッファ
+	ID3D11Buffer* m_IndexBuffer = nullptr;		// インデックスバッファ
+	ID3D11Buffer* m_cbmtrl = nullptr;			// マテリアル用コンスタントバッファ
 
+private:
+	
 	bool setupMesh();
 	void updatevertexbuffer();
 };

@@ -2,10 +2,12 @@
 #include"CTex.h"
 #include"instan.h"
 #include"instance.h"
+#include"instancemodel.h"
 class MouseCircle {
 private:
 
 	DXManager* m_texture;//テクスチャ
+	//InstanceModel* m_model;//テクスチャ
 
 	bool mIsInstancing = true;
 public:

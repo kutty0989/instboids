@@ -27,6 +27,7 @@ public:
 	std::vector<shared_ptr<UniqueEnemy>> unique_enemy_vector;//ƒ]ƒ“ƒr
 	std::vector<shared_ptr<UniqueEnemy_Bomb>> unique_enemy_bomb_vector;//ƒ]ƒ“ƒr
 	std::vector<shared_ptr<Player>> in_enemy_vector;//“G‚Ì”ÍˆÍ“à‚Ìboids
+	std::vector <Player*> instance_vector;//“G‚Ì”ÍˆÍ“à‚Ìboids
 	std::vector<shared_ptr<Build>> build_vector;//Œš•¨
 	
 	std::vector<shared_ptr<Player>> buf_vec; 
