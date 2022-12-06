@@ -184,6 +184,8 @@ void CModelInstance::Update(XMFLOAT4X4 mat[]) {
 }
 
 void CModelInstance::Draw() {
+
+
 	// 頂点フォーマットをセット
 	GetDX11DeviceContext()->IASetInputLayout(m_pVertexLayout);
 
@@ -198,12 +200,15 @@ void CModelInstance::Draw() {
 }
 
 void CModelInstance::DrawInstance() {
+	m_pVertexLayout;
 	// 頂点フォーマットをセット
 	GetDX11DeviceContext()->IASetInputLayout(m_pVertexLayout);
 
 	// 頂点シェーダーをセット
 	GetDX11DeviceContext()->VSSetShader(m_pVertexShader, nullptr, 0);
-
+	GetDX11DeviceContext()->GSSetShader(nullptr, nullptr, 0);
+	GetDX11DeviceContext()->HSSetShader(nullptr, nullptr, 0);
+	GetDX11DeviceContext()->DSSetShader(nullptr, nullptr, 0);
 	// ピクセルシェーダーをセット
 	GetDX11DeviceContext()->PSSetShader(m_pPixelShader, nullptr, 0);
 

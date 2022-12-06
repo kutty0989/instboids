@@ -776,6 +776,9 @@
     <ClInclude Include="DatFileLoader.h">
       <Filter>ソース ファイル\system\DX11\Sprite</Filter>
     </ClInclude>
+    <ClInclude Include="InstanceModelMgr.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shader\ps.hlsl">

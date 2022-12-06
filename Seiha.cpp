@@ -18,19 +18,19 @@
 #include"billboardMgr.h"
 #include"CModelInstance.h"
 #include"enemy.h"
+#include"InstanceModelMgr.h"
 
 #define debuglog(a) std::cout<<a<<std::endl;
 
 CModel			g_model;			// 主人公モデル
 
-CModelInstance g_air;
-#define		ENEMYMAX		1000
+
 
 
 //Player	g_player;		// プレイヤオブジェクト
 SkyBox  g_skybox;       // 背景オブジェクト
 //BoundingSphere g_boundingsphere;//当たり判定の球オブジェクト
-enemy g_enemy[ENEMYMAX];		// 敵
+
 
 CBillBoard fire;
 CLight g_clight;
@@ -107,6 +107,17 @@ void Seiha::Initialize() {
 			);
 	
 		}
+		for (int i = 0; i < g_modelinstancelist.size(); i++)
+		{
+			InstanceModelMgr::GetInstance().LoadInstanceModel(
+				g_modelinstancelist[i].num,
+				g_modelinstancelist[i].modelname,
+				g_modelinstancelist[i].vsfilenamename,
+				g_modelinstancelist[i].psfilename
+		
+			);
+
+		}
 		for (int i = 0; i < g_texlist.size(); i++)
 		{
 			CTexMgr::GetInstance().LoadModel(
@@ -126,12 +137,7 @@ void Seiha::Initialize() {
 
 
 		//g_air.InitiInstancing(5000, "assets/f1/f1.x.dat", "assets/vsinstance.fx", "assets/ps.fx");
-		g_air.InitiInstancing(ENEMYMAX, "assets/f1.x.dat", "shader/vsinstance.fx", "shader/ps.fx");
-
-		// 敵を初期化
-		for (int i = 0; i < ENEMYMAX; i++) {
-			g_enemy[i].Init(&g_air);
-		}
+	
 
 
 	/*	bool sts = false;
@@ -278,21 +284,8 @@ void  Seiha::Update(uint64_t dt) {
 	XMFLOAT3 eye = CCamera::GetInstance()->GetEye();
 	DX11LightUpdate(XMFLOAT4(eye.x, eye.y, eye.z, 1.0f));
 
+	//
 	
-	static XMFLOAT4X4 mat[ENEMYMAX];
-	// 敵更新
-	for (int i = 0; i < ENEMYMAX; i++) {
-		g_enemy[i].Update();
-		XMFLOAT4X4	world;
-		DX11MtxFromQt(world, g_enemy[i].GetRotation());
-		world._41 = g_enemy[i].GetPos().x;
-		world._42 = g_enemy[i].GetPos().y;
-		world._43 = g_enemy[i].GetPos().z;
-		mat[i] = world;
-	}
-
-	// インスタンスバッファを更新
-	g_air.Update(mat);
 
 	MouseCircle::GetInstance()->Update();
 	CCamera::GetInstance()->Update(PlayerMgr::GetInstance()->ImPlayer->GetMtx());
@@ -329,7 +322,7 @@ void Seiha::Draw()
 	//	g_billboard.SetPosition(pos.x,pos.y, pos.z);
 	//	g_billboard.DrawBillBoard(viewmtx);
 	//}
-	g_air.DrawInstance();
+	
 	//Notes_Arrange::GetInstance()->NotesDraw();
 
 }

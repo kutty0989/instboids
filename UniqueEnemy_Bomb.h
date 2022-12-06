@@ -1,6 +1,7 @@
 #pragma once
 #pragma once
 #include"player.h"
+#include"CModelInstance.h"
 
 class UniqueEnemy_Bomb :public Player
 {
@@ -20,7 +21,8 @@ public:
 
 	int b_animecnt = 0;
 	bool animereset = false;
-	CModel* um_model;						// ‚R‚cƒ‚ƒfƒ‹
+	//CModel* um_model;						// ‚R‚cƒ‚ƒfƒ‹
+	CModelInstance* um_instancemodel;						// ‚R‚cƒ‚ƒfƒ‹
 
 	bool Init();
 
@@ -45,11 +47,15 @@ public:
 	void  UEDelete(float arraynum, std::vector<std::shared_ptr< UniqueEnemy_Bomb>>& Player_Vector1);
 
 
-	void SetModel(CModel* model)
+	/*void SetModel(CModel* model)
 	{
 		um_model = model;
-	}
+	}*/
 
+	void SetModel(CModelInstance* model)
+	{
+		um_instancemodel = model;
+	}
 
 	enum class UNIQUE_ENEMY_ANIME
 	{

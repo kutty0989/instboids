@@ -20,6 +20,7 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<CModel>>m_modelhashmap;
 	
 public:
+	
 	ModelMgr(const ModelMgr&) = delete;
 	ModelMgr& operator=(const ModelMgr&) = delete;
 	ModelMgr(ModelMgr&&) = delete;
@@ -69,6 +70,12 @@ public:
 		return true;
 	}
 
+
+
+
+	
+
+
 	CModel* GetModelPtr(std::string key) {
 		//ë∂ç›Ç∑ÇÈÇ©ÇämÇ©ÇﬂÇÈ
 		auto it = m_modelhashmap.find(key);
@@ -77,4 +84,5 @@ public:
 		}
 		return m_modelhashmap[key].get();
 	}
+	
 };

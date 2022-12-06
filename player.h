@@ -5,6 +5,7 @@
 #include"myutil.h"
 #include    "XAudio2.h"
 #include"BoidsHp.h"
+#include"CModelInstance.h"
 //#include"UniqueEnemy.h"
 //#include"UniqueEnemy_Bomb.h"
 
@@ -15,6 +16,7 @@ private:
 
 
 	CModel* m_model;						// ３Ｄモデル
+	CModelInstance* m_instancemodel;						// ３Ｄモデル
 	BoidsHp boidshp; //hpbarのビルボード
 	float anglecos;
 	double col;//プレイヤーの場所のカラー高さ情報
@@ -110,6 +112,10 @@ public:
 	{
 		return m_model;
 	}
+	CModelInstance* GetInstanceModel()
+	{
+		return m_instancemodel;
+	}
 
 	void SetScale(float x,float y,float z)
 	{
@@ -121,6 +127,10 @@ public:
 	void SetModel(CModel* model)
 	{
 		m_model = model;
+	}
+	void SetInstanceModel(CModelInstance* model)
+	{
+		m_instancemodel = model;
 	}
 	void Loadanimation()
 	{

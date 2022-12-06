@@ -7,6 +7,7 @@ const int INTERPOLATENUM = 4;			// 補間数
 
 bool UniqueEnemy_Bomb::Init()
 {
+	//um_instancemodel = pmodel;
 	// 行列初期化
 	DX11MtxIdentity(m_mtx);
 
@@ -45,48 +46,26 @@ bool UniqueEnemy_Bomb::Init()
 
 void UniqueEnemy_Bomb::Draw(std::vector<shared_ptr<Player>>& zonbie_vector)
 {
-
-	if (um_model->m_assimpfile.animationreset == true)
-	{
-		float desiredseparation = 10;//視野　プレイヤーからの距離
-		if (manime.animecnt == 2)
-		{
-			for (auto& it : zonbie_vector)
-			{
-				if (it != nullptr)
-				{
-					float d = location.distance(it->location);
-					// 現在のボイドが捕食者ではなく、私たちが見ているボイドが
-					// 捕食者、次に大きな分離 Pvector を作成します
-					if ((d > 0) && (d < desiredseparation) && it->predator == true) {
-
-						it->hp = 0;
-					}
-				}
-			}
+	
 			manime.animecnt = 0;
 			unique_enemy_anime = UNIQUE_ENEMY_ANIME::IDLE;
-		}
-	}
-
+	
 	//	m_model->Update(animecnt, m_mtx, animereset);
 		// モデル描画
-	um_model->Draw(m_mtx);
-
-
-
+	//um_model->Draw(m_mtx);
 }
 void UniqueEnemy_Bomb::Update()
 {
+	if (hp > 0)
+	{
+		boid_borders();
+		Ground::GetInstance()->GetPlayerHeight(*this);
 
-	boid_borders();
-	Ground::GetInstance()->GetPlayerHeight(*this);
-
-	//Z軸を取り出す
-	axisZ.x = m_mtx._31;
-	axisZ.y = m_mtx._32;
-	axisZ.z = m_mtx._33;
-	axisZ.w = 0.0f;
+		//Z軸を取り出す
+		axisZ.x = m_mtx._31;
+		axisZ.y = m_mtx._32;
+		axisZ.z = m_mtx._33;
+		axisZ.w = 0.0f;
 
 
 		if (zonbienearflg)
@@ -100,115 +79,141 @@ void UniqueEnemy_Bomb::Update()
 				bombcnt = 0;
 			}
 			bombcnt++;
-			
+
 		}
 		else
 		{
 			bombcnt = 0;
 		}
-	
 
 
-	if ((unique_enemy_anime != UNIQUE_ENEMY_ANIME::ATTACK) && (boid_accel == 0))
+
+		if ((unique_enemy_anime != UNIQUE_ENEMY_ANIME::ATTACK) && (boid_accel == 0))
+		{
+			unique_enemy_anime = UNIQUE_ENEMY_ANIME::IDLE;
+			manime.animecnt = 0;
+		}
+		if ((unique_enemy_anime != UNIQUE_ENEMY_ANIME::ATTACK) && (boid_accel > 0))
+		{
+			unique_enemy_anime = UNIQUE_ENEMY_ANIME::MOVE;
+			manime.animecnt = 1;
+		}
+
+		if (unique_enemy_anime == UNIQUE_ENEMY_ANIME::ATTACK)
+		{
+			boid_accel -= 0.5f;
+			manime.animecnt = 2;
+		}
+
+
+
+
+		if (awaycnt > 0)
+		{
+			awaycnt -= 1;
+		}
+		if (awaycnt == 0) {
+			boid_accel -= 0.05f;
+		}
+		if (boid_accel < 0)
+		{
+			boid_accel = 0;
+		}
+
+		angle.y = -GetKakudo(angley.x, angley.y);
+		angle.y += 180.0f;
+		if (angle.y < 360)
+		{
+			angle.y -= 360.0f;
+		}
+
+		m_pos.x = location.x;
+		m_pos.z = location.y;
+
+		SetAngle();
+		//SetScale(3.0f, 3.0f, 3.0f);
+		m_mtx._41 = m_pos.x;
+		m_mtx._42 = m_pos.y + 4.0f;
+		m_mtx._43 = m_pos.z;
+
+
+		if (b_animecnt != manime.animecnt)
+		{
+			animereset = true;
+			manime.m_Frame = 0;
+		}
+		else
+		{
+			animereset = false;
+		}
+
+		b_animecnt = manime.animecnt;//前回のアニメ番号保存
+
+
+		{
+			ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
+
+			ImGui::Begin("config 5");
+
+			ImGui::SetNextWindowSize(ImVec2(300, 400));
+			float pos[2] = { location.x,location.y };
+			//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
+
+
+			//float pos[3] = { Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z};
+			ImGui::DragInt("animecnt", &manime.animecnt);
+			ImGui::DragInt("animecnt", &manime.m_Frame);
+			ImGui::DragFloat2("pos", pos);
+
+
+			ImGui::End();
+			ImGui::PopStyleColor();
+			ImGui::PopStyleColor();
+		}
+
+		if (manime.m_cnt % INTERPOLATENUM == 0) {
+			manime.m_preFrame = manime.m_Frame;
+			manime.m_Frame++;
+			manime.m_factor = 0;
+		}
+
+		manime.m_factor = 1.0f / (float)(manime.m_cnt % INTERPOLATENUM + 1);
+
+		manime.m_cnt++;
+	}
+	else if (hp <= 0)
 	{
-		unique_enemy_anime = UNIQUE_ENEMY_ANIME::IDLE;
-		manime.animecnt = 0;
+		m_mtx._41 = -10000.0f;
+		m_mtx._42 = -10000.0f;
+		m_mtx._43 = -10000.0f;
+
 	}
-	if ((unique_enemy_anime != UNIQUE_ENEMY_ANIME::ATTACK) && (boid_accel > 0))
-	{
-		unique_enemy_anime = UNIQUE_ENEMY_ANIME::MOVE;
-		manime.animecnt = 1;
-	}
-
-	if (unique_enemy_anime == UNIQUE_ENEMY_ANIME::ATTACK)
-	{
-		boid_accel -= 0.5f;
-		manime.animecnt = 2;
-	}
-
-
-
-
-	if (awaycnt > 0)
-	{
-		awaycnt -= 1;
-	}
-	if (awaycnt == 0) {
-		boid_accel -= 0.05f;
-	}
-	if (boid_accel < 0)
-	{
-		boid_accel = 0;
-	}
-
-	angle.y = -GetKakudo(angley.x, angley.y);
-	angle.y += 180.0f;
-	if (angle.y < 360)
-	{
-		angle.y -= 360.0f;
-	}
-
-	m_pos.x = location.x;
-	m_pos.z = location.y;
-
-	SetAngle();
-	//SetScale(3.0f, 3.0f, 3.0f);
-	m_mtx._41 = m_pos.x;
-	m_mtx._42 = m_pos.y + 4.0f;
-	m_mtx._43 = m_pos.z;
-
-
-	if (b_animecnt != manime.animecnt)
-	{
-		animereset = true;
-		manime.m_Frame = 0;
-	}
-	else
-	{
-		animereset = false;
-	}
-
-	b_animecnt = manime.animecnt;//前回のアニメ番号保存
-
-
-	{
-		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
-
-		ImGui::Begin("config 5");
-
-		ImGui::SetNextWindowSize(ImVec2(300, 400));
-		float pos[2] = { location.x,location.y };
-		//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
-
-
-		//float pos[3] = { Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z};
-		ImGui::DragInt("animecnt", &manime.animecnt);
-		ImGui::DragInt("animecnt", &manime.m_Frame);
-		ImGui::DragFloat2("pos", pos);
-
-
-		ImGui::End();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-	}
-
-	if (manime.m_cnt % INTERPOLATENUM == 0) {
-		manime.m_preFrame = manime.m_Frame;
-		manime.m_Frame++;
-		manime.m_factor = 0;
-	}
-
-	manime.m_factor = 1.0f / (float)(manime.m_cnt % INTERPOLATENUM + 1);
-
-	manime.m_cnt++;
-
 }
 
 void UniqueEnemy_Bomb::UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector)
 {
-	UEnemy_flock(zonbie_vector);
-	UEnemy_update();
+	if (hp > 0)
+	{
+		UEnemy_flock(zonbie_vector);
+		UEnemy_update();
+
+		float desiredseparation = 30;//視野　プレイヤーからの距離
+
+		for (auto& it : zonbie_vector)
+		{
+			if (it != nullptr)
+			{
+				float d = location.distance(it->location);
+				// 現在のボイドが捕食者ではなく、私たちが見ているボイドが
+				// 捕食者、次に大きな分離 Pvector を作成します
+				if ((d > 0) && (d < desiredseparation) && it->predator == true) {
+
+					this->hp =0 ;
+				}
+			}
+		}
+	}
 }
 
 

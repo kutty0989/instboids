@@ -124,6 +124,35 @@ public:
 	};
 
 
+	enum  class MODELIID
+	{
+		PLAYER,
+		
+	};
+
+
+
+	struct ModelDataInstanceList {
+		MODELIID  id;
+		int num;
+		std::string modelname;
+		std::string vsfilenamename;
+		std::string psfilename;
+	
+	};
+
+
+	std::vector<ModelDataInstanceList>  g_modelinstancelist = {
+		{MODELIID::PLAYER,100,"assets/f1.x.dat","shader/vs.hlsl","shader/ps.hlsl"},
+	//{MODELID::ONE,zonbie, "shader/vsoneskin.fx", "shader/ps.fx","assets/"},
+		//{MODELID::HUMAN,"assets/dice/PlayerBox.x","shader/vs.hlsl","shader/ps.hlsl","assets/dice/"},
+
+		//{MODELID::HUMAN,human, "shader/vsoneskin.fx", "shader/ps.fx","assets/"},
+//		{MODELID::ONE,"assets/dice/PlayerBox.x","shader/vs.hlsl","shader/ps.hlsl","assets/dice/"},
+
+	};
+
+
 
 
 	Ground g_ground;//ínå`

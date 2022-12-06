@@ -9,6 +9,7 @@
 #include"CCamera.h"
 #include"BulletMgr.h"
 #include"BoidsHp.h"
+#include"InstanceModelMgr.h"
 
 BoundingSphere g_bsphere;//当たり判定の球オブジェクト
 BoundingSphere g_bsplayer;//自分用BS
@@ -35,8 +36,9 @@ const int gridnum = 20;
 std::vector<shared_ptr<Player>> grid_vector[gridnum][gridnum] = {};
 std::vector<shared_ptr<Player>> grid_zonbievector[gridnum][gridnum] = {};
 std::vector<shared_ptr<UniqueEnemy>> bufunique_enemy_vector[3][1] = {};//ゾンビ
-
-
+CModelInstance g_air;
+#define		ENEMYMAX		1
+UniqueEnemy_Bomb g_enemy[ENEMYMAX];		// 敵
 CModel *g_model;
 using namespace std;
 
@@ -60,9 +62,12 @@ void PlayerMgr::Init()
 	{
 		UEnemyCreate();
 	}
-	for (int i = 0; i < unique_enemy_bomb_num; i++)
-	{
-		UEnemyBombCreate();
+	g_air.InitiInstancing(ENEMYMAX, "assets/f1.x.dat", "shader/vsinstance.fx", "shader/ps.fx");
+
+	// 敵を初期化
+	for (int i = 0; i < ENEMYMAX; i++) {
+		g_enemy[i].SetModel(InstanceModelMgr::GetInstance().GetInstanceModelPtr(Scean::GetInstance()->g_modelinstancelist[static_cast<int>(Scean::MODELIID::PLAYER)].modelname));
+		g_enemy[i].Init();
 	}
 	
 	maxaccel = 2.0f;
@@ -102,11 +107,11 @@ void PlayerMgr::Draw()
 	for (auto& n : player_vector) {
 		n->Draw(0);
 	}
-	for (auto& n : unique_enemy_bomb_vector)
-	{
-		n->Draw(zonbie_vector);
-	}
-
+	//for (auto& n : unique_enemy_bomb_vector)
+	//{
+	//	n->Draw(zonbie_vector);
+	//}
+	InstanceModelMgr::GetInstance().InstanceDraw("assets/f1.x.dat");
 	//for (int i = 0; i < unique_enemy_vector_num; i++)
 	//{
 	//	if (unique_enemy_vector[i] != nullptr)
@@ -121,6 +126,7 @@ void PlayerMgr::Draw()
 	//}
 	unique_enemy_vector.clear();
 
+	g_air.DrawInstance();
 	//for (int i = 0; i <3; i++)
 	//{
 	//	for (int a = 0; a < bufunique_enemy_vector[i]->size(); a++)
@@ -231,9 +237,9 @@ void PlayerMgr::PlayerUpdate()
 
 	for (int i = 0; i < 3; i++)
 	{
-		for (int a = 0; a <bufunique_enemy_vector[i]->size(); a++)
+		for (int a = 0; a < bufunique_enemy_vector[i]->size(); a++)
 		{
-			if (bufunique_enemy_vector[i]->at(a)!=nullptr)
+			if (bufunique_enemy_vector[i]->at(a) != nullptr)
 			{
 				unique_enemy_vector.push_back(std::move(bufunique_enemy_vector[i]->at(a)));
 			}
@@ -603,7 +609,7 @@ void PlayerMgr::PlayerUpdate()
 				}
 				grid_zonbievector[m][n].at(i)->zonbie_run(buf_vec, buf_pvec, mousevelocity);
 				grid_zonbievector[m][n].at(i)->ZonbieUpdate(animno, 1);
-				grid_zonbievector[m][n].at(i)->boids_attack(buf_pvec, grid_zonbievector[m][n].at(i),unique_enemy_bomb_vector);
+				grid_zonbievector[m][n].at(i)->boids_attack(buf_pvec, grid_zonbievector[m][n].at(i), unique_enemy_bomb_vector);
 			}
 		}
 	}
@@ -650,7 +656,7 @@ void PlayerMgr::PlayerUpdate()
 		unique_enemy_vector[i]->Update();
 
 	}
-	
+
 	for (int i = 0; i < unique_enemy_bomb_vector_num; i++)
 	{
 		if (unique_enemy_bomb_vector.at(i)->GetHp() <= 0)
@@ -658,14 +664,25 @@ void PlayerMgr::PlayerUpdate()
 			unique_enemy_bomb_vector.at(i)->UEDelete(i, unique_enemy_bomb_vector);
 			unique_enemy_bomb_vector_num--;
 		}
-		
+
 	}
-	for (int i = 0; i < unique_enemy_bomb_vector_num; i++)
-	{
-		unique_enemy_bomb_vector[i]->UEnemy_run(zonbie_vector);
-		unique_enemy_bomb_vector[i]->Update();
+	static XMFLOAT4X4 mat[ENEMYMAX];
+	// 敵更新
+	for (int i = 0; i < ENEMYMAX; i++) {
+		g_enemy[i].UEnemy_run(zonbie_vector);
+		g_enemy[i].Update();
+		XMFLOAT4X4	world;
+		DX11MtxFromQt(world, g_enemy[i].GetRotation());
+		world._41 = g_enemy[i].GetMtx()._41;
+		world._42 = g_enemy[i].GetMtx()._42;
+		world._43 = g_enemy[i].GetMtx()._43;
+		mat[i] = world;
 	}
 
+	// インスタンスバッファを更新
+	g_air.Update(mat);
+
+	InstanceModelMgr::GetInstance().InstanceUpdate("assets/f1.x.dat",mat);
 	{
 		//ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
@@ -762,7 +779,8 @@ void PlayerMgr::UEnemyBombCreate()
 {
 	shared_ptr<UniqueEnemy_Bomb> pl;
 	pl = std::make_shared<UniqueEnemy_Bomb>();
-	pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::BOX)].modelname));
+	//pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::BOX)].modelname));
+	pl->SetInstanceModel(InstanceModelMgr::GetInstance().GetInstanceModelPtr(Scean::GetInstance()->g_modelinstancelist[static_cast<int>(Scean::MODELIID::PLAYER)].modelname));
 	pl->Init();
 	unique_enemy_bomb_vector_num++;
 	unique_enemy_bomb_vector.emplace_back(std::move(pl));
