@@ -120,6 +120,16 @@ bool CreateVertexShader(ID3D11Device* device,						// 頂点シェーダーオブジェクト
 	ID3D11VertexShader** ppVertexShader,
 	ID3D11InputLayout**  ppVertexLayout);
 
+bool CreateVertexinShader(ID3D11Device* device,						// 頂点シェーダーオブジェクトを生成、同時に頂点レイアウトも生成
+	const char* szFileName,
+	LPCSTR szEntryPoint,
+	LPCSTR szShaderModel,
+	D3D11_INPUT_ELEMENT_DESC* layout,
+	unsigned int numElements,
+	ID3D11VertexShader** ppVertexShader,
+	ID3D11InputLayout** ppVertexLayout);
+
+
 bool CreatePixelShader(ID3D11Device* device,						// ピクセルシェーダーオブジェクトを生成
 	const char* szFileName,
 	LPCSTR szEntryPoint,

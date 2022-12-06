@@ -17,19 +17,20 @@
 #include"CBillboardMgr.h"
 #include"billboardMgr.h"
 #include"CModelInstance.h"
+#include"enemy.h"
 
 #define debuglog(a) std::cout<<a<<std::endl;
 
 CModel			g_model;			// 主人公モデル
 
 CModelInstance g_air;
-#define		ENEMYMAX		5000
+#define		ENEMYMAX		1000
 
 
 //Player	g_player;		// プレイヤオブジェクト
 SkyBox  g_skybox;       // 背景オブジェクト
 //BoundingSphere g_boundingsphere;//当たり判定の球オブジェクト
-Player				g_enemy[ENEMYMAX];		// 敵
+enemy g_enemy[ENEMYMAX];		// 敵
 
 CBillBoard fire;
 CLight g_clight;
@@ -125,7 +126,13 @@ void Seiha::Initialize() {
 
 
 		//g_air.InitiInstancing(5000, "assets/f1/f1.x.dat", "assets/vsinstance.fx", "assets/ps.fx");
-		g_air.InitiInstancing(5000, "assets/f1.x.dat", "assets/shader/vsinstance.fx", "assets/shader/ps.fx");
+		g_air.InitiInstancing(ENEMYMAX, "assets/f1.x.dat", "shader/vsinstance.fx", "shader/ps.fx");
+
+		// 敵を初期化
+		for (int i = 0; i < ENEMYMAX; i++) {
+			g_enemy[i].Init(&g_air);
+		}
+
 
 	/*	bool sts = false;
 		sts = g_model.Init("assets/Charcter.x", "shader/vs.hlsl", "shader/ps.hlsl","");
@@ -275,9 +282,9 @@ void  Seiha::Update(uint64_t dt) {
 	static XMFLOAT4X4 mat[ENEMYMAX];
 	// 敵更新
 	for (int i = 0; i < ENEMYMAX; i++) {
-		g_enemy[i].Update(false);
+		g_enemy[i].Update();
 		XMFLOAT4X4	world;
-		g_enemy[i].GetMtx();
+		DX11MtxFromQt(world, g_enemy[i].GetRotation());
 		world._41 = g_enemy[i].GetPos().x;
 		world._42 = g_enemy[i].GetPos().y;
 		world._43 = g_enemy[i].GetPos().z;
@@ -312,8 +319,16 @@ void Seiha::Draw()
 	//fire.DrawBillBoard(CCamera::GetInstance()->GetCameraMatrix());
 	
 	//BoidsHp::GetInstance()->Draw();
-	MouseCircle::GetInstance()->Draw();
+//	MouseCircle::GetInstance()->Draw();
 
+
+	//	// 敵描画
+	//XMFLOAT4X4 viewmtx = CCamera::GetInstance()->GetCameraMatrix();
+	//for (int i = 0; i < ENEMYMAX; i++) {
+	//	XMFLOAT3 pos = g_enemy[i].GetPos();
+	//	g_billboard.SetPosition(pos.x,pos.y, pos.z);
+	//	g_billboard.DrawBillBoard(viewmtx);
+	//}
 	g_air.DrawInstance();
 	//Notes_Arrange::GetInstance()->NotesDraw();
 

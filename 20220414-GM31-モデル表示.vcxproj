@@ -166,7 +166,6 @@
     <ClCompile Include="CTex.cpp" />
     <ClCompile Include="CWindow.cpp" />
     <ClCompile Include="CWindowCallback.cpp" />
-    <ClCompile Include="DataFileLoder.cpp" />
     <ClCompile Include="DatFile.cpp" />
     <ClCompile Include="DatFileLoader.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
@@ -248,7 +247,6 @@
     <ClInclude Include="CTex.h" />
     <ClInclude Include="CTexMgr.h" />
     <ClInclude Include="Data.h" />
-    <ClInclude Include="DataFileLoder.h" />
     <ClInclude Include="DatFile.h" />
     <ClInclude Include="DatFileLoader.h" />
     <ClInclude Include="DIController.h" />
@@ -354,6 +352,10 @@
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
+    <FxCompile Include="shader\ps.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="shader\ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -389,6 +391,10 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="shader\vsbillboard.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="shader\vsinstance.fx">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>

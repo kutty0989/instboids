@@ -21,7 +21,7 @@ private:
 	int buildlevel = 1;
 public:
 	bool nier_flg = false;
-
+	
 	bool Init();
 	bool Init(XMFLOAT3 pos);
 

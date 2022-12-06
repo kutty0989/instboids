@@ -189,15 +189,19 @@ unsigned long Application :: MainLoop()
 		
 		Game::GameRender(delta_time);		// ｹﾞｰﾑ描画
 
-		int64_t sleep_time = 16666 - delta_time;
+		int64_t sleep_time = 16 - (::timeGetTime() - last_time);
 
-		if (sleep_time > 0) {
-			float tt = sleep_time / 1000.0f;
-//			printf("sleep:%f \n", tt);
-			std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(tt)));
+		std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
+
+//		int64_t sleep_time = 16666 - delta_time;
+//
+//		if (sleep_time > 0) {
+//			float tt = sleep_time / 1000.0f;
+////			printf("sleep:%f \n", tt);
+//			std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(tt)));
 			//指定した相対時間だけ現スレッドをブロックする (function template)
 		}
-	}
+	
 
 	// タイマ解像度を元に戻す
 	::timeEndPeriod(1);
@@ -209,7 +213,6 @@ unsigned long Application :: MainLoop()
 
 	return window->GetMessage();
 }
-
 //==============================================================================
 //!	@fn		Input
 //!	@brief	キー入力

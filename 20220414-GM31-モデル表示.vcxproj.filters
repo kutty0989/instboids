@@ -408,9 +408,6 @@
     <ClCompile Include="CBBoxGenerater.cpp">
       <Filter>ソース ファイル\system\model\CBox</Filter>
     </ClCompile>
-    <ClCompile Include="DataFileLoder.cpp">
-      <Filter>ソース ファイル\system\model</Filter>
-    </ClCompile>
     <ClCompile Include="Skeleton.cpp">
       <Filter>ソース ファイル\system\model\Skeleton</Filter>
     </ClCompile>
@@ -719,9 +716,6 @@
     <ClInclude Include="Data.h">
       <Filter>ソース ファイル\system\model</Filter>
     </ClInclude>
-    <ClInclude Include="DataFileLoder.h">
-      <Filter>ソース ファイル\system\model</Filter>
-    </ClInclude>
     <ClInclude Include="NonCopyable.h">
       <Filter>ソース ファイル\system\model\Cmodel</Filter>
     </ClInclude>
@@ -830,6 +824,12 @@
       <Filter>ソース ファイル\shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\psvscommon.fx">
+      <Filter>ソース ファイル\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\vsinstance.fx">
+      <Filter>ソース ファイル\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\ps.fx">
       <Filter>ソース ファイル\shader</Filter>
     </FxCompile>
   </ItemGroup>

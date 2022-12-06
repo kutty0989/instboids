@@ -74,14 +74,14 @@ bool DatFile::Load(const char* filename, ID3D11Device* device11, ID3D11DeviceCon
 				&m_tex,
 				&m_srv[i]);
 			if (!sts) {
-				sts = CreateSRVfromWICFile(m_datfile->m_DecalTex[i].c_str(),
+				sts = CreateSRVfromTGAFile(m_datfile->m_DecalTex[i].c_str(),
 					device11,
-					device11Context,
 					&m_tex,
 					&m_srv[i]);
-				if (!sts) {
+			
+				/*if (!sts) {
 					MessageBox(NULL, "CreatetSRVfromTGAFile", "Error", MB_OK);
-				}
+				}*/
 			}
 		
 		}

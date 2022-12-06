@@ -3,7 +3,7 @@
 #include	<DirectXMath.h>
 #include	<string>
 #include	"CBox.h"
-#include"DataFileLoder.h"
+#include"DatFileLoader.h"
 
 // OBB用構造体
 struct OBB {
@@ -34,14 +34,14 @@ private:
 		const DirectX::XMFLOAT3& pvecSeparate,		// 分離軸
 		const DirectX::XMFLOAT3& pvecDistance);		// ２つのオブジェクトを結ぶベクトル
 
-	void CalculateBoundingBox(DataFileLoder* datdata);		// AABBを求める
+	void CalculateBoundingBox(DatFileLoader* datdata);		// AABBを求める
 
 public:
 	COBB();
 
 	~COBB();
 
-	void Init(DataFileLoder* datdata) {
+	void Init(DatFileLoader* datdata) {
 		CalculateBoundingBox(datdata);	// OBB作成
 		CreateBoxMesh();				// メッシュ作成
 	}

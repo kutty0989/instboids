@@ -187,6 +187,46 @@ bool CreateVertexShader(
 	return true;
 }
 
+bool CreateVertexinShader(ID3D11Device* device, const char* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, D3D11_INPUT_ELEMENT_DESC* layout, unsigned int numElements, ID3D11VertexShader** ppVertexShader, ID3D11InputLayout** ppVertexLayout)
+{
+	HRESULT hr;
+
+	ID3DBlob* pBlob = nullptr;
+
+	void* ShaderObject;
+	size_t	ShaderObjectSize;
+
+	// ファイルの拡張子に合わせてコンパイル
+	 hr = CompileShaderFromFile(szFileName, szEntryPoint, szShaderModel, &pBlob);if (FAILED(hr))
+	{
+		if (pBlob)pBlob->Release();
+		return false;
+	}
+
+	// 頂点シェーダーを生成
+	 hr = device->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, ppVertexShader);
+	if (FAILED(hr))
+	{
+		if (pBlob)pBlob->Release();
+		return false;
+	}
+
+	// 頂点データ定義生成
+	hr = device->CreateInputLayout(
+		layout,
+		numElements,
+		pBlob->GetBufferPointer(),
+		pBlob->GetBufferSize(),
+		ppVertexLayout);
+	if (FAILED(hr)) {
+		MessageBox(nullptr, "CreateInputLayout error", "error", MB_OK);
+		pBlob->Release();
+		return false;
+	}
+
+	return true;
+}
+
 //--------------------------------------------------------------------------------------
 // ピクセルシェーダーオブジェクトを生成する
 //--------------------------------------------------------------------------------------
@@ -220,6 +260,38 @@ bool CreatePixelShader(ID3D11Device* device,
 
 	return true;
 }
+
+bool CreatePixelinShader(ID3D11Device* device,
+	const char* szFileName,
+	LPCSTR szEntryPoint,
+	LPCSTR szShaderModel,
+	ID3D11PixelShader** ppPixelShader) {
+
+	HRESULT hr;
+
+	ID3DBlob* pBlob = nullptr;
+
+	void* ShaderObject;
+	size_t	ShaderObjectSize;
+
+	// ファイルの拡張子に合わせてコンパイル
+	hr = CompileShader(szFileName, szEntryPoint, szShaderModel, &ShaderObject, ShaderObjectSize, &pBlob);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	// ピクセルシェーダーを生成
+	hr = device->CreatePixelShader(ShaderObject, ShaderObjectSize, nullptr, ppPixelShader);
+	if (FAILED(hr))
+	{
+		if (pBlob)pBlob->Release();
+		return false;
+	}
+
+	return true;
+}
+
 //--------------------------------------------------------------------------------------
 // ハルシェーダーオブジェクトを生成する
 //--------------------------------------------------------------------------------------

@@ -4,24 +4,37 @@
 #include"IMgui/imgui.h"
 #include<iostream>
 #include <math.h>
+#include"dx11mathutil.h"
 #include"Bpm_Data.h"
 class GameObject {
-	uint64_t m_id = 0;						// 識別子
+	
 protected:
 	DirectX::XMFLOAT3 m_pos{};				// オブジェクトの位置
 	DirectX::XMFLOAT4 m_rotation{};				// オブジェクトの位置
 	
 	DirectX::XMFLOAT4 m_color{};              //カラー/
-
+	unsigned int			m_id;			// ＩＤ
 
 
 public:
-	DirectX::XMFLOAT4X4 m_mtx{};				// 姿勢
+	 void Init() {
+		DirectX::XMFLOAT3 p = { 0, 0, 0 };
+		SetPosition(p);
+		DX11QtIdentity(m_rotation);
+	}
 
-	GameObject() {};
-	virtual ~GameObject() {}
-	virtual bool Init() = 0;
-	virtual void Finalize() = 0;
+	 void Uninit() {
+
+	}
+
+	 void Draw() {
+
+	}
+
+	 void Update(const DirectX::XMFLOAT4& q, const DirectX::XMFLOAT3& pos) {
+	}
+
+	DirectX::XMFLOAT4X4 m_mtx{};				// 姿勢
 
 	// 姿勢を取得
 	DirectX::XMFLOAT4X4 GetMtx() {
@@ -45,6 +58,23 @@ public:
 		DEAD
 	};
 
+	
+
+	void SetPosition(const DirectX::XMFLOAT3& pos) {
+		m_pos = pos;
+	}
+
+	void SetRotation(const DirectX::XMFLOAT4& qt) {
+		m_rotation = qt;
+	}
+
+	DirectX::XMFLOAT4 GetRotation() const {
+		return m_rotation;
+	}
+
+	DirectX::XMFLOAT3 GetPosition() const {
+		return m_pos;
+	}
 	STATUS m_sts;
 
 };

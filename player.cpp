@@ -1264,7 +1264,7 @@ void Player::SetAngle()
 	XMFLOAT4 qtx = {};//クォータニオン
 	XMFLOAT4 qty = {};//クォータニオン
 	XMFLOAT4 qtz = {};//クォータニオン
-	XMFLOAT4 qt; //= {};
+	XMFLOAT4 qt= {};
 	
 	//DX11GetQtfromMatrix(m_mtx, qt);
 

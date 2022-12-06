@@ -2,7 +2,7 @@
 #pragma once
 #include	<d3d11.h>
 #include	"DatFile.h"
-#include"DataFileLoder.h"
+#include"DatFileLoader.h"
 #include"ModelData.h"
 
 class CModelInstance {

@@ -5,10 +5,11 @@
 #include	"gameobject.h"
 #include	"CModel.h"
 #include	"DX11util.h"
+#include"CModelInstance.h"
 #include	"DX11Settransform.h"
 
 class enemy : public GameObject {
-	CModel* m_model;
+	CModelInstance* m_model;
 	float				m_speed = 1.0f;			// スピード
 
 	DirectX::XMFLOAT3	m_angle = { 0.0f, 0.0f, 0.0f };
@@ -27,7 +28,7 @@ class enemy : public GameObject {
 	unsigned int		m_action = STRAIGHT;
 	unsigned int		m_counter;
 public:
-	void Init(CModel* pmodel) {
+	void Init(CModelInstance* pmodel) {
 		m_model = pmodel;
 
 		std::random_device  m_rnd;     // 非決定的な乱数生成器
@@ -38,7 +39,7 @@ public:
 		m_action = 3;
 		m_counter = 10;
 
-		GameObject::Init();
+		//GameObject::Init();
 	}
 
 	void Exit() {
@@ -97,9 +98,9 @@ public:
 		axisz.w = 0.0f;
 
 		// 進行方向に進む
-		m_pos.x += axisz.x * m_speed;
+		m_pos.x = rand() % 1000;
 		m_pos.y += axisz.y * m_speed;
-		m_pos.z += axisz.z * m_speed;
+		m_pos.z = rand() % 1000;
 	}
 
 	void Autopilot() {

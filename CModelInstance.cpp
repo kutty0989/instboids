@@ -10,8 +10,6 @@
 bool CModelInstance::InitiInstancing(int num, const char* filename, const char* vsfile, const char* psfile) {
 
 	bool sts;
-
-	m_assimpfile.Load(filename, GetDX11Device(), GetDX11DeviceContext());
 	// 飛行機のモデルデータを読み込み
 	sts = m_datfile.Load(filename, GetDX11Device(), GetDX11DeviceContext());
 	if (!sts) {
@@ -59,7 +57,7 @@ bool CModelInstance::InitiInstancing(int num, const char* filename, const char* 
 	unsigned int numElements = ARRAYSIZE(layout);
 
 	// 頂点シェーダーオブジェクトを生成、同時に頂点レイアウトも生成
-	sts = CreateVertexShader(GetDX11Device(),
+	sts = CreateVertexinShader(GetDX11Device(),
 		vsfile,
 		"main",
 		"vs_5_0",

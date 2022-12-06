@@ -1,8 +1,8 @@
 #include	"obb.h"
 #include	"CDirectxGraphics.h"
 #include	"dx11mathutil.h"
-#include	"DataFileLoder.h"
 #include	"CBox.h"
+#include"DatFileLoader.h"
 #include	"DX11Settransform.h"
 #include	"CBBoxGenerater.h"
 
@@ -100,7 +100,7 @@ void COBB::CalculateOBB(std::vector<XMFLOAT3>& vertices) {
 }
 
 // 頂点群から固有ベクトルを使用してAABBを作る
-void COBB::CalculateBoundingBox(DataFileLoder* datdata) {
+void COBB::CalculateBoundingBox(DatFileLoader* datdata) {
 
 	int				numvertices;			// 頂点数
 
