@@ -17,9 +17,9 @@ bool UniqueEnemy_Bomb::Init()
 	float posx = rand() % 400 - 200.0f;
 	float posz = rand() % 400 - 200.0f;
 	SetPos(XMFLOAT3(posx, 0.0f, posz));
-	angle.x = 45.0f;
+	angle.x = 0.0f;
 	angle.z = 0.0f;
-	angle.y = -90.0f;
+	angle.y = 0.0f;
 
 
 	float xx = rand() % 5 - 2.0f;
@@ -120,21 +120,39 @@ void UniqueEnemy_Bomb::Update()
 			boid_accel = 0;
 		}
 
-		angle.y = -GetKakudo(angley.x, angley.y);
-		angle.y += 180.0f;
-		if (angle.y < 360)
-		{
-			angle.y -= 360.0f;
-		}
+	
+	
+		DX11MtxIdentity(scale);
+		DX11MtxIdentity(trans);
+		DX11MtxIdentity(rot);
+		DX11MtxIdentity(world);
+
+		scale._11 = 2.0f;
+		scale._22 = 2.0f;
+		scale._33 = 2.0f;
+
+		angle.y = 0.0f;
+		angle.y = -GetAtan(velocity.x, velocity.y);
+		angle.y += 90.0f;
+		float ang = angle.y;
+		SetAngle();
+		angle.y -= b_angle;
+		b_angle = ang;
+
+		DX11MtxMultiply(world, scale, rot);
 
 		m_pos.x = location.x;
 		m_pos.z = location.y;
 
-		SetAngle();
-		//SetScale(3.0f, 3.0f, 3.0f);
-		m_mtx._41 = m_pos.x;
-		m_mtx._42 = m_pos.y + 4.0f;
-		m_mtx._43 = m_pos.z;
+		trans._41 = m_pos.x;
+		trans._42 = m_pos.y + 4.0f;
+		trans._43 = m_pos.z;
+
+		world._41 = trans._41;
+		world._42 = trans._42;
+		world._43 = trans._43;
+
+		m_mtx = world;
 
 
 		if (b_animecnt != manime.animecnt)
@@ -198,7 +216,7 @@ void UniqueEnemy_Bomb::UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector
 		UEnemy_flock(zonbie_vector);
 		UEnemy_update();
 
-		float desiredseparation = 30;//視野　プレイヤーからの距離
+		float desiredseparation = 10;//視野　プレイヤーからの距離
 
 		for (auto& it : zonbie_vector)
 		{
@@ -209,7 +227,7 @@ void UniqueEnemy_Bomb::UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector
 				// 捕食者、次に大きな分離 Pvector を作成します
 				if ((d > 0) && (d < desiredseparation) && it->predator == true) {
 
-					this->hp =0 ;
+					this->hp -=1 ;
 				}
 			}
 		}

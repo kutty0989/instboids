@@ -69,9 +69,9 @@ bool Player::Init() {
 	float posz = rand() % 400 - 200;//初期値
 	SetPos(XMFLOAT3(posx, 0.0f, posz));//初期値
 	
-	angle.x = -90.0f;
+	angle.x = 0.0f;
 	angle.z = 0.0f;
-	angle.y = -90.0f;
+	angle.y = 0.0f;
 
 	return true;
 }
@@ -119,12 +119,12 @@ void Player::boid_Init(float x, float y)
 
 
 	champion = false;
-	desSep = 5;
-	desAli = 15;
-	desCoh = 10;
+	desSep = 15;
+	desAli = 55;
+	desCoh = 20;
 	SepW = 1.5;
 	AliW = 1.0;
-	CohW = 1.0;
+	CohW = 0.2;
 }
 
 void Player::zonbie_Init(float x, float y)
@@ -166,7 +166,7 @@ void Player::boid_player_Init(float x, float y)
 	desCoh = 50;
 	SepW = 1.5;
 	AliW = 1.0;
-	CohW = 1.0;
+	CohW = 0.2;
 
 }
 
@@ -231,20 +231,7 @@ void Player::Update(bool input) {
 	Ground::GetInstance()->GetPlayerHeight(*this);
 
 	boid_borders();
-
-	m_pos.x = location.x;
-	m_pos.z = location.y;
-
-
-	angle.y = -GetAtan(velocity.x, velocity.y);
-	SetAngle();
-
-	//Z軸を取り出す
-	axisZ.x = m_mtx._31;
-	axisZ.y = m_mtx._32;
-	axisZ.z = m_mtx._33;
-	axisZ.w = 0.0f;
-
+	
 
 	if (awaycnt > 0)
 	{
@@ -258,41 +245,38 @@ void Player::Update(bool input) {
 		boid_accel = 1.0f;
 	}
 
-	//{
-	//	//ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
-	//	ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
 
-	//	ImGui::Begin("config 6");
+	DX11MtxIdentity(scale);
+	DX11MtxIdentity(trans);
+	DX11MtxIdentity(rot);
+	DX11MtxIdentity(world);
 
-	//	ImGui::SetNextWindowSize(ImVec2(300, 400));
-	//	//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
+	scale._11 = 2.0f;
+	scale._22 = 2.0f;
+	scale._33 = 2.0f;
+	
+	angle.y = 0.0f;
+	angle.y = -GetAtan(velocity.x, velocity.y);
+	angle.y += 90.0f;
+	float ang = angle.y;
+	SetAngle();
+	angle.y -= b_angle;
+	b_angle = ang;
 
-	//	float pos[2] = { location.x,location.y };
-	//	float accel[2] = { acceleration.x,acceleration.y };
-	//	float vel[2] = { velocity.x, velocity.y };
-	//	float accela = PlayerMgr::GetInstance()->accel;
-	//	//float pos[3] = { Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z};
-	//	ImGui::DragFloat2("player", pos);
-	//	ImGui::DragFloat2("accel", accel);
-	//	ImGui::DragFloat2("velocity", vel);
-	//	ImGui::DragFloat("ACEEL", &accela);
-	//	//ImGui::DragInt("notes", &it);
-	//	location.x = pos[0];
-	//	location.y = pos[1];
-	//	acceleration.y = accel[0];
-	//	acceleration.y = accel[1];
-	//	velocity.y = vel[0];
-	//	velocity.y = vel[1];
+	DX11MtxMultiply(world,scale, rot);
 
+	m_pos.x = location.x;
+	m_pos.z = location.y;
 
-	//	ImGui::End();
-	//	ImGui::PopStyleColor();
-	//}
+	trans._41 = m_pos.x;
+	trans._42 = m_pos.y + 4.0f;
+	trans._43 = m_pos.z;
 
-	m_mtx._41 = m_pos.x;
-	m_mtx._42 = m_pos.y + 4.0f;
-	m_mtx._43 = m_pos.z;
+	world._41 = trans._41;
+	world._42 = trans._42;
+	world._43 = trans._43;
 
+	m_mtx = world;
 
 }
 
@@ -465,19 +449,21 @@ void Player::boids_attack(std::vector<shared_ptr<Player>>& player_vector, std::s
 
 
 Pvector desired;//計算用の変数
+Pvector des;//計算用の変数
 
 // maxSpeed を制限し、必要な操舵力を見つけ、
 //ベクトルを正規化します
 Pvector Player::boid_seek(const Pvector& v)
 {
 	desired = { 0,0 };
-	desired.subTwoVector(v, location);  //位置からターゲットを指すベクトル
+	desired = desired.subTwoVector(v, location);  //位置からターゲットを指すベクトル
 	// 必要な正規化と最大速度へのスケーリング
 	desired.normalize();
 	desired.mulScalar(maxSpeed);
 
 	//ステアリング = 望ましいマイナス速度
-	acceleration.subTwoVector(desired, velocity);
+	acceleration = acceleration.subTwoVector(desired, velocity);
+	acceleration.normalize();
 	acceleration.limit(maxForce);  // Limit to maximum steering force
 	return acceleration;
 }
@@ -633,7 +619,7 @@ void Player::zonbie_flock(std::vector<shared_ptr<Player>>& player_vector, std::v
 	sep.mulScalar(SepW);
 	ali.mulScalar(AliW); // さまざまな特性の重みを変更する必要がある場合があります
 	coh.mulScalar(CohW);
-	awa.mulScalar(CohW);
+	awa.mulScalar(1.0f);
 	dmg.mulScalar(3.0f);
 	//
 	//  力ベクトルを加速度に加える
@@ -1059,18 +1045,14 @@ Pvector Player::boid_Cohesion(std::vector<shared_ptr<Player>>& player_vector)
 	int count = 0;
 	for (auto& it : player_vector)
 	{
-
-		if (it->follow == Follow::FREE)
-		{
-			float d = location.distance(it->location);
-			if ((d > 0) && (d < neighbordist)) {
-				desired.addVector(it->location);
-				count++;
-			}
+		float d = it->location.distance(this->location);
+		if ((d > 0) && (d < neighbordist)) {
+			desired.addVector(it->location);
+			count++;
 		}
-
 	}
 	if (count > 0) {
+		this->location;
 		desired.divScalar(count);
 		return boid_seek(desired);
 	}
@@ -1264,8 +1246,8 @@ void Player::SetAngle()
 	XMFLOAT4 qtx = {};//クォータニオン
 	XMFLOAT4 qty = {};//クォータニオン
 	XMFLOAT4 qtz = {};//クォータニオン
-	XMFLOAT4 qt= {};
 	
+
 	//DX11GetQtfromMatrix(m_mtx, qt);
 
 	//指定軸回転のクォータニオンを生成
@@ -1276,19 +1258,18 @@ void Player::SetAngle()
 
 	//クォータニオンを合成
 	XMFLOAT4 tempqt1;
-	DX11QtMul(tempqt1, qt, qtx);
+	DX11QtMul(tempqt1, qtx, qty);
 
 	XMFLOAT4 tempqt2;
-	DX11QtMul(tempqt2, qty, qtz);
-
-	XMFLOAT4 tempqt3;
-	DX11QtMul(tempqt3, tempqt1, tempqt2);
+	DX11QtMul(tempqt2, qtz, tempqt1);
 
 	//クォータニオンをノーマライズ
-	DX11QtNormalize(tempqt3, tempqt3);
+	DX11QtNormalize(tempqt2, tempqt2);
+
+	SetRotation(tempqt2);
 
 	//クォータニオンから行列を作成
-	DX11MtxFromQt(m_mtx, tempqt3);
+	DX11MtxFromQt(rot, tempqt2);
 }
 
 XMFLOAT3 Player::GetAngle()

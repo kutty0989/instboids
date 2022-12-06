@@ -37,7 +37,7 @@ std::vector<shared_ptr<Player>> grid_vector[gridnum][gridnum] = {};
 std::vector<shared_ptr<Player>> grid_zonbievector[gridnum][gridnum] = {};
 std::vector<shared_ptr<UniqueEnemy>> bufunique_enemy_vector[3][1] = {};//ƒ]ƒ“ƒr
 CModelInstance g_air;
-#define		ENEMYMAX		1
+#define		ENEMYMAX		100
 UniqueEnemy_Bomb g_enemy[ENEMYMAX];		// “G
 CModel *g_model;
 using namespace std;
@@ -672,10 +672,9 @@ void PlayerMgr::PlayerUpdate()
 		g_enemy[i].UEnemy_run(zonbie_vector);
 		g_enemy[i].Update();
 		XMFLOAT4X4	world;
-		DX11MtxFromQt(world, g_enemy[i].GetRotation());
-		world._41 = g_enemy[i].GetMtx()._41;
-		world._42 = g_enemy[i].GetMtx()._42;
-		world._43 = g_enemy[i].GetMtx()._43;
+		world = g_enemy[i].GetMtx();;
+		//DX11MtxFromQt(world, g_enemy[i].GetRotation());
+		
 		mat[i] = world;
 	}
 

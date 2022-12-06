@@ -129,6 +129,7 @@ void DX11QtRotationAxis(XMFLOAT4& qt, XMFLOAT4& axis, float angle) {
 	ALIGN16 XMVECTOR outqt;
 	ALIGN16 XMVECTOR axisvec;
 
+	
 	axisvec = XMLoadFloat4(&axis);
 
 	outqt = XMQuaternionRotationAxis(axisvec, (angle*XM_PI) / 180.0f);

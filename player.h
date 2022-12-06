@@ -14,7 +14,7 @@ class UniqueEnemy_Bomb;
 class Player :public GameObject {
 private:
 
-
+	
 	CModel* m_model;						// ３Ｄモデル
 	CModelInstance* m_instancemodel;						// ３Ｄモデル
 	BoidsHp boidshp; //hpbarのビルボード
@@ -39,6 +39,12 @@ private:
 
 
 public:
+	XMFLOAT4X4 rot = {};
+	XMFLOAT4X4 scale = {};
+	XMFLOAT4X4 trans = {};
+	XMFLOAT4X4 world = {};
+	float b_angle = 0.0f;
+
 	Pvector uedesired;//計算用の変数
 	Pvector uesteer;//計算用の変数
 

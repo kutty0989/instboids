@@ -4,8 +4,9 @@
 #include"IMgui/imgui.h"
 #include<iostream>
 #include <math.h>
-#include"dx11mathutil.h"
+#include"DX11util.h"
 #include"Bpm_Data.h"
+#include"dx11mathutil.h"
 class GameObject {
 	
 protected:
@@ -65,6 +66,7 @@ public:
 	}
 
 	void SetRotation(const DirectX::XMFLOAT4& qt) {
+		
 		m_rotation = qt;
 	}
 
