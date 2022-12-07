@@ -14,6 +14,7 @@
 #include"ModelMgr.h"
 #include"Scean.h"
 #include"BulletMgr.h"
+#include"InstanceModelMgr.h"
 #include"UniqueEnemy_Bomb.h"
 class Scean;
 
@@ -172,7 +173,7 @@ void Player::boid_player_Init(float x, float y)
 
 void Player::follow_Init()
 {
-	SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::ONE)].modelname));
+	SetInstanceModel(InstanceModelMgr::GetInstance().GetInstanceModelPtr(Scean::GetInstance()->g_modelinstancelist[static_cast<int>(Scean::MODELIID::PLAYER)].modelname));
 	maxSpeed = 3.5;
 	maxForce = 0.5;
 	hp = 2;
@@ -205,7 +206,7 @@ void Player::Draw(int animenum) {
 		//	}
 		}	
 			// モデル描画
-		m_model->Draw(m_mtx);	
+	//	m_model->Draw(m_mtx);	
 		
 
 	}
@@ -394,7 +395,7 @@ void Player::FollowUpdate()
 
 
 void Player::Finalize() {
-	m_model->Uninit();
+//	m_model->Uninit();
 }
 
 
@@ -404,7 +405,7 @@ void Player::applyForce(const Pvector& force)
 	acceleration.addVector(force);
 }
 
-void Player::Move_And_Delete(float arraynum, std::vector <std::shared_ptr<Player>>& player_vector1, std::vector <std::shared_ptr<Player>>& player_vector2)
+void Player::Move_And_Delete(float arraynum, std::vector <Player>& player_vector1, std::vector <Player>& player_vector2)
 {
 	//1の配列へ２の配列の要素番号を移動
 	player_vector1.push_back(std::move(player_vector2[arraynum]));
@@ -414,33 +415,33 @@ void Player::Move_And_Delete(float arraynum, std::vector <std::shared_ptr<Player
 
 }
 
-void Player::Delete(float arraynum, std::vector<std::shared_ptr<Player>>& Player_Vector1)
+void Player::Delete(float arraynum, std::vector<Player>& Player_Vector1)
 {
 	Player_Vector1.erase(Player_Vector1.begin() + arraynum);
 }
 
 
-void Player::boids_attack(std::vector<shared_ptr<Player>>& player_vector, std::shared_ptr<Player>& zonbie, std::vector<shared_ptr<UniqueEnemy_Bomb>>& unique_enemy_vector)
+void Player::boids_attack(std::vector<Player>& player_vector, Player& zonbie, std::vector<UniqueEnemy_Bomb>& unique_enemy_vector)
 {
 	if(changeflg)
 	{ 
 	for (auto& i : player_vector)
 	{
-		float dd = i->location.distance(zonbie->location);
+		float dd = i.location.distance(zonbie.location);
 
 		//hp減産処理
 		if (dd < 8)
 		{
-			i->hp = 0;
+			i.hp = 0;
 		}
 	}
 	for (auto& u : unique_enemy_vector)
 	{
-		float dd = u->location.distance(zonbie->location);
+		float dd = u.location.distance(zonbie.location);
 
 		if (dd < 18)
 		{
-			u->hp -= 1;
+			u.hp -= 1;
 		}
 	}
 	}
@@ -468,7 +469,7 @@ Pvector Player::boid_seek(const Pvector& v)
 	return acceleration;
 }
 
-//Pvector Player::boid_view(std::vector<shared_ptr<Player>>& player_vector, std::shared_ptr<Player>& implayer)
+//Pvector Player::boid_view(std::vector<Player>& player_vector, Player& implayer)
 //{
 //	// How far can it see?
 //	float sightDistance = 100;
@@ -477,10 +478,10 @@ Pvector Player::boid_seek(const Pvector& v)
 //	for (int i = 0; i < maxnum; i++) {
 //		// A vector that points to another boid and that angle
 //		desired ={0,0};
-//		desired = desired.subTwoVector(it->location, location);
+//		desired = desired.subTwoVector(it.location, location);
 //
 //		// How far is it
-//		float d = location.distance(it->location);
+//		float d = location.distance(it.location);
 //		
 //		// What is the angle between the other boid and this one's current direction
 //		float desireda = velocity.angleBetween(desired);
@@ -496,15 +497,15 @@ Pvector Player::boid_seek(const Pvector& v)
 //
 //
 
-//std::vector<std::shared_ptr<Player>> grid[100][100] = { {} };
-void Player::boid_run(std::vector<shared_ptr<Player>>& player_vector, std::vector<shared_ptr<Player>>& zonbie_vector)
+//std::vector<Player> grid[100][100] = { {} };
+void Player::boid_run(std::vector<Player>& player_vector, std::vector<Player>& zonbie_vector)
 {
 	boid_flock(player_vector,zonbie_vector);
 	boid_update();
 
 }
 
-void Player::zonbie_run(std::vector<shared_ptr<Player>>& player_vector, std::vector<shared_ptr<Player>>& human_vector, Pvector mousevec)
+void Player::zonbie_run(std::vector<Player>& player_vector, std::vector<Player>& human_vector, Pvector mousevec)
 {
 	zonbie_flock(player_vector,human_vector, mousevec);
 	boid_update();
@@ -520,7 +521,7 @@ Pvector dmg = { 0,0 };
 
 
 //ボイドの群れに三法則を適用する
-void Player::boid_flock(std::vector<shared_ptr<Player>>& player_vector, std::vector<shared_ptr<Player>>& zonbie_vector)
+void Player::boid_flock(std::vector<Player>& player_vector, std::vector<Player>& zonbie_vector)
 {
 	sep = { 0,0 };
 	ali = { 0,0 };
@@ -557,7 +558,7 @@ void Player::boid_flock(std::vector<shared_ptr<Player>>& player_vector, std::vec
 
 }
 
-void Player::zonbie_flock(std::vector<shared_ptr<Player>>& player_vector, std::vector<shared_ptr<Player>>& human_vector, Pvector mousevec)
+void Player::zonbie_flock(std::vector<Player>& player_vector, std::vector<Player>& human_vector, Pvector mousevec)
 {
 	sep = { 0,0 };
 	ali = { 0,0 };
@@ -723,7 +724,7 @@ Pvector steer(0, 0);
 
 // 分離
 // ボイド同士が近づきすぎないようにする
-Pvector Player::boid_Separation(std::vector<shared_ptr<Player>>& player_vector, std::vector<shared_ptr<Player>>& zonbie_vector)
+Pvector Player::boid_Separation(std::vector<Player>& player_vector, std::vector<Player>& zonbie_vector)
 {
 	// ボイド間分離視野距離
 	float desiredseparation = 10;//視野　プレイヤーからの距離
@@ -734,16 +735,16 @@ Pvector Player::boid_Separation(std::vector<shared_ptr<Player>>& player_vector, 
 	//for (int i = 0; i < sizeof(player_vector)/sizeof(player_vector[0]); i++)//0回
 	for (auto& it : player_vector)
 	{
-		if (it != nullptr)
+		if (&it != nullptr)
 		{
 			// 現在のboidから見ているboidまでの距離を計算する
-			if (it->follow == Follow::FREE)
+			if (it.follow == Follow::FREE)
 			{
-				float d = location.distance(it->location);
+				float d = location.distance(it.location);
 				// これが仲間のボイドであり、近すぎる場合は、離れてください
 				if ((d > 0) && (d < desiredseparation)) {
 					desired = { 0,0 };
-					desired = desired.subTwoVector(location, it->location);
+					desired = desired.subTwoVector(location, it.location);
 					desired.normalize();
 					desired.divScalar(d);      // Weight by distance
 					steer.addVector(desired);
@@ -754,15 +755,15 @@ Pvector Player::boid_Separation(std::vector<shared_ptr<Player>>& player_vector, 
 	}
 	for (auto& it : zonbie_vector)
 	{
-		if (it != nullptr)
+		if (&it != nullptr)
 		{
-			float d = location.distance(it->location);
+			float d = location.distance(it.location);
 			//// 現在のボイドが捕食者であり、私たちが見ているボイドも捕食者である場合
 			//// 捕食者は近づいて、その後わずかに分離
 			//if ((d > 0) && (d < desiredseparation) && predator == true
-			//	&& it->predator == true) {
+			//	&& it.predator == true) {
 			//	desired = { 0,0 };
-			//	desired = desired.subTwoVector(location, it->location);
+			//	desired = desired.subTwoVector(location, it.location);
 			//	desired.normalize();
 			//	desired.divScalar(d);
 			//	steer.addVector(desired);
@@ -770,9 +771,9 @@ Pvector Player::boid_Separation(std::vector<shared_ptr<Player>>& player_vector, 
 			//}
 			// 現在のボイドが捕食者ではなく、私たちが見ているボイドが
 			// 捕食者、次に大きな分離 Pvector を作成します
-			 if ((d > 0) && (d < desiredseparation + 20) && it->predator == true) {
+			 if ((d > 0) && (d < desiredseparation + 20) && it.predator == true) {
 				desired = { 0,0 };
-				desired = desired.subTwoVector(location, it->location);
+				desired = desired.subTwoVector(location, it.location);
 				desired.mulScalar(900);
 				steer.addVector(desired);
 				count++;
@@ -797,7 +798,7 @@ Pvector Player::boid_Separation(std::vector<shared_ptr<Player>>& player_vector, 
 	return steer;
 }
 
-Pvector Player::boid_inSeparation(std::vector<shared_ptr<Player>>& player_vector)
+Pvector Player::boid_inSeparation(std::vector<Player>& player_vector)
 {
 	// ボイド間分離視野距離
 	this->desSep;//視野　プレイヤーからの距離
@@ -848,19 +849,19 @@ Pvector Player::boid_inSeparation(std::vector<shared_ptr<Player>>& player_vector
 	//システム内のすべてのボイドについて、近すぎるかどうかを確認します
 	for (auto& it : player_vector)
 	{
-		if (it != nullptr)
+		if (&it != nullptr)
 		{
 			// 現在のboidから見ているboidまでの距離を計算する
-			if (it->follow != Follow::FREE)
+			if (it.follow != Follow::FREE)
 			{
-				float d = location.distance(it->location);
+				float d = location.distance(it.location);
 				if ((d > 0) && (d < this->desSep)) {
 
 					//desiredseparation /= count;
 						// これが仲間のボイドであり、近すぎる場合は、離れてください
 					if ((d > 0) && (d < this->desSep)) {
 						desired = { 0,0 };
-						desired = desired.subTwoVector(location, it->location);
+						desired = desired.subTwoVector(location, it.location);
 						desired.normalize();
 				    	desired.divScalar(d);      // Weight by distance
 						steer.addVector(desired);
@@ -897,7 +898,7 @@ Pvector Player::boid_inSeparation(std::vector<shared_ptr<Player>>& player_vector
 // 整列
 //視野内のボイドの平均速度を計算し、
 // 一致するように現在のボイドの速度を操作します
-Pvector Player::boid_Alignment(std::vector<shared_ptr<Player>>& player_vector)
+Pvector Player::boid_Alignment(std::vector<Player>& player_vector)
 {
 	float neighbordist = desAli; // Field of vision
 
@@ -906,11 +907,11 @@ Pvector Player::boid_Alignment(std::vector<shared_ptr<Player>>& player_vector)
 	for (auto& it : player_vector)
 	{
 
-		if (it->follow == Follow::FREE)
+		if (it.follow == Follow::FREE)
 		{
-			float d = location.distance(it->location);
+			float d = location.distance(it.location);
 			if ((d > 0) && (d < neighbordist)) { // 0 < d < 50
-				desired.addVector(it->velocity);
+				desired.addVector(it.velocity);
 				count++;
 			}
 		}
@@ -963,7 +964,7 @@ Pvector Player::boid_zonbieAlignment(Pvector mousepos)
 	return ali_vel;
 }
 
-Pvector Player::boid_zonbieAway(std::vector<shared_ptr<Player>>& player_vector)
+Pvector Player::boid_zonbieAway(std::vector<Player>& player_vector)
 {// ボイド間分離視野距離
 	float desiredseparation = 50.0f;//視野　プレイヤーからの距離
 	steer = { 0.0f,0.0f };
@@ -979,10 +980,10 @@ Pvector Player::boid_zonbieAway(std::vector<shared_ptr<Player>>& player_vector)
 		// 捕食者は近づいて、その後わずかに分離
 		for (auto& it : player_vector)
 		{
-			float d = location.distance(it->location);
+			float d = location.distance(it.location);
 			if (d < before_distanse) {
 				before_distanse = d;
-				nearplayer = it->location;
+				nearplayer = it.location;
 			}
 		}
 		if ((before_distanse > 0) && (before_distanse < desiredseparation))
@@ -1038,16 +1039,16 @@ Pvector Player::boid_zonbieSearch()
 // 結合
 // 近くのボイドの平均位置を見つけ、
 // その方向に移動する操舵力。
-Pvector Player::boid_Cohesion(std::vector<shared_ptr<Player>>& player_vector)
+Pvector Player::boid_Cohesion(std::vector<Player>& player_vector)
 {
 	float neighbordist = desCoh;
 	desired = { 0,0 };
 	int count = 0;
 	for (auto& it : player_vector)
 	{
-		float d = it->location.distance(this->location);
+		float d = it.location.distance(this->location);
 		if ((d > 0) && (d < neighbordist)) {
-			desired.addVector(it->location);
+			desired.addVector(it.location);
 			count++;
 		}
 	}
@@ -1144,7 +1145,7 @@ Pvector Player::zonbie_damage()
 }
 
 //集合
-Pvector Player::boid_inCohesion(std::vector<shared_ptr<Player>>& player_vector)
+Pvector Player::boid_inCohesion(std::vector<Player>& player_vector)
 {
 
 	desired = { 0,0 };

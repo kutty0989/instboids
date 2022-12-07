@@ -181,7 +181,7 @@ void UniqueEnemy::Update()
 
 }
 
-void UniqueEnemy::UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector)
+void UniqueEnemy::UEnemy_run(std::vector<Player>& zonbie_vector)
 {
 	UEnemy_flock(zonbie_vector);
 	UEnemy_update();
@@ -190,7 +190,7 @@ void UniqueEnemy::UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector)
 
 
 
-void UniqueEnemy::UEnemy_flock(std::vector<shared_ptr<Player>>& zonbie_vector)
+void UniqueEnemy::UEnemy_flock(std::vector<Player>& zonbie_vector)
 {
 	ueser = { 0,0 };
 	uesep = { 0,0 };
@@ -256,7 +256,7 @@ Pvector UniqueEnemy::UEnemy_Search()
 	return uedesired;
 }
 
-Pvector UniqueEnemy::UEnemy_Separation(std::vector<shared_ptr<Player>>& zonbie_vector)
+Pvector UniqueEnemy::UEnemy_Separation(std::vector<Player>& zonbie_vector)
 {
 	// ボイド間分離視野距離
 	float desiredseparation = 10;//視野　プレイヤーからの距離
@@ -266,14 +266,14 @@ Pvector UniqueEnemy::UEnemy_Separation(std::vector<shared_ptr<Player>>& zonbie_v
 
 	for (auto& it : zonbie_vector)
 	{
-		if (it != nullptr)
+		if (&it != nullptr)
 		{
-			float d = location.distance(it->location);
+			float d = location.distance(it.location);
 			// 現在のボイドが捕食者ではなく、私たちが見ているボイドが
 			// 捕食者、次に大きな分離 Pvector を作成します
-			if ((d > 0) && (d < desiredseparation) && it->predator == true) {
+			if ((d > 0) && (d < desiredseparation) && it.predator == true) {
 				uedesired = { 0,0 };
-				uedesired = uedesired.subTwoVector(location, it->location);
+				uedesired = uedesired.subTwoVector(location, it.location);
 				uedesired.mulScalar(900);
 				uesteer.addVector(uedesired);
 				count++;
@@ -294,7 +294,7 @@ Pvector UniqueEnemy::UEnemy_Separation(std::vector<shared_ptr<Player>>& zonbie_v
 	return uesteer;
 }
 
-Pvector UniqueEnemy::UEnemy_Attack(std::vector<shared_ptr<Player>>& zonbie_vector)
+Pvector UniqueEnemy::UEnemy_Attack(std::vector<Player>& zonbie_vector)
 {
 	// ボイド間分離視野距離
 	float desiredseparation = 80;//視野　プレイヤーからの距離
@@ -306,10 +306,10 @@ Pvector UniqueEnemy::UEnemy_Attack(std::vector<shared_ptr<Player>>& zonbie_vecto
 	{
 	for (auto& it : zonbie_vector)
 	{
-		float d = location.distance(it->location);
+		float d = location.distance(it.location);
 		if (d < before_distanse) {
 			before_distanse = d;
-			nearplayer = it->location;
+			nearplayer = it.location;
 		}
 	}
 	

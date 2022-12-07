@@ -44,7 +44,7 @@ public:
 
 	// ˆÊ’u‚ðŽæ“¾
 	DirectX::XMFLOAT3 GetPos() {
-		return m_pos;
+			return m_pos;
 	}
 
 	// ‚h‚c‚ðŽæ“¾

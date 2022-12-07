@@ -11,7 +11,7 @@
 #include"myutil.h"
 #include"UniqueEnemy.h"
 #include"UniqueEnemy_Bomb.h"
-const int boids_num = 200;//‘S‘Ì‚Ìboids‚Ì‰Šú”
+const int boids_num = 100;//‘S‘Ì‚Ìboids‚Ì‰Šú”
 const int zonbbie_num = 10;//ƒ]ƒ“ƒr‚Ì‰Šú”
 const int unique_enemy_num = 0;//‹ßÚ‚Ì‰Šú”
 const int unique_enemy_bomb_num = 100;//‰“‹——£‚Ì‰Šú”
@@ -21,17 +21,17 @@ class PlayerMgr
 {
 public:
 
-	std::vector<shared_ptr<Player>> player_vector;//”ÍˆÍŠO‚Ìbodis
+	std::vector<Player> player_vector;//”ÍˆÍŠO‚Ìbodis
 	std::vector<shared_ptr<Player>> in_player_vector;//”ÍˆÍ“à‚Ìboids
-	std::vector<shared_ptr<Player>> zonbie_vector;//ƒ]ƒ“ƒr
+	std::vector<Player> zonbie_vector;//ƒ]ƒ“ƒr
 	std::vector<shared_ptr<UniqueEnemy>> unique_enemy_vector;//ƒ]ƒ“ƒr
-	std::vector<shared_ptr<UniqueEnemy_Bomb>> unique_enemy_bomb_vector;//ƒ]ƒ“ƒr
+	std::vector<UniqueEnemy_Bomb> unique_enemy_bomb_vector;//ƒ]ƒ“ƒr
 	std::vector<shared_ptr<Player>> in_enemy_vector;//“G‚Ì”ÍˆÍ“à‚Ìboids
 	std::vector <Player*> instance_vector;//“G‚Ì”ÍˆÍ“à‚Ìboids
 	std::vector<shared_ptr<Build>> build_vector;//Œš•¨
 	
-	std::vector<shared_ptr<Player>> buf_vec; 
-	std::vector<shared_ptr<Player>> buf_pvec;
+	std::vector<Player> buf_vec; 
+	std::vector<Player> buf_pvec;
 	std::shared_ptr<Player> ImPlayer;
 	std::shared_ptr<Player> ImEnemy;
 

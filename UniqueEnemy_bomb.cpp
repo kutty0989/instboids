@@ -44,7 +44,7 @@ bool UniqueEnemy_Bomb::Init()
 	return true;
 }
 
-void UniqueEnemy_Bomb::Draw(std::vector<shared_ptr<Player>>& zonbie_vector)
+void UniqueEnemy_Bomb::Draw(std::vector<Player>& zonbie_vector)
 {
 	
 			manime.animecnt = 0;
@@ -209,7 +209,7 @@ void UniqueEnemy_Bomb::Update()
 	}
 }
 
-void UniqueEnemy_Bomb::UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector)
+void UniqueEnemy_Bomb::UEnemy_run(std::vector<Player>& zonbie_vector)
 {
 	if (hp > 0)
 	{
@@ -220,12 +220,12 @@ void UniqueEnemy_Bomb::UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector
 
 		for (auto& it : zonbie_vector)
 		{
-			if (it != nullptr)
+			if (&it != nullptr)
 			{
-				float d = location.distance(it->location);
+				float d = location.distance(it.location);
 				// 現在のボイドが捕食者ではなく、私たちが見ているボイドが
 				// 捕食者、次に大きな分離 Pvector を作成します
-				if ((d > 0) && (d < desiredseparation) && it->predator == true) {
+				if ((d > 0) && (d < desiredseparation) && it.predator == true) {
 
 					this->hp -=1 ;
 				}
@@ -235,7 +235,7 @@ void UniqueEnemy_Bomb::UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector
 }
 
 
-void UniqueEnemy_Bomb::UEnemy_flock(std::vector<shared_ptr<Player>>& zonbie_vector)
+void UniqueEnemy_Bomb::UEnemy_flock(std::vector<Player>& zonbie_vector)
 {
 	ueser = { 0,0 };
 	uesep = { 0,0 };
@@ -301,7 +301,7 @@ Pvector UniqueEnemy_Bomb::UEnemy_Search()
 	return uedesired;
 }
 
-Pvector UniqueEnemy_Bomb::UEnemy_Separation(std::vector<shared_ptr<Player>>& zonbie_vector)
+Pvector UniqueEnemy_Bomb::UEnemy_Separation(std::vector<Player>& zonbie_vector)
 {
 	// ボイド間分離視野距離
 	float desiredseparation = 10;//視野　プレイヤーからの距離
@@ -311,14 +311,14 @@ Pvector UniqueEnemy_Bomb::UEnemy_Separation(std::vector<shared_ptr<Player>>& zon
 
 	for (auto& it : zonbie_vector)
 	{
-		if (it != nullptr)
+		if (&it != nullptr)
 		{
-			float d = location.distance(it->location);
+			float d = location.distance(it.location);
 			// 現在のボイドが捕食者ではなく、私たちが見ているボイドが
 			// 捕食者、次に大きな分離 Pvector を作成します
-			if ((d > 0) && (d < desiredseparation) && it->predator == true) {
+			if ((d > 0) && (d < desiredseparation) && it.predator == true) {
 				uedesired = { 0,0 };
-				uedesired = uedesired.subTwoVector(location, it->location);
+				uedesired = uedesired.subTwoVector(location, it.location);
 				uedesired.mulScalar(900);
 				uesteer.addVector(uedesired);
 				count++;
@@ -339,7 +339,7 @@ Pvector UniqueEnemy_Bomb::UEnemy_Separation(std::vector<shared_ptr<Player>>& zon
 	return uesteer;
 }
 
-Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<shared_ptr<Player>>& zonbie_vector)
+Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<Player>& zonbie_vector)
 {
 	// ボイド間分離視野距離
 	float desiredseparation = 100;//視野　プレイヤーからの距離
@@ -351,11 +351,11 @@ Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<shared_ptr<Player>>& zonbie_
 	{
 		for (auto& it : zonbie_vector)
 		{
-			float d = location.distance(it->location);
+			float d = location.distance(it.location);
 			if (d < before_distanse) {
 				before_distanse = d;
-				nearplayer = it->location;
-				zpos = XMFLOAT3(it->m_mtx._41,it->m_mtx._42,it->m_mtx._43);
+				nearplayer = it.location;
+				zpos = XMFLOAT3(it.m_mtx._41,it.m_mtx._42,it.m_mtx._43);
 				
 			}
 		}
@@ -405,7 +405,7 @@ int UniqueEnemy_Bomb::UEnemy_GetAnime()
 }
 
 
-void  UniqueEnemy_Bomb::UEDelete(float arraynum, std::vector<std::shared_ptr<UniqueEnemy_Bomb>>& Player_Vector1)
+void  UniqueEnemy_Bomb::UEDelete(float arraynum, std::vector<UniqueEnemy_Bomb>& Player_Vector1)
 {
 	Player_Vector1.erase(Player_Vector1.begin() + arraynum);
 }
