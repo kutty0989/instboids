@@ -208,8 +208,34 @@ void UniqueEnemy_Bomb::Update()
 
 	}
 }
+//
+//void UniqueEnemy_Bomb::UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector)
+//{
+//	if (hp > 0)
+//	{
+//		UEnemy_flock(zonbie_vector);
+//		UEnemy_update();
+//
+//		float desiredseparation = 10;//視野　プレイヤーからの距離
+//
+//		for (auto& it : zonbie_vector)
+//		{
+//			if (it != nullptr)
+//			{
+//				float d = location.distance(it->location);
+//				// 現在のボイドが捕食者ではなく、私たちが見ているボイドが
+//				// 捕食者、次に大きな分離 Pvector を作成します
+//				if ((d > 0) && (d < desiredseparation) && it->predator == true) {
+//
+//					this->hp -=1 ;
+//				}
+//			}
+//		}
+//	}
+//}
+//
 
-void UniqueEnemy_Bomb::UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector)
+void UniqueEnemy_Bomb::UEnemy_run(std::vector<Player>& zonbie_vector)
 {
 	if (hp > 0)
 	{
@@ -220,14 +246,14 @@ void UniqueEnemy_Bomb::UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector
 
 		for (auto& it : zonbie_vector)
 		{
-			if (it != nullptr)
+			if (&it != nullptr)
 			{
-				float d = location.distance(it->location);
+				float d = location.distance(it.location);
 				// 現在のボイドが捕食者ではなく、私たちが見ているボイドが
 				// 捕食者、次に大きな分離 Pvector を作成します
-				if ((d > 0) && (d < desiredseparation) && it->predator == true) {
+				if ((d > 0) && (d < desiredseparation) && it.predator == true) {
 
-					this->hp -=1 ;
+					this->hp -= 1;
 				}
 			}
 		}
@@ -235,7 +261,36 @@ void UniqueEnemy_Bomb::UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector
 }
 
 
-void UniqueEnemy_Bomb::UEnemy_flock(std::vector<shared_ptr<Player>>& zonbie_vector)
+
+//void UniqueEnemy_Bomb::UEnemy_flock(std::vector<shared_ptr<Player>>& zonbie_vector)
+//{
+//	ueser = { 0,0 };
+//	uesep = { 0,0 };
+//	ueatt = { 0,0 };
+//
+//	if (unique_enemy_anime != UNIQUE_ENEMY_ANIME::ATTACK)
+//	{
+//		ueser = UEnemy_Search();
+//
+//		//	uesep = UEnemy_Separation(zonbie_vector);
+//		ueatt = UEnemy_Attack(zonbie_vector);
+//	}
+//
+//
+//
+//	ueser.mulScalar(CohW);
+//	//uesep.mulScalar(SepW);
+//	ueatt.mulScalar(1.5f);
+//
+//
+//
+//	applyForce(ueser);
+//	applyForce(uesep);
+//	applyForce(ueatt);
+//
+//}
+
+void UniqueEnemy_Bomb::UEnemy_flock(std::vector<Player>& zonbie_vector)
 {
 	ueser = { 0,0 };
 	uesep = { 0,0 };
@@ -265,15 +320,27 @@ void UniqueEnemy_Bomb::UEnemy_flock(std::vector<shared_ptr<Player>>& zonbie_vect
 
 void UniqueEnemy_Bomb::UEnemy_update()
 {
-	acceleration.normalize();
+	//acceleration.normalize();
 
-	acceleration.mulScalar(boid_accel);
+	//acceleration.mulScalar(boid_accel);
+	////  更新速度
+	//velocity.addVector(acceleration);
+
+	//location.addVector(velocity);
+
+	//acceleration.mulScalar(0);
+
+
+	//スローダウンを急激にしないために
+	acceleration.mulScalar(0.35f);
 	//  更新速度
 	velocity.addVector(acceleration);
-
+	//  制限速度
+	velocity.limit(maxSpeed);
+	velocity.mulScalar(boid_accel);
 	location.addVector(velocity);
-
-	velocity.mulScalar(0);
+	// 各サイクルで加速度を 0 にリセットする
+	acceleration.mulScalar(0);
 }
 
 
@@ -301,7 +368,7 @@ Pvector UniqueEnemy_Bomb::UEnemy_Search()
 	return uedesired;
 }
 
-Pvector UniqueEnemy_Bomb::UEnemy_Separation(std::vector<shared_ptr<Player>>& zonbie_vector)
+Pvector UniqueEnemy_Bomb::UEnemy_Separation(std::vector<Player>& zonbie_vector)
 {
 	// ボイド間分離視野距離
 	float desiredseparation = 10;//視野　プレイヤーからの距離
@@ -311,14 +378,14 @@ Pvector UniqueEnemy_Bomb::UEnemy_Separation(std::vector<shared_ptr<Player>>& zon
 
 	for (auto& it : zonbie_vector)
 	{
-		if (it != nullptr)
+		if (&it != nullptr)
 		{
-			float d = location.distance(it->location);
+			float d = location.distance(it.location);
 			// 現在のボイドが捕食者ではなく、私たちが見ているボイドが
 			// 捕食者、次に大きな分離 Pvector を作成します
-			if ((d > 0) && (d < desiredseparation) && it->predator == true) {
+			if ((d > 0) && (d < desiredseparation) && it.predator == true) {
 				uedesired = { 0,0 };
-				uedesired = uedesired.subTwoVector(location, it->location);
+				uedesired = uedesired.subTwoVector(location, it.location);
 				uedesired.mulScalar(900);
 				uesteer.addVector(uedesired);
 				count++;
@@ -339,24 +406,64 @@ Pvector UniqueEnemy_Bomb::UEnemy_Separation(std::vector<shared_ptr<Player>>& zon
 	return uesteer;
 }
 
-Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<shared_ptr<Player>>& zonbie_vector)
+//
+//Pvector UniqueEnemy_Bomb::UEnemy_Separation(std::vector<shared_ptr<Player>>& zonbie_vector)
+//{
+//	// ボイド間分離視野距離
+//	float desiredseparation = 10;//視野　プレイヤーからの距離
+//	uesteer = { 0,0 };
+//	int count = 0;
+//	//システム内のすべてのボイドについて、近すぎるかどうかを確認します
+//
+//	for (auto& it : zonbie_vector)
+//	{
+//		if (it != nullptr)
+//		{
+//			float d = location.distance(it->location);
+//			// 現在のボイドが捕食者ではなく、私たちが見ているボイドが
+//			// 捕食者、次に大きな分離 Pvector を作成します
+//			if ((d > 0) && (d < desiredseparation) && it->predator == true) {
+//				uedesired = { 0,0 };
+//				uedesired = uedesired.subTwoVector(location, it->location);
+//				uedesired.mulScalar(900);
+//				uesteer.addVector(uedesired);
+//				count++;
+//			}
+//		}
+//	}
+//
+//	// 位置の平均差を加速度に加算
+//	if (count > 0)
+//		uesteer.divScalar((float)count);
+//	if (uesteer.magnitude2x() > 0) {
+//		awaycnt = 0;
+//		// Steering = Desired - Velocity
+//		uesteer.normalize();
+//		boid_accel = 2.5f;
+//		uesteer.limit(maxForce);
+//	}
+//	return uesteer;
+//}
+
+
+Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<Player>& zonbie_vector)
 {
 	// ボイド間分離視野距離
 	float desiredseparation = 100;//視野　プレイヤーからの距離
 	uesteer = { 0,0 };
 	float before_distanse = 100.0f;//一番近い距離保存用
 
-	
+
 	if (unique_enemy_anime != UNIQUE_ENEMY_ANIME::ATTACK)
 	{
 		for (auto& it : zonbie_vector)
 		{
-			float d = location.distance(it->location);
+			float d = location.distance(it.location);
 			if (d < before_distanse) {
 				before_distanse = d;
-				nearplayer = it->location;
-				zpos = XMFLOAT3(it->m_mtx._41,it->m_mtx._42,it->m_mtx._43);
-				
+				nearplayer = it.location;
+				zpos = XMFLOAT3(it.m_mtx._41, it.m_mtx._42, it.m_mtx._43);
+
 			}
 		}
 
@@ -395,9 +502,69 @@ Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<shared_ptr<Player>>& zonbie_
 			zonbienearflg = false;
 		}
 	}
-	
+
 	return uedesired;
 }
+
+//Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<shared_ptr<Player>>& zonbie_vector)
+//{
+//	// ボイド間分離視野距離
+//	float desiredseparation = 100;//視野　プレイヤーからの距離
+//	uesteer = { 0,0 };
+//	float before_distanse = 100.0f;//一番近い距離保存用
+//
+//	
+//	if (unique_enemy_anime != UNIQUE_ENEMY_ANIME::ATTACK)
+//	{
+//		for (auto& it : zonbie_vector)
+//		{
+//			float d = location.distance(it->location);
+//			if (d < before_distanse) {
+//				before_distanse = d;
+//				nearplayer = it->location;
+//				zpos = XMFLOAT3(it->m_mtx._41,it->m_mtx._42,it->m_mtx._43);
+//				
+//			}
+//		}
+//
+//		if ((before_distanse > 0) && (before_distanse < 15))
+//		{
+//			uedesired = { 0,0 };
+//			uedesired = uedesired.subTwoVector(location, nearplayer);
+//			uedesired.normalize();
+//			uedesired.divScalar(900);
+//
+//			acceleration = uedesired;
+//			angley.x = acceleration.x;
+//			angley.y = acceleration.y;
+//			this->boid_accel = 2.3f;
+//
+//			//unique_enemy_anime = UNIQUE_ENEMY_ANIME::ATTACK;
+//
+//		}
+//
+//		if ((before_distanse > 20) && (before_distanse < desiredseparation))
+//		{
+//			uedesired = { 0,0 };
+//			uedesired = uedesired.subTwoVector(location, nearplayer);
+//			uedesired.normalize();
+//			uedesired.mulScalar(-1);
+//			uedesired.divScalar(before_distanse);
+//
+//			acceleration = uedesired;
+//			angley.x = acceleration.x;
+//			angley.y = acceleration.y;
+//			this->boid_accel = 0.0f;
+//			zonbienearflg = true;
+//		}
+//		else
+//		{
+//			zonbienearflg = false;
+//		}
+//	}
+//	
+//	return uedesired;
+//}
 
 int UniqueEnemy_Bomb::UEnemy_GetAnime()
 {
@@ -405,7 +572,11 @@ int UniqueEnemy_Bomb::UEnemy_GetAnime()
 }
 
 
-void  UniqueEnemy_Bomb::UEDelete(float arraynum, std::vector<std::shared_ptr<UniqueEnemy_Bomb>>& Player_Vector1)
+void  UniqueEnemy_Bomb::UEDelete(float arraynum, std::vector<UniqueEnemy_Bomb*>& Player_Vector1)
 {
 	Player_Vector1.erase(Player_Vector1.begin() + arraynum);
 }
+//void  UniqueEnemy_Bomb::UEDelete(float arraynum, std::vector<std::shared_ptr<UniqueEnemy_Bomb>>& Player_Vector1)
+//{
+//	Player_Vector1.erase(Player_Vector1.begin() + arraynum);
+//}

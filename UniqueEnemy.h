@@ -27,9 +27,11 @@ public:
 
 	void Update();
 
-	void UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector);
+	void UEnemy_run(std::vector<Player*>& zonbie_vector);
+	//void UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector);
 
-	void UEnemy_flock(std::vector<shared_ptr<Player>>& zonbie_vector);
+	void UEnemy_flock(std::vector<Player*>& zonbie_vector);
+	//void UEnemy_flock(std::vector<shared_ptr<Player>>& zonbie_vector);
 
 	void UEnemy_update();
 

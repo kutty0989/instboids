@@ -21,17 +21,22 @@ class PlayerMgr
 {
 public:
 
-	std::vector<shared_ptr<Player>> player_vector;//”ÍˆÍŠO‚Ìbodis
+	std::vector<Player> player_vector;//”ÍˆÍŠO‚Ìbodis
+	//std::vector<shared_ptr<Player>> player_vector;//”ÍˆÍŠO‚Ìbodis
 	std::vector<shared_ptr<Player>> in_player_vector;//”ÍˆÍ“à‚Ìboids
-	std::vector<shared_ptr<Player>> zonbie_vector;//ƒ]ƒ“ƒr
+	std::vector<Player> zonbie_vector;//ƒ]ƒ“ƒr
+	//std::vector<shared_ptr<Player>> zonbie_vector;//ƒ]ƒ“ƒr
 	std::vector<shared_ptr<UniqueEnemy>> unique_enemy_vector;//ƒ]ƒ“ƒr
-	std::vector<shared_ptr<UniqueEnemy_Bomb>> unique_enemy_bomb_vector;//ƒ]ƒ“ƒr
+	//std::vector<shared_ptr<UniqueEnemy_Bomb>> unique_enemy_bomb_vector;//ƒ]ƒ“ƒr
+	std::vector<UniqueEnemy_Bomb*> unique_enemy_bomb_vector;//ƒ]ƒ“ƒr
 	std::vector<shared_ptr<Player>> in_enemy_vector;//“G‚Ì”ÍˆÍ“à‚Ìboids
 	std::vector <Player*> instance_vector;//“G‚Ì”ÍˆÍ“à‚Ìboids
 	std::vector<shared_ptr<Build>> build_vector;//Œš•¨
 	
-	std::vector<shared_ptr<Player>> buf_vec; 
-	std::vector<shared_ptr<Player>> buf_pvec;
+	std::vector<Player> buf_vec; 
+	//std::vector<shared_ptr<Player>> buf_vec; 
+	std::vector<Player> buf_pvec;
+	//std::vector<shared_ptr<Player>> buf_pvec;
 	std::shared_ptr<Player> ImPlayer;
 	std::shared_ptr<Player> ImEnemy;
 
@@ -45,7 +50,7 @@ public:
 
 	void Finsh();
 
-	void BoidsCreate(float x,float z);
+	/*void BoidsCreate(float x,float z);
 
 	void PlayerCreate();
 
@@ -59,13 +64,15 @@ public:
 
 	void UEnemyBombCreate();
 
-	void PlayerUpdate();
+	
 
 	bool CheckImnput();
 
 	void oneplayerUpdate();
 
-	void Releace();
+	void Releace();*/
+
+	void PlayerUpdate();
 
 	static PlayerMgr* GetInstance()
 	{

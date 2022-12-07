@@ -180,17 +180,49 @@ void UniqueEnemy::Update()
 	manime.m_cnt++;
 
 }
+//
+//void UniqueEnemy::UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector)
+//{
+//	UEnemy_flock(zonbie_vector);
+//	UEnemy_update();
+//}
+//
+//
 
-void UniqueEnemy::UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector)
+void UniqueEnemy::UEnemy_run(std::vector<Player*>& zonbie_vector)
 {
 	UEnemy_flock(zonbie_vector);
 	UEnemy_update();
 }
+//void UniqueEnemy::UEnemy_flock(std::vector<shared_ptr<Player>>& zonbie_vector)
+//{
+//	ueser = { 0,0 };
+//	uesep = { 0,0 };
+//	ueatt = { 0,0 };
+//
+//	if (unique_enemy_anime != UNIQUE_ENEMY_ANIME::ATTACK)
+//	{
+//		ueser = UEnemy_Search();
+//
+//		//	uesep = UEnemy_Separation(zonbie_vector);
+//		//ueatt = UEnemy_Attack(zonbie_vector);
+//	}
+//
+//
+//
+//	ueser.mulScalar(CohW);
+//	//uesep.mulScalar(SepW);
+//	ueatt.mulScalar(1.5f);
+//
+//
+//
+//	applyForce(ueser);
+//	applyForce(uesep);
+//	applyForce(ueatt);
+//
+//}
 
-
-
-
-void UniqueEnemy::UEnemy_flock(std::vector<shared_ptr<Player>>& zonbie_vector)
+void UniqueEnemy::UEnemy_flock(std::vector<Player*>& zonbie_vector)
 {
 	ueser = { 0,0 };
 	uesep = { 0,0 };
