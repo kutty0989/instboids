@@ -60,7 +60,7 @@ std::vector<Texture> ModelData::loadMaterialTextures(
 			Texture tex;
 
 			std::string filename = std::string(str.C_Str());
-			std::string filenameonly = ExtractFileName(filename, '\\');		// ファイル名を取得
+			std::string filenameonly = ExtractFileName(filename, '\\/');		// ファイル名を取得
 		//	std::string filenameonly = ExtractFileName(filename, "\\");		// ファイル名を取得
 			//filename = ExtractFileName(filename, '\\');		// ファイル名を取得
 			filename = m_directory + filenameonly;				// リソースディレクトリ＋ファイル名
@@ -77,10 +77,10 @@ std::vector<Texture> ModelData::loadMaterialTextures(
 				bool sts = CreateSRVfromFile(
 					filename.c_str(),
 					dev, devcon, &tex.texres, &tex.texture);
-				if (!sts) {
+			/*	if (!sts) {
 					MessageBox(nullptr, "Texture couldn't be loaded", "Error!", MB_ICONERROR | MB_OK);
 					tex.texture = nullptr;
-				}
+				}*/
 			}
 
 			tex.type = typeName;
@@ -177,9 +177,9 @@ void ModelData::LoadMaterial() {
 			mtrl.m_Diffuse.x = colordiffuse.r;
 			mtrl.m_Diffuse.y = colordiffuse.g;
 			mtrl.m_Diffuse.z = colordiffuse.b;
-			mtrl.m_Diffuse.x = 1.0f;
-			mtrl.m_Diffuse.y = 1.0f;
-			mtrl.m_Diffuse.z = 1.0f;
+			//mtrl.m_Diffuse.x = 1.0f;
+			//mtrl.m_Diffuse.y = 1.0f;
+			//mtrl.m_Diffuse.z = 1.0f;
 
 			aiColor3D colorspecular(0.f, 0.f, 0.f);
 			mat->Get(AI_MATKEY_COLOR_SPECULAR, colorspecular);

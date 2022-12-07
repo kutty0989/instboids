@@ -88,12 +88,14 @@ public:
 
 	enum  class MODELID
 	{
+		ONE,
 		PLAYER,
 		SKYDOME,
 		ENEMY,
 		MISSILE,
 		BOX,
-		ONE,
+		HYUMAN,
+		
 		HUMAN,
 	};
 
@@ -109,12 +111,13 @@ public:
 
 
 	std::vector<ModelDataList>  g_modellist = {
+		{MODELID::ONE,"assets/3danime/Warzombie F Pedroso.fbx","shader/vsoneskin.fx", "shader/ps.fx","assets/3danime/"},
 		{MODELID::PLAYER,"assets/f1/f1.x","shader/vs.hlsl","shader/ps.hlsl","assets/f1/"},
 		{MODELID::SKYDOME,"assets/skydome/skydome.x","shader/vs.hlsl","shader/ps.hlsl","assets/skydome/"},
 		{MODELID::ENEMY,"assets/f1/f1.x","shader/vs.hlsl","shader/ps.hlsl","assets/f1/"},
 		{MODELID::MISSILE,"assets/starwars/Shot.x","shader/vs.hlsl","shader/ps.hlsl","assets/starwars/"},
 		{MODELID::BOX,"assets/dice/PlayerBox.x","shader/vs.hlsl","shader/ps.hlsl","assets/dice/"},
-		{MODELID::ONE,"assets/dice/PlayerBox.x","shader/vs.hlsl","shader/ps.hlsl","assets/dice/"},
+		//{MODELID::HYUMAN,"assets/3danime/Ch21_nonPBR (3).fbx","shader/vsoneskin.fx", "shader/ps.fx","assets/3danime/"},
 		//{MODELID::ONE,zonbie, "shader/vsoneskin.fx", "shader/ps.fx","assets/"},
 		//{MODELID::HUMAN,"assets/dice/PlayerBox.x","shader/vs.hlsl","shader/ps.hlsl","assets/dice/"},
 

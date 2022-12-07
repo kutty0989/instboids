@@ -353,6 +353,8 @@ void Player::ZonbieUpdate(int animenum ,int i)
 
 	SetAngle();
 
+	SetScale(0.1f, 0.1f, 0.1f);
+
 	m_mtx._41 = m_pos.x;
 	m_mtx._42 = m_pos.y + 4.0f;
 	m_mtx._43 = m_pos.z;

@@ -705,7 +705,7 @@ void PlayerMgr::BoidsCreate(float x, float z)
 {
 	shared_ptr<Player> pl;
 	pl = std::make_shared<Player>();
-	pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::PLAYER)].modelname));
+	pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::HYUMAN)].modelname));
 	pl->Init();
 	if ((x == 0)&&(z == 0))
 	{
