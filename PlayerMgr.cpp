@@ -62,11 +62,11 @@ void PlayerMgr::Init()
 	{
 		UEnemyCreate();
 	}
-	g_air.InitiInstancing(ENEMYMAX, "assets/f1.x.dat", "shader/vsinstance.fx", "shader/ps.fx");
+	g_air.InitiInstancing(100, "assets/3danime/Warzombie F Pedroso.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/Ch21_1001_Diffuse.png");
 
 	// “G‚ğ‰Šú‰»
 	for (int i = 0; i < ENEMYMAX; i++) {
-		g_enemy[i].SetModel(InstanceModelMgr::GetInstance().GetInstanceModelPtr(Scean::GetInstance()->g_modelinstancelist[static_cast<int>(Scean::MODELIID::PLAYER)].modelname));
+		g_enemy[i].SetModel(&g_air);
 		g_enemy[i].Init();
 	}
 	
@@ -111,7 +111,7 @@ void PlayerMgr::Draw()
 	//{
 	//	n->Draw(zonbie_vector);
 	//}
-	InstanceModelMgr::GetInstance().InstanceDraw("assets/f1.x.dat");
+//	InstanceModelMgr::GetInstance().InstanceDraw("assets/f1.x.dat");
 	//for (int i = 0; i < unique_enemy_vector_num; i++)
 	//{
 	//	if (unique_enemy_vector[i] != nullptr)
@@ -674,7 +674,7 @@ void PlayerMgr::PlayerUpdate()
 		XMFLOAT4X4	world;
 		world = g_enemy[i].GetMtx();;
 		//DX11MtxFromQt(world, g_enemy[i].GetRotation());
-		
+	
 		mat[i] = world;
 	}
 
@@ -705,7 +705,7 @@ void PlayerMgr::BoidsCreate(float x, float z)
 {
 	shared_ptr<Player> pl;
 	pl = std::make_shared<Player>();
-	pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::HYUMAN)].modelname));
+	pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::PLAYER)].modelname));
 	pl->Init();
 	if ((x == 0)&&(z == 0))
 	{

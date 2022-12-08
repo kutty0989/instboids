@@ -27,20 +27,6 @@ DXManager::DXManager()
 
 	mInstanceNum = 40 * 500;
 
-//	D3D_FEATURE_LEVEL fl = D3D_FEATURE_LEVEL_11_0;
-	//D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &fl, 1, D3D11_SDK_VERSION, &scd, &mSwapChain, &device, NULL, &devcontext);
-		//ID3D11Texture2D* pbbTex;
-	//swap->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pbbTex);
-	//device->CreateRenderTargetView(m_tex.Get(), NULL, mRenderTargetView.GetAddressOf());
-	//pbbTex->Release();
-
-	//auto swap = CDirectXGraphics::GetInstance()->GetSwapChain();
-
-	//ID3D11Texture2D* pbbTex;
-	//swap->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pbbTex);
-	//device->CreateRenderTargetView(pbbTex, NULL, mRenderTargetView.GetAddressOf());
-	//pbbTex->Release();
-
 
 	// ビューポートの設定
 	D3D11_VIEWPORT vp;

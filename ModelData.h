@@ -32,6 +32,7 @@ public:
 	bool Load(std::string resourcefolder, std::string filename);
 
 	void Draw(ID3D11DeviceContext* devcon, DirectX::XMFLOAT4X4& mtxworld);
+	void Drawinstance(ID3D11DeviceContext* devcon);
 	
 	void Update(int m_Frame, int m_preFrame, float m_factor, int animecnt,
 		const XMFLOAT4X4& mtxworld,

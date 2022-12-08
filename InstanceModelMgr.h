@@ -43,7 +43,7 @@ public:
 	
 
 
-	bool LoadInstanceModel(int num, std::string modelfilename, std::string vsfinlename, std::string psfilename) {
+	bool LoadInstanceModel(int num, std::string modelfilename, std::string vsfinlename, std::string psfilename, std::string texfoldername) {
 		std::unique_ptr<CModelInstance> p;
 		p = std::make_unique<CModelInstance>();
 
@@ -55,7 +55,7 @@ public:
 			}*/
 
 			//ƒ‚ƒfƒ‹“Ç‚Ýž‚Ý
-		bool sts = p->InitiInstancing(num, modelfilename.c_str(), vsfinlename.c_str(), psfilename.c_str());
+		bool sts = p->InitiInstancing(num, modelfilename.c_str(), vsfinlename.c_str(), psfilename.c_str(),texfoldername.c_str());
 		if (!sts) {
 			return false;
 		}
@@ -75,9 +75,9 @@ public:
 		return true;
 	}
 	bool InstanceUpdate(std::string modelfilename, XMFLOAT4X4 mat[]) {
-		GetInstanceModelPtr(modelfilename)->Update(mat);
+	//	GetInstanceModelPtr(modelfilename)->Update(mat);
 
-		m_modelinstancehashmap[modelfilename]->Update(mat);
+	//	m_modelinstancehashmap[modelfilename]->Update(mat);
 
 		return true;
 	}

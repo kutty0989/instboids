@@ -125,6 +125,32 @@ void Mesh::Draw(ID3D11DeviceContext* devcon)
 	devcon->DrawIndexed(static_cast<unsigned int>(m_indices.size()), 0, 0);
 }
 
+void Mesh::Drawinstance(ID3D11DeviceContext* devcon)
+{
+	unsigned int stride = sizeof(Vertex);
+	unsigned int offset = 0;
+	// 頂点バッファをセット
+	devcon->IASetVertexBuffers(0, 1, &m_VertexBuffer, &stride, &offset);
+	// インデックスバッファをセット
+	devcon->IASetIndexBuffer(m_IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	// トポロジーをセット
+	devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	// SRVをセット
+	if (m_textures.size() >= 1) {
+		devcon->PSSetShaderResources(0, 1, &m_textures[0].texture);			// debug ts
+	}
+	else {
+		// 真っ白SRVをセット
+		devcon->PSSetShaderResources(0, 1, &m_whitesrv);					// debug ts
+	}
+	// マテリアルをVSへセット
+	devcon->VSSetConstantBuffers(3, 1, &m_cbmtrl);
+	devcon->PSSetConstantBuffers(3, 1, &m_cbmtrl);
+
+	// インデックスバッファを利用して描画
+	devcon->DrawIndexedInstanced(static_cast<unsigned int>(m_indices.size()),100,0, 0, 0);
+}
+
 void Mesh::Close()
 {
 	for (int i = 0; i < m_obbvectorcontainer.size(); i++) {

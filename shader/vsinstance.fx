@@ -5,7 +5,7 @@
 //--------------------------------------------------------------------------------------
 // 頂点シェーダー
 //--------------------------------------------------------------------------------------
-VS_OUTPUT main(float4 Pos		:	POSITION,
+VS_OUTPUT main(float4 Pos	:	POSITION,
 	float4 Normal : NORMAL,
 	float2 Tex : TEXCOORD,
 	float4x4 mat : LocalToWorld)

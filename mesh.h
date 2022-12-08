@@ -36,6 +36,7 @@ public:
 	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures,Material mtrl);
 
 	void Draw(ID3D11DeviceContext *devcon);
+	void Drawinstance(ID3D11DeviceContext *devcon);
 	std::vector<COBB*> m_obbvectorcontainer;		// OBBƒŠƒXƒg
 
 	void Close();

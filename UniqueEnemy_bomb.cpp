@@ -127,9 +127,9 @@ void UniqueEnemy_Bomb::Update()
 		DX11MtxIdentity(rot);
 		DX11MtxIdentity(world);
 
-		scale._11 = 2.0f;
-		scale._22 = 2.0f;
-		scale._33 = 2.0f;
+		scale._11 = 0.1f;
+		scale._22 = 0.1f;
+		scale._33 = 0.1f;
 
 		angle.y = 0.0f;
 		angle.y = -GetAtan(velocity.x, velocity.y);

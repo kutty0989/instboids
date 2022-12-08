@@ -128,7 +128,7 @@ bool ModelData::Load(std::string resourcefolder,
 
 	m_directory = resourcefolder;		// このモデルのテクスチャが存在するディレクトリ
 
-
+	
 	// ボーンを生成する
 	CreateBone(m_assimpscene.GetScene()->mRootNode);
 
@@ -222,6 +222,23 @@ void ModelData::Draw(ID3D11DeviceContext* devcon, XMFLOAT4X4& mtxworld)
 		DX11SetTransform::GetInstance()->SetTransform(DX11SetTransform::TYPE::WORLD, mtxworld);
 		// 定数バッファセット処理
 		m_meshes[i].Draw(devcon);
+	}
+}
+
+void ModelData::Drawinstance(ID3D11DeviceContext* devcon)
+{
+	// アニメーションデータを持っているか？
+	if (m_assimpscene.HasAnimation())
+	{	// ボーン行列を定数バッファに反映させる
+		UpdateBoneMatrixConstantBuffer();
+	}
+
+	for (int i = 0; i < m_meshes.size(); i++)
+	{
+		// ワールド変換行列
+	//	DX11SetTransform::GetInstance()->SetTransform(DX11SetTransform::TYPE::WORLD, mtxworld);
+		// 定数バッファセット処理
+		m_meshes[i].Drawinstance(devcon);
 	}
 }
 

@@ -107,17 +107,18 @@ void Seiha::Initialize() {
 			);
 	
 		}
-		for (int i = 0; i < g_modelinstancelist.size(); i++)
-		{
-			InstanceModelMgr::GetInstance().LoadInstanceModel(
-				g_modelinstancelist[i].num,
-				g_modelinstancelist[i].modelname,
-				g_modelinstancelist[i].vsfilenamename,
-				g_modelinstancelist[i].psfilename
-		
-			);
+		//for (int i = 0; i < g_modelinstancelist.size(); i++)
+		//{
+		//	InstanceModelMgr::GetInstance().LoadInstanceModel(
+		//		g_modelinstancelist[i].num,
+		//		g_modelinstancelist[i].modelname,
+		//		g_modelinstancelist[i].vsfilenamename,
+		//		g_modelinstancelist[i].psfilename,
+		//		g_modelinstancelist[i].texfoldername
+		//
+		//	);
 
-		}
+		//}
 		for (int i = 0; i < g_texlist.size(); i++)
 		{
 			CTexMgr::GetInstance().LoadModel(
