@@ -11,6 +11,7 @@
 #include"myutil.h"
 #include"UniqueEnemy.h"
 #include"UniqueEnemy_Bomb.h"
+
 const int boids_num = 200;//‘S‘Ì‚Ìboids‚Ì‰Šú”
 const int zonbbie_num = 10;//ƒ]ƒ“ƒr‚Ì‰Šú”
 const int unique_enemy_num = 0;//‹ßÚ‚Ì‰Šú”

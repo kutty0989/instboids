@@ -70,6 +70,16 @@ cbuffer ConstantBufferBoneMatrix : register(b9)
 
 }
 
+cbuffer BlendBuffer : register(b10)
+{
+
+    float blendone;
+    float blendtwo;
+    float blendthere;
+    float blendfour;
+ 
+};
+
 ////アルベドマップ
 //Texture2D<float4> g_albedo : register(t0);
 

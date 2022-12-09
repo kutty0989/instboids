@@ -368,14 +368,14 @@ bool CDirectXGraphics::Init(HWND hWnd, unsigned int Width, unsigned int Height, 
 	//	smpDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 		// サンプラーステート生成
-	hr = m_lpDevice->CreateSamplerState(&smpDesc, &m_samplerstate);
+	hr = m_lpDevice->CreateSamplerState(&smpDesc, m_samplerstate.GetAddressOf());
 	if (FAILED(hr))
 	{
 		return false;
 	}
 
 	// サンプラーステートを転送
-	m_lpImmediateContext->PSSetSamplers(0, 1, &m_samplerstate);
+	m_lpImmediateContext->PSSetSamplers(0, 1, m_samplerstate.GetAddressOf());
 
 	m_Height = Height;
 	m_Width = Width;

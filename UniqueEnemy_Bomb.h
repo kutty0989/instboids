@@ -41,6 +41,8 @@ public:
 	Pvector UEnemy_Separation(std::vector<shared_ptr<Player>>& zonbie_vector);
 
 	Pvector UEnemy_Attack(std::vector<shared_ptr<Player>>& zonbie_vector);
+	
+	void UEnemy_Dmg(std::vector<shared_ptr<Player>>& zonbie_vector);
 
 	int UEnemy_GetAnime();
 

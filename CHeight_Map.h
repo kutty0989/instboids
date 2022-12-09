@@ -35,6 +35,14 @@ public:
 
 	};
 
+	struct BlendBuffer
+	{
+		float blendone;
+		float blendtwo;
+		float blendthere;
+		float blendfour;
+	};
+
 	// ディスプレイスメントマップの高さ
 	static float g_hight;
 	static float g_devide;
@@ -132,6 +140,8 @@ public:
 	void SetAlpha(float a);
 
 	float HeightColor = 0.0f;
+
+	void SetTexture();
 
 	double GetHeightColor(XMFLOAT2 playerpos);
 	
@@ -245,6 +255,7 @@ private:
 
 	ID3D11Buffer* g_pConstantBuffer = nullptr;			// 定数バッファ
 	ID3D11Buffer* g_pConstantBuffer2 = nullptr;			// 定数バッファ
+	ID3D11Buffer* g_pConstantBlendBuffer = nullptr;			// 定数バッファ
 
 
 	double col;//プレイヤーの場所のカラー高さ情報

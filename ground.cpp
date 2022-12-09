@@ -3,7 +3,6 @@
 #include<iostream>
 #include"PlayerMgr.h"
 #include"player.h"
-#include"Save.h"
 
 
 float sinC;
@@ -14,10 +13,10 @@ bool Ground::Init()
 	g_heightmap = new CHeight_Map();
 	g_heightmap->Init(XMFLOAT3(1.0f, 1.0f, 1.0f));
 	g_heightmap->LoadTexture("assets/UI/ground1.jpg",0);//１枚目の地面画像　
-	g_heightmap->LoadTexture("assets/UI/glow.jpg",1);//２枚目の高さによってブレンドする画像
-	g_heightmap->LoadTexture("assets/UI/snow.jpeg",2);//２枚目の高さによってブレンドする画像
-	g_heightmap->LoadTexture("assets/UI/blood.png",3);//２枚目の高さによってブレンドする画像
-	//m_WidthHeight = { 100.0f,100.0f };
+	g_heightmap->LoadTexture("assets/UI/snow.jpeg", 1);//２枚目の高さによってブレンドする画像
+	g_heightmap->LoadTexture("assets/UI/glow.jpg",2);//２枚目の高さによってブレンドする画像
+	g_heightmap->LoadTexture("assets/UI/blood.png", 3);//２枚目の高さによってブレンドする画像
+													 //m_WidthHeight = { 100.0f,100.0f };
 
 	m_scale.x = scaling;
 	m_scale.y = scaling;
@@ -38,7 +37,7 @@ void Ground::Draw()
 	g_heightmap->Draw();
 	
 }
-SaveData save1;
+
 float a;
 void Ground::Update()
 {
@@ -77,30 +76,27 @@ void Ground::Update()
 	if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_T))
 	{
 
-		save1.fdata = 0.0f;
-		save1.name = "test";
-		save1.datavec[0] = 0;
-		save1.datavec[1] = 0;
-		save1.datavec[2] = 0;
+		Save::GetInstance()->save1.fdata = 0.0f;
+		Save::GetInstance()->save1.name = "test";
+		Save::GetInstance()->save1.datavec[0] = 0;
+		Save::GetInstance()->save1.datavec[1] = 0;
+		Save::GetInstance()->save1.datavec[2] = 0;
 
-		save1.dotto = CHeight_Map::GetInstance()->vData;
+		Save::GetInstance()->save1.dotto = CHeight_Map::GetInstance()->vData;
 
 
 
-		Savevin("assets/assets.dat", save1);
+		Save::GetInstance()->Savevin("assets/assets.dat", Save::GetInstance()->save1);
 	}
 	if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_Y))
 	{
-		save1 = Loadvin("assets/assets.dat");
-		auto map = save1.dotto;
+		Save::GetInstance()->save1 = Save::GetInstance()->Loadvin("assets/assets.dat");
+		auto map = Save::GetInstance()->save1.dotto;
 	
 		g_heightmap->LoadMap(map);
 
 	}
-	if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_U))
-	{
-		g_heightmap->NoiseCreate();//自動地形生成
-	}
+
 	//if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_7))
 	//{
 	//	g_heightmap->LoadMap(save1.dotto);

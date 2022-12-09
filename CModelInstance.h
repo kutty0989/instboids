@@ -44,16 +44,19 @@ private:
 	ID3D11Buffer* m_pVertexBuffer;		// 頂点バッファ
 	ID3D11Buffer* m_pIndexBuffer;			// インデックスバッファ
 //	DatFileLoader* m_datfile;				// datファイルデータ
-	ID3D11ShaderResourceView** m_srv;					// シェーダーリソースビュー
+	ID3D11ShaderResourceView* m_srv;					// シェーダーリソースビュー
 	ID3D11Buffer* m_cb3;					// コンスタントバッファ(マテリアル用)
 	ID3D11Resource* m_tex;
 public:
 	bool InitiInstancing(int instancecnt, const char* filename, const char* vsfile, const char* psfile, std::string texfoldername);
+	bool TestInstancing(int instancecnt, const char* filename, const char* vsfile, const char* psfile, std::string texfoldername);
 	bool Init(const char* filename, const char* vsfile, const char* psfile);
 	void Uninit();
 	void Update(XMFLOAT4X4 mat[]);							// インスタンスバッファ更新
+	void TestUpdate(XMFLOAT4X4 mat[]);							// インスタンスバッファ更新
 	void Draw();
 	void DrawInstance();
+	void TestInstance();
 	DatFileLoader* GetDatFileData() {
 		return m_datfile.GetDatFileLoader();
 	}

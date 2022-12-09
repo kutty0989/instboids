@@ -7,6 +7,8 @@
 #include"DX11util.h"
 #include"Bpm_Data.h"
 #include"dx11mathutil.h"
+#include"Save.h"
+
 class GameObject {
 	
 protected:

@@ -191,6 +191,85 @@ bool CModelInstance::InitiInstancing(int num, const char* filename, const char* 
 	return true;
 }
 
+bool CModelInstance::TestInstancing(int instancecnt, const char* filename, const char* vsfile, const char* psfile, std::string texfoldername)
+{
+	bool sts;
+
+	// 飛行機のモデルデータを読み込み
+	sts = m_datfile.Load(filename, GetDX11Device(), GetDX11DeviceContext());
+	if (!sts) {
+		char str[128];
+		sprintf_s(str, 128, "%s load ERROR!!", filename);
+		MessageBox(nullptr, str, "error", MB_OK);
+		return false;
+	}
+
+	// インスタンシング数セット
+	m_instancecount = instancecnt;
+
+	m_initdata = _mm_malloc(sizeof(XMMATRIX) * instancecnt, 16);
+	XMMATRIX* pstart = static_cast<XMMATRIX*>(m_initdata);
+
+	// インスタンスバッファの初期行列をセット
+	for (int i = 0; i < m_instancecount; i++) {
+		*pstart = XMMatrixTranspose(XMMatrixTranslation(0, 0, 0));
+		pstart++;
+	}
+
+	sts = CreateVertexBufferWrite(
+		GetDX11Device(),		// device11
+		sizeof(XMMATRIX),		// １頂点当たりバイト数
+		instancecnt,					// 頂点数
+		m_initdata,				// 初期化データ
+		&m_pInstanceBuffer);	// 頂点バッファ
+	if (!sts) {
+		MessageBox(nullptr, "CreateVertexBufferWrite(InstanceBuffer) error", "error", MB_OK);
+		return false;
+	}
+
+	// 頂点データの定義
+	D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		// semantic name    index		format							slot	alignedbyteoffset				inputslotclass				instancedatasteprate
+		{ "POSITION",		0,		DXGI_FORMAT_R32G32B32_FLOAT,		0,		D3D11_APPEND_ALIGNED_ELEMENT,	D3D11_INPUT_PER_VERTEX_DATA,	0 },
+		{ "NORMAL",			0,		DXGI_FORMAT_R32G32B32_FLOAT,	    0,		D3D11_APPEND_ALIGNED_ELEMENT,	D3D11_INPUT_PER_VERTEX_DATA,	0 },
+		{ "TEXCOORD",		0,		DXGI_FORMAT_R32G32_FLOAT,			0,		D3D11_APPEND_ALIGNED_ELEMENT,	D3D11_INPUT_PER_VERTEX_DATA,	0 },
+		{ "LocalToWorld",	0,		DXGI_FORMAT_R32G32B32A32_FLOAT,		1,		0,								D3D11_INPUT_PER_INSTANCE_DATA,	1 },
+		{ "LocalToWorld",	1,		DXGI_FORMAT_R32G32B32A32_FLOAT,		1,		16,								D3D11_INPUT_PER_INSTANCE_DATA,	1 },
+		{ "LocalToWorld",	2,		DXGI_FORMAT_R32G32B32A32_FLOAT,		1,		32,								D3D11_INPUT_PER_INSTANCE_DATA,	1 },
+		{ "LocalToWorld",	3,		DXGI_FORMAT_R32G32B32A32_FLOAT,		1,		48,								D3D11_INPUT_PER_INSTANCE_DATA,	1 },
+	};
+	unsigned int numElements = ARRAYSIZE(layout);
+
+	// 頂点シェーダーオブジェクトを生成、同時に頂点レイアウトも生成
+	sts = CreateVertexShader(GetDX11Device(),
+		vsfile,
+		"main",
+		"vs_5_0",
+		layout,
+		numElements,
+		&m_pVertexShader,
+		&m_pVertexLayout);
+	if (!sts) {
+		MessageBox(nullptr, "CreateVertexShader error", "error", MB_OK);
+		return false;
+	}
+
+	// ピクセルシェーダーを生成
+	sts = CreatePixelShader(			// ピクセルシェーダーオブジェクトを生成
+		GetDX11Device(),		// デバイスオブジェクト
+		psfile,
+		"main",
+		"ps_5_0",
+		&m_pPixelShader);
+	if (!sts) {
+		MessageBox(nullptr, "CreatePixelShader error", "error", MB_OK);
+		return false;
+	}
+
+	return true;
+}
+
 bool CModelInstance::Init(const char* filename, const char* vsfile, const char* psfile) {
 
 	bool sts;
@@ -276,6 +355,26 @@ void CModelInstance::Update(XMFLOAT4X4 mat[]) {
 	XMMATRIX* pstart = static_cast<XMMATRIX*>(m_initdata);
 
 	 //インスタンスバッファの初期行列をセット
+	for (int i = 0; i < m_instancecount; i++) {
+		*pstart = XMMatrixTranspose(XMLoadFloat4x4(&mat[i]));
+		pstart++;
+	}
+
+	HRESULT hr = GetDX11DeviceContext()->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData);
+	if (SUCCEEDED(hr)) {
+		memcpy_s(pData.pData, pData.RowPitch, (void*)(m_initdata), sizeof(XMMATRIX) * m_instancecount);
+
+		GetDX11DeviceContext()->Unmap(m_pInstanceBuffer, 0);
+	}
+}
+
+void CModelInstance::TestUpdate(XMFLOAT4X4 mat[])
+{
+	D3D11_MAPPED_SUBRESOURCE pData;
+
+	XMMATRIX* pstart = static_cast<XMMATRIX*>(m_initdata);
+
+	// インスタンスバッファの初期行列をセット
 	for (int i = 0; i < m_instancecount; i++) {
 		*pstart = XMMatrixTranspose(XMLoadFloat4x4(&mat[i]));
 		pstart++;
@@ -379,4 +478,23 @@ void CModelInstance::DrawInstance() {
 	//m_assimpfile.Drawinstance(devcontext);
 	// モデルインスタンシング描画
 	//m_datfile.DrawInstance(GetDX11DeviceContext(), m_pInstanceBuffer, m_instancecount);
+}
+
+void CModelInstance::TestInstance()
+{
+	// 頂点フォーマットをセット
+	GetDX11DeviceContext()->IASetInputLayout(m_pVertexLayout);
+
+	// 頂点シェーダーをセット
+	GetDX11DeviceContext()->VSSetShader(m_pVertexShader, nullptr, 0);
+	GetDX11DeviceContext()->GSSetShader(nullptr, nullptr, 0);
+	GetDX11DeviceContext()->HSSetShader(nullptr, nullptr, 0);
+	GetDX11DeviceContext()->DSSetShader(nullptr, nullptr, 0);
+
+	// ピクセルシェーダーをセット
+	GetDX11DeviceContext()->PSSetShader(m_pPixelShader, nullptr, 0);
+
+	// モデルインスタンシング描画
+	m_datfile.DrawInstance(GetDX11DeviceContext(), m_pInstanceBuffer, m_instancecount);
+
 }

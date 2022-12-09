@@ -101,6 +101,14 @@ public:
 		m_pos.x = rand() % 1000;
 		m_pos.y += axisz.y * m_speed;
 		m_pos.z = rand() % 1000;
+
+		m_mtx._11 = 1.0f;
+		m_mtx._22 = 1.0f;
+		m_mtx._33 = 1.0f;
+
+		m_mtx._41 = m_pos.x;
+		m_mtx._42 = 100;
+		m_mtx._43 = m_pos.z;
 	}
 
 	void Autopilot() {

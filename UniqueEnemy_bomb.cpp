@@ -127,9 +127,9 @@ void UniqueEnemy_Bomb::Update()
 		DX11MtxIdentity(rot);
 		DX11MtxIdentity(world);
 
-		scale._11 = 0.1f;
-		scale._22 = 0.1f;
-		scale._33 = 0.1f;
+		scale._11 = 0.2f;
+		scale._22 = 0.2f;
+		scale._33 = 0.2f;
 
 		angle.y = 0.0f;
 		angle.y = -GetAtan(velocity.x, velocity.y);
@@ -168,28 +168,6 @@ void UniqueEnemy_Bomb::Update()
 		b_animecnt = manime.animecnt;//前回のアニメ番号保存
 
 
-		{
-			ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
-			ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
-
-			ImGui::Begin("config 5");
-
-			ImGui::SetNextWindowSize(ImVec2(300, 400));
-			float pos[2] = { location.x,location.y };
-			//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
-
-
-			//float pos[3] = { Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z};
-			ImGui::DragInt("animecnt", &manime.animecnt);
-			ImGui::DragInt("animecnt", &manime.m_Frame);
-			ImGui::DragFloat2("pos", pos);
-
-
-			ImGui::End();
-			ImGui::PopStyleColor();
-			ImGui::PopStyleColor();
-		}
-
 		if (manime.m_cnt % INTERPOLATENUM == 0) {
 			manime.m_preFrame = manime.m_Frame;
 			manime.m_Frame++;
@@ -215,21 +193,9 @@ void UniqueEnemy_Bomb::UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector
 	{
 		UEnemy_flock(zonbie_vector);
 		UEnemy_update();
-
-		float desiredseparation = 10;//視野　プレイヤーからの距離
-
-		for (auto& it : zonbie_vector)
+		if (dmgflg)
 		{
-			if (it != nullptr)
-			{
-				float d = location.distance(it->location);
-				// 現在のボイドが捕食者ではなく、私たちが見ているボイドが
-				// 捕食者、次に大きな分離 Pvector を作成します
-				if ((d > 0) && (d < desiredseparation) && it->predator == true) {
-
-					this->hp -=1 ;
-				}
-			}
+			UEnemy_Dmg(zonbie_vector);
 		}
 	}
 }
@@ -243,10 +209,14 @@ void UniqueEnemy_Bomb::UEnemy_flock(std::vector<shared_ptr<Player>>& zonbie_vect
 
 	if (unique_enemy_anime != UNIQUE_ENEMY_ANIME::ATTACK)
 	{
-		ueser = UEnemy_Search();
-
-		//	uesep = UEnemy_Separation(zonbie_vector);
-		ueatt = UEnemy_Attack(zonbie_vector);
+		if (bserflg)
+		{
+			ueser = UEnemy_Search();
+		}
+		if (bbombflg)
+		{
+			ueatt = UEnemy_Attack(zonbie_vector);
+		}
 	}
 
 
@@ -397,6 +367,25 @@ Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<shared_ptr<Player>>& zonbie_
 	}
 	
 	return uedesired;
+}
+
+void UniqueEnemy_Bomb::UEnemy_Dmg(std::vector<shared_ptr<Player>>& zonbie_vector)
+{
+	float desiredseparation = 10;//視野　プレイヤーからの距離
+
+	for (auto& it : zonbie_vector)
+	{
+		if (it != nullptr)
+		{
+			float d = location.distance(it->location);
+			// 現在のボイドが捕食者ではなく、私たちが見ているボイドが
+			// 捕食者、次に大きな分離 Pvector を作成します
+			if ((d > 0) && (d < desiredseparation) && it->predator == true) {
+
+				this->hp -= 1;
+			}
+		}
+	}
 }
 
 int UniqueEnemy_Bomb::UEnemy_GetAnime()

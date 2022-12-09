@@ -6,15 +6,18 @@
 #include    "XAudio2.h"
 #include"BoidsHp.h"
 #include"CModelInstance.h"
+
 //#include"UniqueEnemy.h"
 //#include"UniqueEnemy_Bomb.h"
 
 class UniqueEnemy_Bomb;
 
+
+
 class Player :public GameObject {
 private:
 
-	
+
 	CModel* m_model;						// ３Ｄモデル
 	CModelInstance* m_instancemodel;						// ３Ｄモデル
 	BoidsHp boidshp; //hpbarのビルボード
@@ -52,7 +55,7 @@ public:
 	Pvector uesep = { 0,0 };
 	Pvector ueatt = { 0,0 };
 
-	
+
 	static Player* GetInstance()
 	{
 		static Player instance;
@@ -60,7 +63,7 @@ public:
 	}
 
 	void CheckBox();
-	
+
 	/// <summary>
 	///生存しているかどうか
 	/// </summary>
@@ -105,7 +108,7 @@ public:
 
 	void Update(bool input);
 
-	void ZonbieUpdate(int animnum,int i);
+	void ZonbieUpdate(int animnum, int i);
 
 	void FollowUpdate();
 
@@ -123,7 +126,7 @@ public:
 		return m_instancemodel;
 	}
 
-	void SetScale(float x,float y,float z)
+	void SetScale(float x, float y, float z)
 	{
 		m_mtx._11 = x;
 		m_mtx._22 = y;
@@ -140,7 +143,7 @@ public:
 	}
 	void Loadanimation()
 	{
-	
+
 	}
 	void SetPos(XMFLOAT3 pos)
 	{
@@ -217,10 +220,10 @@ public:
 	void boid_player_Init(float x, float y);//動かすキャラの初期化
 	void follow_Init();
 	//Boid(float x, float y, bool predCheck);
-	
+
 	void applyForce(const Pvector& force);//3法則を加速度に加える
 	// Three Laws that boids follow
-	
+
 	/// <summary>
 	///配列１から配列２に移動し、削除する
 	/// </summary>
@@ -228,7 +231,7 @@ public:
 	/// <param name="Player_Vector1"></param>
 	/// <param name="Player_Vector2"></param>
 	void Move_And_Delete(float arraynum, std::vector <std::shared_ptr<Player>>& Player_Vector1, std::vector <std::shared_ptr<Player>>& Player_Vector2);
-	
+
 	void Delete(float arraynum, std::vector <std::shared_ptr<Player>>& Player_Vector1);
 
 	/// <summary>
@@ -265,7 +268,7 @@ public:
 	/// <param name="player_vector"></param>
 	/// <returns></returns>
 	Pvector boid_zonbieAway(std::vector<shared_ptr<Player>>& human_vector);
-	
+
 	/// <summary>
 	/// 探索　うろうろする
 	/// </summary>
@@ -292,7 +295,7 @@ public:
 	/// <returns></returns>
 	Pvector boid_inCohesion(std::vector<shared_ptr<Player>>& player_vector);
 	//Functions involving SFML and visualisation linking
-	
+
 	/// <summary>
 	/// 最高速度に制限し目的地へ向かう
 	/// </summary>
@@ -312,14 +315,14 @@ public:
 	/// <param name="Player_Vector"></param>
 	/// <param name="implayer"></param>
 	void boid_run(std::vector<shared_ptr<Player>>& player_vector, std::vector<shared_ptr<Player>>& zonbie_vector);
-	
+
 	/// <summary>
 	/// mgrクラスで呼び出す関数　updateを纏めた物
 	/// </summary>
 	/// <param name="player_vector"></param>
 	/// <param name="human_vector"></param>
 	/// <param name="mousevec"></param>
-	void zonbie_run(std::vector<shared_ptr<Player>>& player_vector, std::vector<shared_ptr<Player>>& human_vector,Pvector mousevec);
+	void zonbie_run(std::vector<shared_ptr<Player>>& player_vector, std::vector<shared_ptr<Player>>& human_vector, Pvector mousevec);
 	/// <summary>
 	/// 速度を元にboidsの位置を更新
 	/// </summary>
@@ -348,12 +351,12 @@ public:
 	float boid_angle(const Pvector& v);
 
 	void boids_attack(std::vector<shared_ptr<Player>>& player_vector, std::shared_ptr<Player>& zonbie, std::vector<shared_ptr<UniqueEnemy_Bomb>>& unique_enemy_vector);
-	
+
 	Pvector zonbie_damage();
 
 
 	//グローバル変数の代わりに、ゲーム内の値と重みにアクセスするために使用され	float desSep;
-	
+
 	float desSep;//分離の視野
 	float desAli;//整列の視野
 	float desCoh;//結合の視野
@@ -374,4 +377,76 @@ public:
 	void setSepW(float x);
 	void setAliW(float x);
 	void setCohW(float x);
+
+
+public:
+
+	static bool hsepflg;
+	static bool haliflg;
+
+
+	static bool zdashflg;
+	static bool zscaflg;
+	static bool zsepflg;
+	static bool zcohflg;
+	static bool zserflg;
+	static bool zawaflg;
+
+	static bool dmgflg;
+	static bool changeflg;
+
+	static bool bbombflg;
+	static bool bserflg;
+	
+	//人間の速さ
+	static float hyumanmaxspeed;//1.5
+	static float hyumanrandspeed;//5
+
+	//hyumanali
+	static float alidist;//40
+
+
+	//hyumnsep
+	static float sepdist;//10
+	static float sepzonbiedist;//30
+	static float sepspeed;//2.0
+	static float septime;//30
+
+
+	static float zonbiehp;//２
+	static float zonbiemaxspeed;//8.5
+	static float zonbiedownspeed;//0.05f
+	
+	//zonbiedamage
+	static float bombdist;//100
+	//zonbiesearch
+	static int Searchcnt;//70
+	static float Seachspeed;//0.3f
+	static float Seachtime;//50
+
+	static float chasedist;//50
+	static float chasespeed;//1.5
+	static float chasetime;//30
+
+	static float Dashspeed;//3.5f
+	static float Dashtime;//40
+
+	//zonbiesep
+	static float Sepdist;//10
+	static float Sepspeed;//1.0
+
+	//集合速度
+	static float cohspeed;//１．０
+
+	//ゾンビとのダメージ距離
+	static float zombirange;//15
+	static float damage;//１．０
+
+	static bool save;
+	static bool load;
+
+	void SetNum();
+	void SaveNum();
+	void LoadNum();
+	void Gui();
 };

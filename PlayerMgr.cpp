@@ -10,6 +10,7 @@
 #include"BulletMgr.h"
 #include"BoidsHp.h"
 #include"InstanceModelMgr.h"
+#include"enemy.h"
 
 BoundingSphere g_bsphere;//当たり判定の球オブジェクト
 BoundingSphere g_bsplayer;//自分用BS
@@ -37,14 +38,16 @@ std::vector<shared_ptr<Player>> grid_vector[gridnum][gridnum] = {};
 std::vector<shared_ptr<Player>> grid_zonbievector[gridnum][gridnum] = {};
 std::vector<shared_ptr<UniqueEnemy>> bufunique_enemy_vector[3][1] = {};//ゾンビ
 CModelInstance g_air;
-#define		ENEMYMAX		100
+CModelInstance g_ene;
+#define		ENEMYMAX		10
 UniqueEnemy_Bomb g_enemy[ENEMYMAX];		// 敵
+enemy g_test[5000];		// 敵
 CModel *g_model;
 using namespace std;
 
 void PlayerMgr::Init()
 {
-
+	Player::GetInstance()->SetNum();
 	//動かすプレイヤーを生成
 	PlayerCreate();
 	EnemyCreate();
@@ -69,7 +72,7 @@ void PlayerMgr::Init()
 		g_enemy[i].SetModel(&g_air);
 		g_enemy[i].Init();
 	}
-	
+
 	maxaccel = 2.0f;
 	accel = maxaccel;
 
@@ -125,7 +128,7 @@ void PlayerMgr::Draw()
 
 	//}
 	unique_enemy_vector.clear();
-
+//	g_ene.TestInstance();
 	g_air.DrawInstance();
 	//for (int i = 0; i <3; i++)
 	//{
@@ -192,8 +195,17 @@ void PlayerMgr::Finsh()
 
 void PlayerMgr::PlayerUpdate()
 {
-
-
+	if (Player::GetInstance()->save)
+	{
+		Player::GetInstance()->SaveNum();
+		Player::GetInstance()->save = false;
+	}
+	if (Player::GetInstance()->load)
+	{
+		Player::GetInstance()->LoadNum();
+		Player::GetInstance()->load = false;
+	}
+	Player::GetInstance()->Gui();
 
 	ImPlayer->FollowUpdate();
 	//ImEnemy->EnemyUpdate();
@@ -681,7 +693,19 @@ void PlayerMgr::PlayerUpdate()
 	// インスタンスバッファを更新
 	g_air.Update(mat);
 
-	InstanceModelMgr::GetInstance().InstanceUpdate("assets/f1.x.dat",mat);
+	//static XMFLOAT4X4 testmat[5000];
+	//// 敵更新
+	//for (int i = 0; i < 5000; i++) {
+	//	g_test[i].Update();
+	//	
+	//	XMFLOAT4X4	world;
+	//	world = g_test[i].GetMtx();;
+	////	DX11MtxFromQt(world, g_test[i].GetRotation());
+
+	//	testmat[i] = world;
+	//}
+//	g_ene.TestUpdate(testmat);
+	//InstanceModelMgr::GetInstance().InstanceUpdate("assets/f1.x.dat",mat);
 	{
 		//ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
@@ -758,7 +782,7 @@ void PlayerMgr::ZonbieCreate()
 	pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::ONE)].modelname));
 	pl->Init();
 	pl->zonbie_Init(pl->GetPos().x, pl->GetPos().z);
-	pl->SetScale(1.5f, 1.5f, 1.5f);
+	pl->SetScale(0.1f, 0.1f, 0.1f);
 	zonbie_vector_num++;
 	zonbie_vector.emplace_back(std::move(pl));
 

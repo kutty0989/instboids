@@ -6,7 +6,8 @@
 
 using Microsoft::WRL::ComPtr;
 
-const std::string zonbie = "assets/HangingIdle.fbx";
+//const std::string zonbie = "assets/HangingIdle.fbx";
+const std::string zonbie = "assets/3danime/Zombie Running (1).fbx";
 //const std::string zonbie = "assets/human_run.fbx";
 //const std::string human = "assets/human_run.fbx";
 //const std::string zonbie = "assets/3danime/zombie1.fbx";
@@ -46,9 +47,9 @@ public:
 	
 		if (modelfilename == zonbie)
 		{
-			p->LoadAnimation("assets/3danime/ZombieIdle.fbx");
-			p->LoadAnimation("assets/3danime/ZombieWalk.fbx");
-			p->LoadAnimation("assets/3danime/ZombieRunning.fbx");
+			p->LoadAnimation("assets/3danime/Zombie Running (1).fbx");
+			p->LoadAnimation("assets/anime/ZombieRunning.fbx");
+			//p->LoadAnimation("assets/3danime/ZombieRunning.fbx");
 
 		}
 	/*	if (modelfilename == human)

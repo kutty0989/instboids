@@ -456,6 +456,9 @@
     <ClCompile Include="DatFileLoader.cpp">
       <Filter>ソース ファイル\system\DX11\Sprite</Filter>
     </ClCompile>
+    <ClCompile Include="Save.cpp">
+      <Filter>ソース ファイル\system\Save</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dx11mathutil.h">

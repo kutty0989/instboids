@@ -6,7 +6,8 @@
 class MouseCircle {
 private:
 
-	DXManager* m_texture;//テクスチャ
+	CTex* m_texture;//テクスチャ
+	//DXManager* m_texture;//テクスチャ
 	//InstanceModel* m_model;//テクスチャ
 
 	bool mIsInstancing = true;
@@ -32,9 +33,12 @@ public:
 
 private:
 
-	void SetTexture(DXManager* tex)
+	/*void SetTexture(DXManager* tex)
+	{
+		m_texture = tex;
+	}*/
+	void SetTexture(CTex* tex)
 	{
 		m_texture = tex;
 	}
-
 };

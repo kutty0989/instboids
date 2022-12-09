@@ -134,8 +134,12 @@ bool CHeight_Map::Init(DirectX::XMFLOAT3 color) {
 		MessageBox(nullptr, "CreateConstantBuffer2 error", "error", MB_OK);
 		return false;
 	}
+	sts = CreateConstantBuffer(GetDX11Device(), sizeof(BlendBuffer), &g_pConstantBlendBuffer);
+	if (!sts) {
+		MessageBox(nullptr, "BlendBuffer error", "error", MB_OK);
+		return false;
+	}
 
-	
 	// デバイスコンテキストを取得
 	ID3D11DeviceContext* devcontext;
 	devcontext = GetDX11DeviceContext();
@@ -252,7 +256,6 @@ void CHeight_Map::Draw() {
 		//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
 		ImGui::DragFloat("height", &g_hight);
 		ImGui::DragFloat("tesslation", &g_tesselationamount);
-		ImGui::DragInt("blendtex", &blendtex);
 		ImGui::Checkbox("randomcreate", &noiseCreateflg);
 		ImGui::End();
 		ImGui::PopStyleColor();
@@ -301,21 +304,8 @@ void CHeight_Map::Draw() {
 
 	//ピクセルシェーダーにTXTUREE　SRVをセット	
 
-	if (blendtex >=1)
-	{
-		devcontext->PSSetShaderResources(1, 1, m_srv[0].GetAddressOf());///高さによって変える画像２をPSセット　描画する
-		g_col = 1.0f;
-	}
-	if (blendtex >= 2)
-	{
-		devcontext->PSSetShaderResources(2, 1, m_srv[1].GetAddressOf());///パーリーノイズをPSセット　描画する
-		g_col = 2.0f;
-	}
-	if (blendtex >= 3)
-	{
-		devcontext->PSSetShaderResources(3, 1, m_srv[2].GetAddressOf());///パーリーノイズをPSセット　描画する
-		g_col = 3.0f;
-	}
+	SetTexture();
+
 	devcontext->PSSetShaderResources(0, 1, D3DShaderResourceView.GetAddressOf());///画像１ををPSセット　描画する
 
 	//devcontext->PSSetShaderResources(4, 1, m_srv[3].GetAddressOf());///パーリーノイズをPSセット　描画する
@@ -595,7 +585,206 @@ T LeapID(T _go, T _to, float _ratio)
 	return _go * (1.0f - _ratio) + _to * (T)_ratio;
 }
 
+static int multitex = 0;
+static bool soil = false;
+static bool snow = false;
+static bool grass = false;
+static int onetex = 0;
+static int twotex = 0;
+static int theretex = 0;
 
+float blendone = 1.0f;
+float blendtwo = 1.0f;
+float blendthere = 1.0f;
+float blendfour = 1.0f;
+
+void CHeight_Map::SetTexture()
+{
+
+
+	// デバイスコンテキストを取得
+	ID3D11DeviceContext* devcontext;
+	devcontext = GetDX11DeviceContext();
+
+	if (g_col == 0)
+	{
+		{
+			ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
+
+			ImGui::Begin("BaseTex_One");
+			ImGui::SetNextWindowSize(ImVec2(300, 400));
+			//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
+
+			ImGui::Checkbox("soil", &soil);
+			ImGui::Checkbox("snow", &snow);
+			ImGui::Checkbox("grass", &grass);
+			ImGui::End();
+			ImGui::PopStyleColor();
+			ImGui::PopStyleColor();
+
+		}
+		if (soil)
+		{
+			onetex = 1;
+			g_col = 1;
+		}
+		else if (snow)
+		{
+			g_col = 1;
+			onetex = 2;
+		}
+		else if (grass)
+		{
+			g_col = 1;
+			onetex = 3;
+		}
+	}
+	if (g_col >= 1)
+	{
+		devcontext->PSSetShaderResources(1, 1, m_srv[onetex - 1].GetAddressOf());///高さによって変える画像２をPSセット　描画する
+
+		if (g_col == 1)
+		{
+			soil = false;
+			snow = false;
+			grass = false;
+
+			{
+				ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
+				ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
+
+				ImGui::Begin("BaseTex_One");
+				ImGui::SetNextWindowSize(ImVec2(300, 400));
+				//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
+
+				ImGui::Checkbox("soil", &soil);
+				ImGui::Checkbox("snow", &snow);
+				ImGui::Checkbox("grass", &grass);
+				ImGui::End();
+				ImGui::PopStyleColor();
+				ImGui::PopStyleColor();
+
+			}
+			if (soil)
+			{
+				twotex = 1;
+				g_col = 2;
+			}
+			else if (snow)
+			{
+				g_col = 2;
+				twotex = 2;
+			}
+			else if (grass)
+			{
+				g_col = 2;
+				twotex = 3;
+			}
+		}
+	}
+	if (g_col >= 2)
+	{
+		devcontext->PSSetShaderResources(2, 1, m_srv[twotex - 1].GetAddressOf());///高さによって変える画像２をPSセット　描画する
+
+		if (g_col == 2)
+		{
+			soil = false;
+			snow = false;
+			grass = false;
+
+			{
+				ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
+				ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
+
+				ImGui::Begin("BaseTex_TWO");
+				ImGui::SetNextWindowSize(ImVec2(300, 400));
+				//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
+
+				ImGui::Checkbox("soil", &soil);
+				ImGui::Checkbox("snow", &snow);
+				ImGui::Checkbox("grass", &grass);
+				ImGui::End();
+				ImGui::PopStyleColor();
+				ImGui::PopStyleColor();
+
+			}
+			if (soil)
+			{
+				theretex = 1;
+				g_col = 3;
+			}
+			else if (snow)
+			{
+				g_col = 3;
+				theretex = 2;
+			}
+			else if (grass)
+			{
+				g_col = 3;
+				theretex = 3;
+			}
+		}
+	}
+	if (g_col >= 3)
+	{
+		soil = false;
+		snow = false;
+		grass = false;
+		devcontext->PSSetShaderResources(3, 1, m_srv[theretex - 1].GetAddressOf());///高さによって変える画像２をPSセット　描画する
+
+		g_col = 4;
+	
+	}
+	if (g_col >= 4)
+	{
+		
+		BlendBuffer cb10;
+		cb10.blendone = blendone;//高さ変数を渡す
+		cb10.blendtwo = blendtwo;//高さ変数を渡す
+		cb10.blendthere = blendthere;//高さ変数を渡す
+		cb10.blendfour = blendfour;//高さ変数を渡す
+		devcontext->UpdateSubresource(g_pConstantBlendBuffer, 0, nullptr, &cb10, 0, 0);		// コンスタントバッファ更新
+		devcontext->PSSetConstantBuffers(10, 1, &g_pConstantBlendBuffer);					// DSへコンスタントバッファをb0レジスタへセット
+
+	//	soil = false;
+	//	snow = false;
+	//	grass = false;
+	//	devcontext->PSSetShaderResources(4, 1, m_srv[theretex - 1].GetAddressOf());///高さによって変える画像２をPSセット　描画する
+
+		{
+			ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
+
+			ImGui::Begin("BlendTex");
+			ImGui::SetNextWindowSize(ImVec2(300, 400));
+			ImGui::DragFloat("one", &blendone);
+			ImGui::DragFloat("two", &blendtwo);
+	
+			ImGui::End();
+			ImGui::PopStyleColor();
+			ImGui::PopStyleColor();
+
+		}
+	//	if (soil)
+	//	{
+	//		theretex = 1;
+	//		g_col = 2;
+	//	}
+	//	else if (snow)
+	//	{
+	//		g_col = 2;
+	//		theretex = 2;
+	//	}
+	//	else if (grass)
+	//	{
+	//		g_col = 2;
+	//		theretex = 3;
+	//	}
+	//
+	}
+
+}
 
 double CHeight_Map::GetHeightColor(XMFLOAT2 playerpos)
 {
