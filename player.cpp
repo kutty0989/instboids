@@ -511,7 +511,7 @@ void Player::boids_attack(std::vector<shared_ptr<Player>>& player_vector, std::s
 	{
 		for (auto& i : player_vector)
 		{
-			float dd = i->location.distance(zonbie->location);
+			float dd = i->location.distance(zonbie->location);					
 
 			//hpå∏éYèàóù
 			if (dd < zombirange)
@@ -521,15 +521,15 @@ void Player::boids_attack(std::vector<shared_ptr<Player>>& player_vector, std::s
 			}
 		}
 
-	/*	for (auto& u : unique_enemy_vector)
+		for (auto& u : unique_enemy_vector)
 		{
 			float dd = u->location.distance(zonbie->location);
 
-			if (dd < 15)
+			if (dd < 25)
 			{
 				u->hp -= 1;
 			}
-		}*/
+		}
 	}
 }
 
@@ -1388,9 +1388,27 @@ void Player::CheckBox()
 			ImGui::Checkbox("change", &changeflg);
 		}
 
+		if (CDirectInput::GetInstance().CheckKeyBuffer(DIK_M))
+		{
+
+			hsepflg = true;
+			haliflg = true;
 
 
+			zdashflg = true;
+			zscaflg = true;
+			zsepflg = true;
+			zcohflg = true;
+			zserflg = true;
+			zawaflg = true;
 
+			dmgflg = true;
+			changeflg = true;
+
+			bbombflg = true;
+			bserflg = true;
+		}
+		
 
 
 

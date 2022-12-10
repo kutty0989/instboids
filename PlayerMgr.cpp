@@ -65,13 +65,19 @@ void PlayerMgr::Init()
 	{
 		UEnemyCreate();
 	}
-	g_air.InitiInstancing(100, "assets/3danime/Warzombie F Pedroso.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/Ch21_1001_Diffuse.png");
 
-	// 敵を初期化
-	for (int i = 0; i < ENEMYMAX; i++) {
-		g_enemy[i].SetModel(&g_air);
-		g_enemy[i].Init();
+	for (int i = 0; i < unique_enemy_bomb_num; i++)
+	{
+		UEnemyBombCreate();
 	}
+	
+	//g_air.InitiInstancing(100, "assets/3danime/Warzombie F Pedroso.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/Ch21_1001_Diffuse.png");
+
+	//// 敵を初期化
+	//for (int i = 0; i < ENEMYMAX; i++) {
+	//	g_enemy[i].SetModel(&g_air);
+	//	g_enemy[i].Init();
+	//}
 
 	maxaccel = 2.0f;
 	accel = maxaccel;
@@ -110,10 +116,10 @@ void PlayerMgr::Draw()
 	for (auto& n : player_vector) {
 		n->Draw(0);
 	}
-	//for (auto& n : unique_enemy_bomb_vector)
-	//{
-	//	n->Draw(zonbie_vector);
-	//}
+	for (auto& n : unique_enemy_bomb_vector)
+	{
+		n->Draw(zonbie_vector);
+	}
 //	InstanceModelMgr::GetInstance().InstanceDraw("assets/f1.x.dat");
 	//for (int i = 0; i < unique_enemy_vector_num; i++)
 	//{
@@ -129,7 +135,7 @@ void PlayerMgr::Draw()
 	//}
 	unique_enemy_vector.clear();
 //	g_ene.TestInstance();
-	g_air.DrawInstance();
+//	g_air.DrawInstance();
 	//for (int i = 0; i <3; i++)
 	//{
 	//	for (int a = 0; a < bufunique_enemy_vector[i]->size(); a++)
@@ -671,6 +677,16 @@ void PlayerMgr::PlayerUpdate()
 
 	for (int i = 0; i < unique_enemy_bomb_vector_num; i++)
 	{
+		if (unique_enemy_bomb_vector.at(i)->GetHp() > 0)
+		{
+			unique_enemy_bomb_vector.at(i)->UEnemy_run(zonbie_vector);
+			unique_enemy_bomb_vector.at(i)->Update();
+		}
+
+	}
+
+	for (int i = 0; i < unique_enemy_bomb_vector_num; i++)
+	{
 		if (unique_enemy_bomb_vector.at(i)->GetHp() <= 0)
 		{
 			unique_enemy_bomb_vector.at(i)->UEDelete(i, unique_enemy_bomb_vector);
@@ -678,20 +694,20 @@ void PlayerMgr::PlayerUpdate()
 		}
 
 	}
-	static XMFLOAT4X4 mat[ENEMYMAX];
-	// 敵更新
-	for (int i = 0; i < ENEMYMAX; i++) {
-		g_enemy[i].UEnemy_run(zonbie_vector);
-		g_enemy[i].Update();
-		XMFLOAT4X4	world;
-		world = g_enemy[i].GetMtx();;
-		//DX11MtxFromQt(world, g_enemy[i].GetRotation());
-	
-		mat[i] = world;
-	}
+	//static XMFLOAT4X4 mat[ENEMYMAX];
+	//// 敵更新
+	//for (int i = 0; i < ENEMYMAX; i++) {
+	//	g_enemy[i].UEnemy_run(zonbie_vector);
+	//	g_enemy[i].Update();
+	//	XMFLOAT4X4	world;
+	//	world = g_enemy[i].GetMtx();;
+	//	//DX11MtxFromQt(world, g_enemy[i].GetRotation());
+	//
+	//	mat[i] = world;
+	//}
 
 	// インスタンスバッファを更新
-	g_air.Update(mat);
+//	g_air.Update(mat);
 
 	//static XMFLOAT4X4 testmat[5000];
 	//// 敵更新
@@ -802,9 +818,11 @@ void PlayerMgr::UEnemyBombCreate()
 {
 	shared_ptr<UniqueEnemy_Bomb> pl;
 	pl = std::make_shared<UniqueEnemy_Bomb>();
-	//pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::BOX)].modelname));
-	pl->SetInstanceModel(InstanceModelMgr::GetInstance().GetInstanceModelPtr(Scean::GetInstance()->g_modelinstancelist[static_cast<int>(Scean::MODELIID::PLAYER)].modelname));
+	pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::PLAYER)].modelname));
+	//pl->SetInstanceModel(InstanceModelMgr::GetInstance().GetInstanceModelPtr(Scean::GetInstance()->g_modelinstancelist[static_cast<int>(Scean::MODELIID::PLAYER)].modelname));
+	
 	pl->Init();
+	
 	unique_enemy_bomb_vector_num++;
 	unique_enemy_bomb_vector.emplace_back(std::move(pl));
 }

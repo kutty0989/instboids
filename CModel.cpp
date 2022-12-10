@@ -124,7 +124,6 @@ void CModel::Draw(XMFLOAT4X4& mtxworld) {
 	devcontext->GSSetShader(nullptr, nullptr, 0);
 	devcontext->HSSetShader(nullptr, nullptr, 0);
 	devcontext->DSSetShader(nullptr, nullptr, 0);
-
 	// ピクセルシェーダーをセット
 	devcontext->PSSetShader(m_pPixelShader, nullptr, 0);
 

@@ -7,7 +7,7 @@ const int INTERPOLATENUM = 4;			// ï‚ä‘êî
 
 bool UniqueEnemy_Bomb::Init()
 {
-	//um_instancemodel = pmodel;
+	//////um_instancemodel = pmodel;
 	// çsóÒèâä˙âª
 	DX11MtxIdentity(m_mtx);
 
@@ -16,7 +16,8 @@ bool UniqueEnemy_Bomb::Init()
 
 	float posx = rand() % 400 - 200.0f;
 	float posz = rand() % 400 - 200.0f;
-	SetPos(XMFLOAT3(posx, 0.0f, posz));
+	m_mtx._41 = posx;
+	m_mtx._43 = posz;
 	angle.x = 0.0f;
 	angle.z = 0.0f;
 	angle.y = 0.0f;
@@ -47,12 +48,12 @@ bool UniqueEnemy_Bomb::Init()
 void UniqueEnemy_Bomb::Draw(std::vector<shared_ptr<Player>>& zonbie_vector)
 {
 	
-			manime.animecnt = 0;
-			unique_enemy_anime = UNIQUE_ENEMY_ANIME::IDLE;
+	manime.animecnt = 0;
+	unique_enemy_anime = UNIQUE_ENEMY_ANIME::IDLE;
 	
 	//	m_model->Update(animecnt, m_mtx, animereset);
 		// ÉÇÉfÉãï`âÊ
-	//um_model->Draw(m_mtx);
+	um_model->Draw(m_mtx);
 }
 void UniqueEnemy_Bomb::Update()
 {
@@ -127,13 +128,12 @@ void UniqueEnemy_Bomb::Update()
 		DX11MtxIdentity(rot);
 		DX11MtxIdentity(world);
 
-		scale._11 = 0.2f;
-		scale._22 = 0.2f;
-		scale._33 = 0.2f;
+		scale._11 = 2.2f;
+		scale._22 = 2.2f;
+		scale._33 = 2.2f;
 
-		angle.y = 0.0f;
-		angle.y = -GetAtan(velocity.x, velocity.y);
-		angle.y += 90.0f;
+
+
 		float ang = angle.y;
 		SetAngle();
 		angle.y -= b_angle;
@@ -209,13 +209,15 @@ void UniqueEnemy_Bomb::UEnemy_flock(std::vector<shared_ptr<Player>>& zonbie_vect
 
 	if (unique_enemy_anime != UNIQUE_ENEMY_ANIME::ATTACK)
 	{
+		ueser = UEnemy_Search();
+		ueatt = UEnemy_Attack(zonbie_vector);
 		if (bserflg)
 		{
-			ueser = UEnemy_Search();
+		
 		}
 		if (bbombflg)
 		{
-			ueatt = UEnemy_Attack(zonbie_vector);
+			
 		}
 	}
 

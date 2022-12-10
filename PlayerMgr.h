@@ -15,7 +15,7 @@
 const int boids_num = 200;//‘S‘Ì‚Ìboids‚Ì‰Šú”
 const int zonbbie_num = 10;//ƒ]ƒ“ƒr‚Ì‰Šú”
 const int unique_enemy_num = 0;//‹ßÚ‚Ì‰Šú”
-const int unique_enemy_bomb_num = 100;//‰“‹——£‚Ì‰Šú”
+const int unique_enemy_bomb_num = 10;//‰“‹——£‚Ì‰Šú”
 using namespace IKD;
 
 class PlayerMgr

@@ -227,7 +227,7 @@ public:
 		{0.0f,0.0f},
 		{1.0f,0.0f},
 		{0.0f,1.0f},
-		{1.0f,1.0f},
+		{1.0f,1.0f}, 
 	};
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> D3DShaderResourceView;
