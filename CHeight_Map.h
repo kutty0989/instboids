@@ -237,9 +237,11 @@ public:
 	const int iPixSize = 512;//縦横ピクセル数
 
    //ノイズ初期設定
-	const double dFrequency = 2.0;//周波数 小さくすると山が少なく、大きくすると細かく
-	const int iOctaves = 7;//オクターブ　スムーズに変化
-
+	 double dFrequency = 2.0;//周波数 小さくすると山が少なく、大きくすると細かく
+	 int iOctaves = 7;//オクターブ　スムーズに変化
+	 static float ScaleMap;
+	 static bool mapsave;
+	 static bool mapload;
 	static std::vector<std::vector<double> > vData;
 	static std::vector<std::vector<double> > gData;
 	static std::vector<byte> bufsrc;

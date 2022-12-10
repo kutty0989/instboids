@@ -17,7 +17,7 @@ bool Ground::Init()
 	g_heightmap->LoadTexture("assets/UI/glow.jpg",2);//‚Q–‡–Ú‚Ì‚‚³‚É‚æ‚Á‚ÄƒuƒŒƒ“ƒh‚·‚é‰æ‘œ
 	g_heightmap->LoadTexture("assets/UI/blood.png", 3);//‚Q–‡–Ú‚Ì‚‚³‚É‚æ‚Á‚ÄƒuƒŒƒ“ƒh‚·‚é‰æ‘œ
 													 //m_WidthHeight = { 100.0f,100.0f };
-
+	scaling = CHeight_Map::GetInstance()->ScaleMap;
 	m_scale.x = scaling;
 	m_scale.y = scaling;
 	return true;
@@ -42,7 +42,9 @@ float a;
 void Ground::Update()
 {
 	
-
+	scaling = CHeight_Map::GetInstance()->ScaleMap;
+	m_scale.x = scaling;
+	m_scale.y = scaling;
 	if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_8))
 	{
 	//	/*std::vector<std::vector<double>> loadmap ={};
@@ -73,7 +75,7 @@ void Ground::Update()
 		//g_heightmap->LoadMap(loadmap);
 	}
 
-	if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_T))
+	if (CHeight_Map::GetInstance()->mapsave)
 	{
 
 		Save::GetInstance()->save1.fdata = 0.0f;
@@ -87,14 +89,15 @@ void Ground::Update()
 
 
 		Save::GetInstance()->Savevin("assets/assets.dat", Save::GetInstance()->save1);
+		CHeight_Map::GetInstance()->mapsave = false;
 	}
-	if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_Y))
+	if (CHeight_Map::GetInstance()->mapload)
 	{
 		Save::GetInstance()->save1 = Save::GetInstance()->Loadvin("assets/assets.dat");
 		auto map = Save::GetInstance()->save1.dotto;
 	
 		g_heightmap->LoadMap(map);
-
+		CHeight_Map::GetInstance()->mapload = false;
 	}
 
 	//if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_7))

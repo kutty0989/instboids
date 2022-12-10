@@ -7,6 +7,9 @@
 float CHeight_Map::g_hight;
 float CHeight_Map::g_tesselationamount;
 float CHeight_Map::g_col;
+bool CHeight_Map::mapsave = false;
+bool CHeight_Map::mapload = false;
+float CHeight_Map::ScaleMap = 2.0f;
 std::vector<std::vector<double> > CHeight_Map::vData;
 std::vector<std::vector<double> > CHeight_Map::gData;
 std::vector<byte> CHeight_Map::bufsrc;
@@ -256,7 +259,13 @@ void CHeight_Map::Draw() {
 		//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
 		ImGui::DragFloat("height", &g_hight);
 		ImGui::DragFloat("tesslation", &g_tesselationamount);
+		ImGui::InputDouble("Frequency", &dFrequency);
+		ImGui::DragInt("iOctaves", &iOctaves);
+		ImGui::DragFloat("scale", &ScaleMap);
 		ImGui::Checkbox("randomcreate", &noiseCreateflg);
+
+		ImGui::Checkbox("mapsave", &mapsave);
+		ImGui::Checkbox("mapload", &mapload);
 		ImGui::End();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();

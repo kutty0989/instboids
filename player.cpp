@@ -1356,30 +1356,40 @@ void Player::CheckBox()
 	{
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
-		ImGui::Begin("Zonbie Rule");
+		ImGui::Begin("Rule");
 
 		ImGui::SetNextWindowSize(ImVec2(300, 400));
 
+		if (ImGui::CollapsingHeader(u8"Hyuman"))
+		{
+			ImGui::Checkbox("Hyuman_Separation", &hsepflg);
+			ImGui::Checkbox("Hyuman_Ali", &haliflg);
+
+		}
+		if (ImGui::CollapsingHeader(u8"Zombie"))
+		{
+			ImGui::Checkbox("Zombie_Dash", &zdashflg);
+			ImGui::Checkbox("Zombie_Cohesion", &zcohflg);
+			ImGui::Checkbox("Zombie_Away", &zawaflg);
+			ImGui::Checkbox("Zombie_Sca", &zscaflg);
+			ImGui::Checkbox("Zombie_Serch", &zserflg);
+			ImGui::Checkbox("Zombie_Sep", &zsepflg);
+		}
+	
+		if (ImGui::CollapsingHeader(u8"E_Bomb"))
+		{
+
+			ImGui::Checkbox("BombE_bomb", &bbombflg);
+			ImGui::Checkbox("BombE_Ser", &bserflg);
+		}
+		if (ImGui::CollapsingHeader(u8"Base_Rule"))
+		{
+			ImGui::Checkbox("Dmg", &dmgflg);
+			ImGui::Checkbox("change", &changeflg);
+		}
 
 
-		ImGui::Checkbox("Boid_Separation", &hsepflg);
-		ImGui::Checkbox("Boid_Ali", &haliflg);
 
-		ImGui::Checkbox("Zombie_Dash", &zdashflg);
-		ImGui::Checkbox("Zombie_Cohesion", &zcohflg);
-		ImGui::Checkbox("Zombie_Away", &zawaflg);
-		ImGui::Checkbox("Zombie_Sca", &zscaflg);
-		ImGui::Checkbox("Zombie_Serch", &zserflg);
-		ImGui::Checkbox("Zombie_Sep", &zsepflg);
-
-
-
-		ImGui::Checkbox("Dmg", &dmgflg);
-		ImGui::Checkbox("change", &changeflg);
-
-
-		ImGui::Checkbox("BombE_bomb", &bbombflg);
-		ImGui::Checkbox("BombE_Ser", &bserflg);
 
 
 
