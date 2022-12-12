@@ -185,10 +185,12 @@ void Player::boid_Init(float x, float y)
 	SepW = 1.5;
 	AliW = 1.0;
 	CohW = 0.2;
+
 }
 
-void Player::zonbie_Init(float x, float y)
+void Player::zonbie_Init(float x, float y, int nowzombiecnt)
 {
+
 	acceleration = Pvector(0, 0);
 
 	location = Pvector(x / 10, y / 10);//ポジション
@@ -206,12 +208,24 @@ void Player::zonbie_Init(float x, float y)
 	CohW = 1.0;
 
 	boidshp.Init();
+	if (ZOMBIE <= nowzombiecnt)
+	{
+		bstatus = BSTATUS::LIVE;
+		hp = zonbiehp;
+	}
+	else
+	{
+		hp = 0;
+		bstatus = BSTATUS::DEAD;
+	}
 }
 
 
 
 void Player::boid_player_Init(float x, float y)
 {
+
+
 	acceleration = Pvector(0, 0);
 	velocity = Pvector(PlayerMgr::GetInstance()->StickXRig, PlayerMgr::GetInstance()->StickYRig);//加速度
 	//velocity = Pvector(0, 0);//加速度
@@ -296,162 +310,173 @@ struct FLOAT3
 
 void Player::Update(bool input) {
 
-	Ground::GetInstance()->GetPlayerHeight(*this);
-
-	boid_borders();
-	
-
-	if (awaycnt > 0)
+	if (bstatus == BSTATUS::LIVE)
 	{
-		awaycnt -= 1;
+		Ground::GetInstance()->GetPlayerHeight(*this);
+
+		boid_borders();
+
+
+		if (awaycnt > 0)
+		{
+			awaycnt -= 1;
+		}
+		if (awaycnt == 0) {
+			boid_accel -= 0.03f;
+		}
+		if (boid_accel < 1.0f)
+		{
+			boid_accel = 1.0f;
+		}
+
+
+		DX11MtxIdentity(scale);
+		DX11MtxIdentity(trans);
+		DX11MtxIdentity(rot);
+		DX11MtxIdentity(world);
+
+		scale._11 = 2.0f;
+		scale._22 = 2.0f;
+		scale._33 = 2.0f;
+
+		angle.y = 0.0f;
+		angle.y = -GetAtan(velocity.x, velocity.y);
+		angle.y -= 90.0f;
+		float ang = angle.y;
+		SetAngle();
+		angle.y -= b_angle;
+		b_angle = ang;
+
+		DX11MtxMultiply(world, scale, rot);
+
+		m_pos.x = location.x;
+		m_pos.z = location.y;
+
+		trans._41 = m_pos.x;
+		trans._42 = m_pos.y + 4.0f;
+		trans._43 = m_pos.z;
+
+		world._41 = trans._41;
+		world._42 = trans._42;
+		world._43 = trans._43;
+
+		m_mtx = world;
 	}
-	if (awaycnt == 0) {
-		boid_accel -= 0.03f;
-	}
-	if (boid_accel < 1.0f)
+	else
 	{
-		boid_accel = 1.0f;
+		m_mtx._41 = 10000;
 	}
-
-
-	DX11MtxIdentity(scale);
-	DX11MtxIdentity(trans);
-	DX11MtxIdentity(rot);
-	DX11MtxIdentity(world);
-
-	scale._11 = 2.0f;
-	scale._22 = 2.0f;
-	scale._33 = 2.0f;
-
-	angle.y = 0.0f;
-	angle.y = -GetAtan(velocity.x, velocity.y);
-	angle.y += 90.0f;
-	float ang = angle.y;
-	SetAngle();
-	angle.y -= b_angle;
-	b_angle = ang;
-
-	DX11MtxMultiply(world,scale, rot);
-
-	m_pos.x = location.x;
-	m_pos.z = location.y;
-
-	trans._41 = m_pos.x;
-	trans._42 = m_pos.y + 4.0f;
-	trans._43 = m_pos.z;
-
-	world._41 = trans._41;
-	world._42 = trans._42;
-	world._43 = trans._43;
-
-	m_mtx = world;
-
 }
 
 
 
-void Player::ZonbieUpdate(int animenum ,int i)
+void Player::ZonbieUpdate(int animenum, int i)
 {
-
-	boid_borders();
-	Ground::GetInstance()->GetPlayerHeight(*this);
-	
-
-	//Z軸を取り出す
-	axisZ.x = m_mtx._31;
-	axisZ.y = m_mtx._32;
-	axisZ.z = m_mtx._33;
-	axisZ.w = 0.0f;
-
-	//float ease_cnt = 1-(ease_nowcnt / 60.0f);
-	//ease_nowcnt--;
-
-	//if (ease_nowcnt > 0)
-	//{
-	//	boid_accel = ease_out(ease_cnt, 2.0f, 0.1f, 10.0f);
-	//}
-	//if (ease_nowcnt <= 0)
-	//{
-	//	ease_nowcnt = 0;
-	//}
-
-	/*if (this->insideflg)
+	if (bstatus == BSTATUS::LIVE)
 	{
-		this->boid_accel = PlayerMgr::GetInstance()->accel;
-		insideflg = false;
+		boid_borders();
+		Ground::GetInstance()->GetPlayerHeight(*this);
 
-	}*/
 
-	if (awaycnt > 0)
+		//Z軸を取り出す
+		axisZ.x = m_mtx._31;
+		axisZ.y = m_mtx._32;
+		axisZ.z = m_mtx._33;
+		axisZ.w = 0.0f;
+
+		//float ease_cnt = 1-(ease_nowcnt / 60.0f);
+		//ease_nowcnt--;
+
+		//if (ease_nowcnt > 0)
+		//{
+		//	boid_accel = ease_out(ease_cnt, 2.0f, 0.1f, 10.0f);
+		//}
+		//if (ease_nowcnt <= 0)
+		//{
+		//	ease_nowcnt = 0;
+		//}
+
+		/*if (this->insideflg)
+		{
+			this->boid_accel = PlayerMgr::GetInstance()->accel;
+			insideflg = false;
+
+		}*/
+
+		if (awaycnt > 0)
+		{
+			awaycnt -= 1;
+		}
+		if (awaycnt == 0) {
+			boid_accel -= 0.05f;
+		}
+		if (boid_accel < 0)
+		{
+			boid_accel = 0;
+		}
+
+		if (boid_accel > 8.5f)
+		{
+			boid_accel = 8.5f;
+		}
+
+		if (boid_accel > 0.5)
+		{
+			zonbieanime = 1;
+		}
+		else if (boid_accel <= 0.5)
+		{
+			zonbieanime = 0;
+		}
+
+		angle.y = 0.0f;
+
+		angle.y = -GetKakudo(angley.x, angley.y);
+		angle.y -= 90.0f;
+		if (angle.y > 360)
+		{
+			angle.y -= 360.0f;
+		}
+
+
+		DX11MtxIdentity(scale);
+		DX11MtxIdentity(trans);
+		DX11MtxIdentity(rot);
+		DX11MtxIdentity(world);
+
+		scale._11 = 5.2f;
+		scale._22 = 5.2f;
+		scale._33 = 5.2f;
+
+
+
+		float ang = angle.y;
+		SetAngle();
+		angle.y -= b_angle;
+		b_angle = ang;
+
+		DX11MtxMultiply(world, scale, rot);
+
+		m_pos.x = location.x;
+		m_pos.z = location.y;
+
+		trans._41 = m_pos.x;
+		trans._42 = m_pos.y + 4.0f;
+		trans._43 = m_pos.z;
+
+
+		world._41 = trans._41;
+		world._42 = trans._42;
+		world._43 = trans._43;
+
+
+		m_mtx = world;
+
+	}
+	else
 	{
-		awaycnt -= 1;
+	m_mtx._41 = 10000;
 	}
-	if (awaycnt == 0) {
-		boid_accel -= 0.05f;
-	}
-	if (boid_accel < 0)
-	{
-		boid_accel = 0;
-	}
-
-	if (boid_accel > 8.5f)
-	{
-		boid_accel = 8.5f;
-	}
-
-	if (boid_accel > 0.5)
-	{
-		zonbieanime = 1;
-	}
-	else if (boid_accel <= 0.5)
-	{
-		zonbieanime = 0;
-	}
-
-	angle.y = 0.0f;
-
-	angle.y = -GetKakudo(angley.x, angley.y);
-	angle.y -= 90.0f;
-	if (angle.y > 360)
-	{
-		angle.y -= 360.0f;
-	}
-
-
-	DX11MtxIdentity(scale);
-	DX11MtxIdentity(trans);
-	DX11MtxIdentity(rot);
-	DX11MtxIdentity(world);
-
-	scale._11 = 5.2f;
-	scale._22 = 5.2f;
-	scale._33 = 5.2f;
-
-	
-
-	float ang = angle.y;
-	SetAngle();
-	angle.y -= b_angle;
-	b_angle = ang;
-
-	DX11MtxMultiply(world, scale, rot);
-
-	m_pos.x = location.x;
-	m_pos.z = location.y;
-
-	trans._41 = m_pos.x;
-	trans._42 = m_pos.y + 4.0f;
-	trans._43 = m_pos.z;
-
-
-	world._41 = trans._41;
-	world._42 = trans._42;
-	world._43 = trans._43;
-
-
-	m_mtx = world;
-
-	
 
 }
 //使ってない

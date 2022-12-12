@@ -7,6 +7,7 @@ const int INTERPOLATENUM = 4;			// •âŠÔ”
 
 bool UniqueEnemy_Bomb::Init()
 {
+
 	//////um_instancemodel = pmodel;
 	// s—ñ‰Šú‰»
 	DX11MtxIdentity(m_mtx);

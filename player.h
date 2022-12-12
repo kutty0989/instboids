@@ -11,7 +11,10 @@
 //#include"UniqueEnemy_Bomb.h"
 
 class UniqueEnemy_Bomb;
-
+#define		ENEMYMAX		10
+#define		ZOMBIEMAX		100
+#define		ZOMBIE		    10
+#define		HYUMANMAX		100
 
 
 class Player :public GameObject {
@@ -205,7 +208,8 @@ public:
 	bool insideflg = false;//マウスで囲った中にいるかv
 	bool awayflg = false;//追いかけてどこかへいくフラグ
 	bool zexplosionflg = false;
-	
+	int initZombie;
+
 	enum class Follow
 	{
 		FREE,
@@ -224,7 +228,7 @@ public:
 	Follow follow;
 
 	void boid_Init(float x, float y);//プレイヤー以外の初期化
-	void zonbie_Init(float x, float y);//ゾンビの初期化
+	void zonbie_Init(float x, float y,int nowzombicnt);//ゾンビの初期化
 	void boid_player_Init(float x, float y);//動かすキャラの初期化
 	void follow_Init();
 	//Boid(float x, float y, bool predCheck);

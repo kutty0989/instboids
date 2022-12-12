@@ -41,10 +41,7 @@ std::vector<Player> grid_zonbievector[gridnum][gridnum] = {};
 CModelInstance cmodelinstance_unique_enemy;
 CModelInstance cmodelinstance_zombie;
 CModelInstance cmodelinstance_hyuman;
-#define		ENEMYMAX		10
-#define		ZOMBIEMAX		100
-#define		ZOMBIE		    10
-#define		HYUMANMAX		100
+
 
 std::vector<UniqueEnemy_Bomb> instance_e_bomb;
 std::vector<Player> instance_zombie;
@@ -96,11 +93,7 @@ void PlayerMgr::Init()
 		Player buf;
 		buf.SetInstanceModel(&cmodelinstance_zombie);
 		buf.Init();
-		buf.zonbie_Init(buf.GetPos().x, buf.GetPos().z);
-		
-			buf.hp = 0;
-			buf.bstatus = Player::BSTATUS::DEAD;
-		
+		buf.zonbie_Init(buf.GetPos().x, buf.GetPos().z, i);
 		instance_zombie.emplace_back(buf);
 	}
 	for (int i = 0; i < HYUMANMAX; i++) {
@@ -253,104 +246,6 @@ void PlayerMgr::PlayerUpdate()
 	}
 	Player::GetInstance()->Gui();
 
-	//ImPlayer->FollowUpdate();
-
-
-	//for (int i = 0; i < 3; i++)
-	//{
-	//	for (int a = 0; a < bufunique_enemy_vector[i]->size(); a++)
-	//	{
-	//		if (bufunique_enemy_vector[i]->at(a) != nullptr)
-	//		{
-	//			unique_enemy_vector.push_back(std::move(bufunique_enemy_vector[i]->at(a)));
-	//		}
-	//	}
-	//}
-
-	//for (int i = 0; i < 3; i++)
-	//{
-	//	bufunique_enemy_vector[i]->clear();
-	//}
-	if (CDirectInput::GetInstance().GetMouseLButtonTrigger())
-	{
-		scattercnt += 30;
-		p_mousepos = { 0,0 };
-		r_mousepos = { 0,0 };
-		mousevelocity = { 0,0 };
-
-		mousestate = Mouse_state::Push_One;
-		p_mousepos.x = CDirectInput::GetInstance().GetMousePosX();
-		p_mousepos.y = CDirectInput::GetInstance().GetMousePosY();
-		p_mousepos.x -= Application::CLIENT_WIDTH / 2;
-		p_mousepos.y = Application::CLIENT_HEIGHT / 2 - p_mousepos.y;
-
-
-		XMFLOAT3 pppos = {};
-
-		for (int i = 0; i < ZOMBIEMAX;i++)
-		{
-		
-				pppos = instance_zombie[i].Screenpos(instance_zombie[i].GetPos());
-				pppos.x -= Application::CLIENT_WIDTH / 2;
-				pppos.y = Application::CLIENT_HEIGHT / 2 - pppos.y;
-
-				float dx = pppos.x - p_mousepos.x;
-				float dy = pppos.y - p_mousepos.y;
-				float dist = sqrt(dx * dx + dy * dy);
-
-				if (dist < 50)
-				{
-					instance_zombie[i].insideflg = true;
-				}
-			
-		}
-
-	}
-	scattercnt--;
-	if (scattercnt < 0)scattercnt = 0;
-	if (scattercnt > 61)
-	{
-		scatterflg = true;
-	}
-	if (scattercnt > 90)
-	{
-		scattercnt = 90;
-	}
-
-	if (CDirectInput::GetInstance().GetMouseLButtonCheck())
-	{
-		mousecnt++;
-		if (mousecnt > 20)
-		{
-			gatherflg = true;
-		}
-	}
-	if (CDirectInput::GetInstance().GetMouseLButtonRelease())
-	{
-		r_mousepos.x = CDirectInput::GetInstance().GetMousePosX();
-		r_mousepos.y = CDirectInput::GetInstance().GetMousePosY();
-		r_mousepos.x -= Application::CLIENT_WIDTH / 2;
-		r_mousepos.y = Application::CLIENT_HEIGHT / 2 - r_mousepos.y;
-
-		mousecnt = 0;
-		gatherflg = false;
-
-		float mousedistance = p_mousepos.distance(r_mousepos);
-		if (mousedistance > 5)
-		{
-			p_mousepos.subVector(r_mousepos);
-			p_mousepos.normalize();
-
-			velocityflg = true;
-			mousevelocity = p_mousepos;
-		}
-		else
-		{
-			mousevelocity = { 0,0 };
-		}
-
-	}
-
 	////óvëfÇÃà⁄ìÆÇ∆çÌèú
 	for (int i = 0; i < HYUMANMAX;i++)
 	{
@@ -371,7 +266,7 @@ void PlayerMgr::PlayerUpdate()
 			}
 		}
 	}
-	for (int i = 0; i < ZOMBIEMAX;i++)
+	for (int i = 0; i < instance_zombie.size();i++)
 	{
 		if (instance_zombie.at(i).GetHp() == 0)
 		{
@@ -380,50 +275,9 @@ void PlayerMgr::PlayerUpdate()
 				instance_zombie.at(i).bstatus = Player::BSTATUS::DEAD;
 			}
 		}
+
 	}
-
-
-	//for (auto& n : instance_zombie) {
-
-	//
-	//for (auto& n : instance_zombie)
-	//{
-	//	n->zonbie_run(instance_zombie, ImPlayer, mousevelocity);
-	//	n->ZonbieUpdate(animno, 1);
-	//	n->boids_attack(player_vector, n);
-	//}
-	//	
-
-
-	//
-	//if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_R))
-	//{
-	//	animno++;
-	//	for (auto& n : instance_zombie) {
-	//		auto nn = n->GetModel();
-	//		unsigned int animnummax = nn->GetAnimationNum();
-	//		if (animno >= animnummax) {
-	//			animno = 0;
-	//		}
-	//	}
-	//}
-
-
-	//for (auto& n : in_enemy_vector) {
-	//	n->boid_run(in_enemy_vector, ImEnemy);
-	//	n->EnemyUpdate();
-	//}
-
-	//for (auto& n : build_vector) {
-	//	n->Update(ImPlayer,in_player_vector);
-	//	if (n->CreateBuildBoids())
-	//	{
-	//		BoidsCreate(n->GetMtx()._41, n->GetMtx()._43);
-	//		player_vector_num++;
-	//	}
-	//}
-
-
+	
 
 	for (int m = 0; m < gridnum; m++)
 	{
@@ -437,20 +291,38 @@ void PlayerMgr::PlayerUpdate()
 
 	for (int i = 0; i < HYUMANMAX; i++)
 	{
-		
+		if (instance_hyuman.at(i).bstatus == Player::BSTATUS::LIVE)
+		{
 			int column = CHeight_Map::GetInstance()->iPixSize / int((instance_hyuman.at(i).location.x + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
 			int row = CHeight_Map::GetInstance()->iPixSize / int((instance_hyuman.at(i).location.y + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
 			grid_vector[column][row].push_back(std::move((instance_hyuman.at(i))));
-		
+		}
+		else if ((instance_hyuman.at(i).hp <= 0) && (instance_hyuman.at(i).bstatus == Player::BSTATUS::LIVE))
+		{
+			instance_hyuman.at(i).bstatus == Player::BSTATUS::DEAD;
+			
+			for (int i = 0; i < ZOMBIEMAX; i++)
+			{
+				if (instance_zombie.at(i).bstatus == Player::BSTATUS::DEAD)
+				{
+					instance_zombie.at(i).bstatus = Player::BSTATUS::LIVE;
+					instance_zombie.at(i).hp = Player::zonbiehp;
+					instance_zombie.at(i).m_mtx._41 = 10000;
+					break;
+				}
+			}
+		}
 	}
 	instance_hyuman.clear();
-	for (int i = 0; i < ZOMBIEMAX;i++)
+	for (int i = 0; i < instance_zombie.size();i++)
 	{
-		
+		if (instance_zombie.at(i).bstatus == Player::BSTATUS::LIVE)
+		{
 			int zcolumn = CHeight_Map::GetInstance()->iPixSize / int((instance_zombie.at(i).location.x + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
 			int zrow = CHeight_Map::GetInstance()->iPixSize / int((instance_zombie.at(i).location.y + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
 			grid_zonbievector[zcolumn][zrow].push_back(move(instance_zombie.at(i)));
-			
+
+		}
 	}
 	instance_zombie.clear();
 
@@ -474,6 +346,7 @@ void PlayerMgr::PlayerUpdate()
 						for (int i = 0; i < grid_zonbievector[m - 1][n].size(); i++)
 						{
 							Player buf = grid_zonbievector[m - 1][n].at(i);
+
 							buf_vec.push_back(buf);
 						}
 					}
@@ -541,17 +414,16 @@ void PlayerMgr::PlayerUpdate()
 
 
 				XMFLOAT4X4	world;
-				
-					//DX11MtxFromQt(world, g_enemy[i].GetRotation());
 
-					
-				
-				
+				//DX11MtxFromQt(world, g_enemy[i].GetRotation());
+
 				grid_vector[m][n].at(i).boid_run(buf_pvec, buf_vec);
 				grid_vector[m][n].at(i).Update(false);
 
+
 				world = grid_vector[m][n].at(i).GetMtx();
 				phmat[hyumancnt] = world;
+
 				hyumancnt += 1;
 			}
 		}
@@ -750,6 +622,84 @@ void PlayerMgr::PlayerUpdate()
 
 
 
+
+	if (CDirectInput::GetInstance().GetMouseLButtonTrigger())
+	{
+		scattercnt += 30;
+		p_mousepos = { 0,0 };
+		r_mousepos = { 0,0 };
+		mousevelocity = { 0,0 };
+
+		mousestate = Mouse_state::Push_One;
+		p_mousepos.x = CDirectInput::GetInstance().GetMousePosX();
+		p_mousepos.y = CDirectInput::GetInstance().GetMousePosY();
+		p_mousepos.x -= Application::CLIENT_WIDTH / 2;
+		p_mousepos.y = Application::CLIENT_HEIGHT / 2 - p_mousepos.y;
+
+
+		XMFLOAT3 pppos = {};
+
+		for (int i = 0; i < ZOMBIEMAX;i++)
+		{
+
+			pppos = instance_zombie[i].Screenpos(instance_zombie[i].GetPos());
+			pppos.x -= Application::CLIENT_WIDTH / 2;
+			pppos.y = Application::CLIENT_HEIGHT / 2 - pppos.y;
+
+			float dx = pppos.x - p_mousepos.x;
+			float dy = pppos.y - p_mousepos.y;
+			float dist = sqrt(dx * dx + dy * dy);
+
+			if (dist < 50)
+			{
+				instance_zombie[i].insideflg = true;
+			}
+		}
+	}
+	scattercnt--;
+	if (scattercnt < 0)scattercnt = 0;
+	if (scattercnt > 61)
+	{
+		scatterflg = true;
+	}
+	if (scattercnt > 90)
+	{
+		scattercnt = 90;
+	}
+
+	if (CDirectInput::GetInstance().GetMouseLButtonCheck())
+	{
+		mousecnt++;
+		if (mousecnt > 20)
+		{
+			gatherflg = true;
+		}
+	}
+	if (CDirectInput::GetInstance().GetMouseLButtonRelease())
+	{
+		r_mousepos.x = CDirectInput::GetInstance().GetMousePosX();
+		r_mousepos.y = CDirectInput::GetInstance().GetMousePosY();
+		r_mousepos.x -= Application::CLIENT_WIDTH / 2;
+		r_mousepos.y = Application::CLIENT_HEIGHT / 2 - r_mousepos.y;
+
+		mousecnt = 0;
+		gatherflg = false;
+
+		float mousedistance = p_mousepos.distance(r_mousepos);
+		if (mousedistance > 5)
+		{
+			p_mousepos.subVector(r_mousepos);
+			p_mousepos.normalize();
+
+			velocityflg = true;
+			mousevelocity = p_mousepos;
+		}
+		else
+		{
+			mousevelocity = { 0,0 };
+		}
+
+	}
 
 	
 
