@@ -27,20 +27,28 @@ int PlayerMgr::StickYRig = 0;
 int PlayerMgr::player_vector_num = boids_num;//ボイドの初期値
 int PlayerMgr::in_player_vector_num = 0;//プレイヤーの周りにいるボイドの初期値
 int PlayerMgr::in_enemy_vector_num = 0;//エネミーの周りにいるボイドの初期値
-int PlayerMgr::zonbie_vector_num = 0;//エネミーの周りにいるボイドの初期値
+//int PlayerMgr::instance_zombie_num = 0;//エネミーの周りにいるボイドの初期値
 int PlayerMgr::unique_enemy_vector_num = 0;//エネミーの周りにいるボイドの初期値
 int PlayerMgr::unique_enemy_bomb_vector_num = 0;//エネミーの周りにいるボイドの初期値
 int PlayerMgr::RStickRigX = 0;
 int PlayerMgr::RStickRigY = 0;
 
 const int gridnum = 20;
-std::vector<shared_ptr<Player>> grid_vector[gridnum][gridnum] = {};
-std::vector<shared_ptr<Player>> grid_zonbievector[gridnum][gridnum] = {};
-std::vector<shared_ptr<UniqueEnemy>> bufunique_enemy_vector[3][1] = {};//ゾンビ
-CModelInstance g_air;
-CModelInstance g_ene;
+std::vector<Player> grid_vector[gridnum][gridnum] = {};
+std::vector<Player> grid_zonbievector[gridnum][gridnum] = {};
+//std::vector<shared_ptr<UniqueEnemy>> bufunique_enemy_vector[3][1] = {};//ゾンビ
+
+CModelInstance cmodelinstance_unique_enemy;
+CModelInstance cmodelinstance_zombie;
+CModelInstance cmodelinstance_hyuman;
 #define		ENEMYMAX		10
-UniqueEnemy_Bomb g_enemy[ENEMYMAX];		// 敵
+#define		ZOMBIEMAX		100
+#define		ZOMBIE		    10
+#define		HYUMANMAX		100
+
+std::vector<UniqueEnemy_Bomb> instance_e_bomb;
+std::vector<Player> instance_zombie;
+std::vector<Player> instance_hyuman;
 enemy g_test[5000];		// 敵
 CModel *g_model;
 using namespace std;
@@ -49,30 +57,60 @@ void PlayerMgr::Init()
 {
 	Player::GetInstance()->SetNum();
 	//動かすプレイヤーを生成
-	PlayerCreate();
-	EnemyCreate();
-	for (int i = 0; i < boids_num; i++)
-	{	
-		//ボイドを生成
-		BoidsCreate(0,0);
-	}
-	for (int i = 0; i < zonbbie_num; i++)
-	{
-		//ボイドを生成
-		ZonbieCreate();
-	}
-	for (int i = 0; i < unique_enemy_num; i++)
+	/*PlayerCreate();
+	EnemyCreate();*/
+	//for (int i = 0; i < boids_num; i++)
+	//{	
+	//	//ボイドを生成
+	//	BoidsCreate(0,0);
+	//}
+	//for (int i = 0; i < zonbbie_num; i++)
+	//{
+	//	//ボイドを生成
+	//	ZonbieCreate();
+	//}
+	/*for (int i = 0; i < unique_enemy_num; i++)
 	{
 		UEnemyCreate();
-	}
+	}*/
 
-	for (int i = 0; i < unique_enemy_bomb_num; i++)
-	{
-		UEnemyBombCreate();
+	//for (int i = 0; i < unique_enemy_bomb_num; i++)
+	//{
+	//	UEnemyBombCreate();
+	//}
+	//
+	//g_air.InitiInstancing(100, "assets/3danime/Warzombie F Pedroso.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/Ch21_1001_Diffuse.png");
+	cmodelinstance_unique_enemy.InitiInstancing(ENEMYMAX, "assets/3danime/sphere.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/sphere.png");
+	cmodelinstance_zombie.InitiInstancing(ZOMBIEMAX, "assets/3danime/cube.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/cube.png");
+	cmodelinstance_hyuman.InitiInstancing(HYUMANMAX, "assets/3danime/tritop.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/tritop.png");
+	//cmodelinstance_hyuman.InitiInstancing(HYUMANMAX, "assets/3danime/Warzombie F Pedroso.fbx", "shader/vsinstance.fx", "shader/ps.hlsl", "assets/3danime/Ch21_1001_Diffuse.png ");
+	//// 敵を初期化
+	for (int i = 0; i < ENEMYMAX; i++) {
+		UniqueEnemy_Bomb buf;
+		buf.SetModel(&cmodelinstance_unique_enemy);
+		buf.Init();
+		instance_e_bomb.emplace_back(buf);
+
+	}
+	for (int i = 0; i < ZOMBIEMAX; i++) {
+		Player buf;
+		buf.SetInstanceModel(&cmodelinstance_zombie);
+		buf.Init();
+		buf.zonbie_Init(buf.GetPos().x, buf.GetPos().z);
+		
+			buf.hp = 0;
+			buf.bstatus = Player::BSTATUS::DEAD;
+		
+		instance_zombie.emplace_back(buf);
+	}
+	for (int i = 0; i < HYUMANMAX; i++) {
+		Player buf;
+		buf.SetInstanceModel(&cmodelinstance_hyuman);
+		buf.Init();
+		buf.boid_Init(buf.GetPos().x, buf.GetPos().z);
+		instance_hyuman.emplace_back(buf);
 	}
 	
-	//g_air.InitiInstancing(100, "assets/3danime/Warzombie F Pedroso.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/Ch21_1001_Diffuse.png");
-
 	//// 敵を初期化
 	//for (int i = 0; i < ENEMYMAX; i++) {
 	//	g_enemy[i].SetModel(&g_air);
@@ -108,18 +146,18 @@ void PlayerMgr::Draw()
 	
 	BulletMgr::GetInstance()->Draw();
 
-	for (int i = 0; i < zonbie_vector_num; i++)
-	{
-		zonbie_vector[i]->Draw(i);
-	}
-	//全描画
-	for (auto& n : player_vector) {
-		n->Draw(0);
-	}
-	for (auto& n : unique_enemy_bomb_vector)
-	{
-		n->Draw(zonbie_vector);
-	}
+	//for (int i = 0; i < instance_zombie_num; i++)
+	//{
+	//	instance_zombie[i]->Draw(i);
+	//}
+	////全描画
+	//for (auto& n : player_vector) {
+	//	n->Draw(0);
+	//}
+	//for (auto& n : unique_enemy_bomb_vector)
+	//{
+	//	n.Draw(instance_zombie);
+	//}
 //	InstanceModelMgr::GetInstance().InstanceDraw("assets/f1.x.dat");
 	//for (int i = 0; i < unique_enemy_vector_num; i++)
 	//{
@@ -134,6 +172,9 @@ void PlayerMgr::Draw()
 
 	//}
 	unique_enemy_vector.clear();
+	cmodelinstance_unique_enemy.DrawInstance();
+	cmodelinstance_hyuman.DrawInstance();
+	cmodelinstance_zombie.DrawInstance();
 //	g_ene.TestInstance();
 //	g_air.DrawInstance();
 	//for (int i = 0; i <3; i++)
@@ -145,7 +186,7 @@ void PlayerMgr::Draw()
 	//			//bufunique_enemy_vector[i]->at(a)->um_model->Update(bufunique_enemy_vector[i]->at(a)->manime.m_Frame, bufunique_enemy_vector[i]->at(a)->manime.m_preFrame, bufunique_enemy_vector[i]->at(a)->manime.m_factor, bufunique_enemy_vector[i]->at(a)->manime.animecnt,
 	//				//bufunique_enemy_vector[i]->at(a)->m_mtx);
 	//		}
-	//	//	bufunique_enemy_vector[i]->at(a)->Draw(zonbie_vector);
+	//	//	bufunique_enemy_vector[i]->at(a)->Draw(instance_zombie);
 	//	}
 	//}
 	//for (auto& n : in_player_vector) {
@@ -156,7 +197,7 @@ void PlayerMgr::Draw()
 	//	n->Draw();
 	//}
 	////ゾンビの移動
-	//for (auto& n : zonbie_vector) {
+	//for (auto& n : instance_zombie) {
 	//	n->Draw();
 	//}
 
@@ -178,7 +219,7 @@ void PlayerMgr::Finsh()
 	//for (auto& n : in_enemy_vector) {
 	//	n->Finalize();
 	//}
-	for (auto& n : zonbie_vector) {
+	/*for (auto& n : instance_zombie) {
 		n->Finalize();
 	}
 	for (int i = 0; i < unique_enemy_vector.size(); i++)
@@ -187,11 +228,10 @@ void PlayerMgr::Finsh()
 	}
 	for (auto& n : unique_enemy_bomb_vector)
 	{
-		n->Finalize();
-	}
+		n.Finalize();
+	}*/
 	
-	zonbie_vector.clear();
-	zonbie_vector_num = 0;
+	instance_zombie.clear();
 
 	
 	ImPlayer->Finalize();
@@ -213,61 +253,24 @@ void PlayerMgr::PlayerUpdate()
 	}
 	Player::GetInstance()->Gui();
 
-	ImPlayer->FollowUpdate();
-	//ImEnemy->EnemyUpdate();
+	//ImPlayer->FollowUpdate();
 
-	////要素の移動と削除
-	//for (int i = 0; i < player_vector_num;i++)
+
+	//for (int i = 0; i < 3; i++)
 	//{
-	//	if (player_vector.at(i) != nullptr)
+	//	for (int a = 0; a < bufunique_enemy_vector[i]->size(); a++)
 	//	{
-	//		if (player_vector.at(i)->follow == Player::Follow::PLAYER)
+	//		if (bufunique_enemy_vector[i]->at(a) != nullptr)
 	//		{
-	//			player_vector.at(i)->Move_And_Delete(i, in_player_vector, player_vector);
-	//			player_vector_num--;
-	//			in_player_vector_num++;
-	//			in_player_vector.at(in_player_vector_num-1)->follow_Init();
-	//		}
-	//	}
-	//}
-	//for (int i = 0; i < player_vector_num;i++)
-	//{
-	//	if (player_vector.at(i) != nullptr)
-	//	{
-	//		if (player_vector.at(i)->follow == Player::Follow::ENEMY)
-	//		{
-	//			player_vector.at(i)->Move_And_Delete(i, in_enemy_vector, player_vector);
-	//			player_vector_num--;
-	//			in_enemy_vector_num++;
+	//			unique_enemy_vector.push_back(std::move(bufunique_enemy_vector[i]->at(a)));
 	//		}
 	//	}
 	//}
 
-	////内側の配列が範囲の外側に出たかどうかの判断
-	//for (int i = 0; i < in_player_vector_num;i++)
+	//for (int i = 0; i < 3; i++)
 	//{
-	//	if (in_player_vector.at(i) != nullptr)
-	//	{
-	//		in_player_vector.at(i)->process_centralization(ImPlayer);
-	//	}
+	//	bufunique_enemy_vector[i]->clear();
 	//}
-
-
-	for (int i = 0; i < 3; i++)
-	{
-		for (int a = 0; a < bufunique_enemy_vector[i]->size(); a++)
-		{
-			if (bufunique_enemy_vector[i]->at(a) != nullptr)
-			{
-				unique_enemy_vector.push_back(std::move(bufunique_enemy_vector[i]->at(a)));
-			}
-		}
-	}
-
-	for (int i = 0; i < 3; i++)
-	{
-		bufunique_enemy_vector[i]->clear();
-	}
 	if (CDirectInput::GetInstance().GetMouseLButtonTrigger())
 	{
 		scattercnt += 30;
@@ -284,11 +287,10 @@ void PlayerMgr::PlayerUpdate()
 
 		XMFLOAT3 pppos = {};
 
-		for (int i = 0; i < zonbie_vector_num;i++)
+		for (int i = 0; i < ZOMBIEMAX;i++)
 		{
-			if (zonbie_vector.at(i) != nullptr)
-			{
-				pppos = zonbie_vector[i]->Screenpos(zonbie_vector[i]->GetPos());
+		
+				pppos = instance_zombie[i].Screenpos(instance_zombie[i].GetPos());
 				pppos.x -= Application::CLIENT_WIDTH / 2;
 				pppos.y = Application::CLIENT_HEIGHT / 2 - pppos.y;
 
@@ -298,9 +300,9 @@ void PlayerMgr::PlayerUpdate()
 
 				if (dist < 50)
 				{
-					zonbie_vector[i]->insideflg = true;
+					instance_zombie[i].insideflg = true;
 				}
-			}
+			
 		}
 
 	}
@@ -350,45 +352,43 @@ void PlayerMgr::PlayerUpdate()
 	}
 
 	////要素の移動と削除
-	for (int i = 0; i < player_vector_num;i++)
+	for (int i = 0; i < HYUMANMAX;i++)
 	{
-		if (player_vector.at(i) != nullptr)
+		if (instance_hyuman.at(i).GetHp() == 0)
 		{
-			if (player_vector.at(i)->GetHp() == 0)
+			if (instance_hyuman.at(i).bstatus !=Player::BSTATUS::DEAD)
 			{
-				player_vector.at(i)->Move_And_Delete(i, zonbie_vector, player_vector);
-				zonbie_vector_num++;
-				player_vector_num--;
-				zonbie_vector.at(zonbie_vector_num - 1)->follow_Init();
+				for (int a = 0; a < ZOMBIEMAX;a++)
+				{
+					if (instance_zombie.at(a).bstatus == Player::BSTATUS::DEAD)
+					{
+						instance_zombie.at(a).zombie_reborn(instance_hyuman.at(a).GetMtx()._41, instance_hyuman.at(a).GetMtx()._43);
+						instance_zombie.at(a).bstatus = Player::BSTATUS::LIVE;
+						instance_hyuman.at(i).bstatus = Player::BSTATUS::DEAD;
+						break;
+					}
+				}
 			}
 		}
 	}
-	for (int i = 0; i < zonbie_vector_num;i++)
+	for (int i = 0; i < ZOMBIEMAX;i++)
 	{
-		if (zonbie_vector.at(i) != nullptr)
+		if (instance_zombie.at(i).GetHp() == 0)
 		{
-			if (zonbie_vector.at(i)->GetHp() == 0)
+			if (instance_zombie.at(i).bstatus != Player::BSTATUS::DEAD)
 			{
-				zonbie_vector.at(i)->Delete(i, zonbie_vector);
-				zonbie_vector_num--;
+				instance_zombie.at(i).bstatus = Player::BSTATUS::DEAD;
 			}
 		}
 	}
 
 
-	if (player_vector_num > 200)
-	{
-		player_vector.clear();
-		player_vector_num = 0;
-	}
-
-
-	//for (auto& n : zonbie_vector) {
+	//for (auto& n : instance_zombie) {
 
 	//
-	//for (auto& n : zonbie_vector)
+	//for (auto& n : instance_zombie)
 	//{
-	//	n->zonbie_run(zonbie_vector, ImPlayer, mousevelocity);
+	//	n->zonbie_run(instance_zombie, ImPlayer, mousevelocity);
 	//	n->ZonbieUpdate(animno, 1);
 	//	n->boids_attack(player_vector, n);
 	//}
@@ -399,7 +399,7 @@ void PlayerMgr::PlayerUpdate()
 	//if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_R))
 	//{
 	//	animno++;
-	//	for (auto& n : zonbie_vector) {
+	//	for (auto& n : instance_zombie) {
 	//		auto nn = n->GetModel();
 	//		unsigned int animnummax = nn->GetAnimationNum();
 	//		if (animno >= animnummax) {
@@ -423,6 +423,8 @@ void PlayerMgr::PlayerUpdate()
 	//	}
 	//}
 
+
+
 	for (int m = 0; m < gridnum; m++)
 	{
 		for (int n = 0; n < gridnum; n++)
@@ -433,22 +435,27 @@ void PlayerMgr::PlayerUpdate()
 	}
 
 
-	for (int i = 0; i < player_vector_num; i++)
+	for (int i = 0; i < HYUMANMAX; i++)
 	{
-		int column = CHeight_Map::GetInstance()->iPixSize / int((player_vector[i]->location.x + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
-		int row = CHeight_Map::GetInstance()->iPixSize / int((player_vector[i]->location.y + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
-		grid_vector[column][row].push_back(move(player_vector[i]));
+		
+			int column = CHeight_Map::GetInstance()->iPixSize / int((instance_hyuman.at(i).location.x + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
+			int row = CHeight_Map::GetInstance()->iPixSize / int((instance_hyuman.at(i).location.y + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
+			grid_vector[column][row].push_back(std::move((instance_hyuman.at(i))));
+		
 	}
-	for (int i = 0; i < zonbie_vector_num;i++)
+	instance_hyuman.clear();
+	for (int i = 0; i < ZOMBIEMAX;i++)
 	{
-		int zcolumn = CHeight_Map::GetInstance()->iPixSize / int((zonbie_vector[i]->location.x + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
-		int zrow = CHeight_Map::GetInstance()->iPixSize / int((zonbie_vector[i]->location.y + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
-		grid_zonbievector[zcolumn][zrow].push_back(move(zonbie_vector[i]));
-
+		
+			int zcolumn = CHeight_Map::GetInstance()->iPixSize / int((instance_zombie.at(i).location.x + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
+			int zrow = CHeight_Map::GetInstance()->iPixSize / int((instance_zombie.at(i).location.y + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
+			grid_zonbievector[zcolumn][zrow].push_back(move(instance_zombie.at(i)));
+			
 	}
-	player_vector.clear();
-	zonbie_vector.clear();
+	instance_zombie.clear();
 
+	static XMFLOAT4X4 phmat[HYUMANMAX];
+	int hyumancnt = 0;
 	for (int m = 0; m < gridnum; m++)
 	{
 		for (int n = 0; n < gridnum; n++)
@@ -466,7 +473,7 @@ void PlayerMgr::PlayerUpdate()
 					{
 						for (int i = 0; i < grid_zonbievector[m - 1][n].size(); i++)
 						{
-							shared_ptr<Player> buf = grid_zonbievector[m - 1][n].at(i);
+							Player buf = grid_zonbievector[m - 1][n].at(i);
 							buf_vec.push_back(buf);
 						}
 					}
@@ -474,7 +481,7 @@ void PlayerMgr::PlayerUpdate()
 					{
 						for (int i = 0; i < grid_zonbievector[m][n - 1].size(); i++)
 						{
-							shared_ptr<Player> buf = grid_zonbievector[m][n - 1].at(i);
+							Player buf = grid_zonbievector[m][n - 1].at(i);
 							buf_vec.push_back(buf);
 						}
 					}
@@ -482,7 +489,7 @@ void PlayerMgr::PlayerUpdate()
 					{
 						for (int i = 0; i < grid_zonbievector[m + 1][n].size(); i++)
 						{
-							shared_ptr<Player> buf = grid_zonbievector[m + 1][n].at(i);
+							Player buf = grid_zonbievector[m + 1][n].at(i);
 							buf_vec.push_back(buf);
 						}
 					}
@@ -490,7 +497,7 @@ void PlayerMgr::PlayerUpdate()
 					{
 						for (int i = 0; i < grid_zonbievector[m][n + 1].size(); i++)
 						{
-							shared_ptr<Player> buf = grid_zonbievector[m][n + 1].at(i);
+							Player buf = grid_zonbievector[m][n + 1].at(i);
 							buf_vec.push_back(buf);
 						}
 					}
@@ -501,7 +508,7 @@ void PlayerMgr::PlayerUpdate()
 					{
 						for (int i = 0; i < grid_vector[m - 1][n].size(); i++)
 						{
-							shared_ptr<Player> buf = grid_vector[m - 1][n].at(i);
+							Player buf = grid_vector[m - 1][n].at(i);
 							buf_pvec.push_back(buf);
 						}
 					}
@@ -509,7 +516,7 @@ void PlayerMgr::PlayerUpdate()
 					{
 						for (int i = 0; i < grid_vector[m][n - 1].size(); i++)
 						{
-							shared_ptr<Player> buf = grid_vector[m][n - 1].at(i);
+							Player buf = grid_vector[m][n - 1].at(i);
 							buf_pvec.push_back(buf);
 						}
 					}
@@ -517,7 +524,7 @@ void PlayerMgr::PlayerUpdate()
 					{
 						for (int i = 0; i < grid_vector[m + 1][n].size(); i++)
 						{
-							shared_ptr<Player> buf = grid_vector[m + 1][n].at(i);
+							Player buf = grid_vector[m + 1][n].at(i);
 							buf_pvec.push_back(buf);
 						}
 					}
@@ -525,23 +532,36 @@ void PlayerMgr::PlayerUpdate()
 					{
 						for (int i = 0; i < grid_vector[m][n + 1].size(); i++)
 						{
-							shared_ptr<Player> buf = grid_vector[m][n + 1].at(i);
+							Player buf = grid_vector[m][n + 1].at(i);
 							buf_pvec.push_back(buf);
 						}
 					}
 
 				}
 
-				grid_vector[m][n].at(i)->boid_run(buf_pvec, buf_vec);
-				grid_vector[m][n].at(i)->Update(false);
 
+				XMFLOAT4X4	world;
+				
+					//DX11MtxFromQt(world, g_enemy[i].GetRotation());
+
+					
+				
+				
+				grid_vector[m][n].at(i).boid_run(buf_pvec, buf_vec);
+				grid_vector[m][n].at(i).Update(false);
+
+				world = grid_vector[m][n].at(i).GetMtx();
+				phmat[hyumancnt] = world;
+				hyumancnt += 1;
 			}
 		}
 	}
+	cmodelinstance_hyuman.Update(phmat);
+	hyumancnt = 0;
 
-
+	static XMFLOAT4X4 zmat[ZOMBIEMAX];
 	static unsigned int animno = 0;
-
+	int zonbiecnt = 0;
 	for (int m = 0; m < gridnum; m++)
 	{
 		for (int n = 0; n < gridnum; n++)
@@ -560,7 +580,7 @@ void PlayerMgr::PlayerUpdate()
 					{
 						for (int i = 0; i < grid_zonbievector[m - 1][n].size(); i++)
 						{
-							shared_ptr<Player> buf = grid_zonbievector[m - 1][n].at(i);
+							Player buf = grid_zonbievector[m - 1][n].at(i);
 							buf_vec.push_back(buf);
 						}
 					}
@@ -568,7 +588,7 @@ void PlayerMgr::PlayerUpdate()
 					{
 						for (int i = 0; i < grid_zonbievector[m][n - 1].size(); i++)
 						{
-							shared_ptr<Player> buf = grid_zonbievector[m][n - 1].at(i);
+							Player buf = grid_zonbievector[m][n - 1].at(i);
 							buf_vec.push_back(buf);
 						}
 					}
@@ -576,7 +596,7 @@ void PlayerMgr::PlayerUpdate()
 					{
 						for (int i = 0; i < grid_zonbievector[m + 1][n].size(); i++)
 						{
-							shared_ptr<Player> buf = grid_zonbievector[m + 1][n].at(i);
+							Player buf = grid_zonbievector[m + 1][n].at(i);
 							buf_vec.push_back(buf);
 						}
 					}
@@ -584,7 +604,7 @@ void PlayerMgr::PlayerUpdate()
 					{
 						for (int i = 0; i < grid_zonbievector[m][n + 1].size(); i++)
 						{
-							shared_ptr<Player> buf = grid_zonbievector[m][n + 1].at(i);
+							Player buf = grid_zonbievector[m][n + 1].at(i);
 							buf_vec.push_back(buf);
 						}
 					}
@@ -595,7 +615,7 @@ void PlayerMgr::PlayerUpdate()
 					{
 						for (int i = 0; i < grid_vector[m - 1][n].size(); i++)
 						{
-							shared_ptr<Player> buf = grid_vector[m - 1][n].at(i);
+							Player buf = grid_vector[m - 1][n].at(i);
 							buf_pvec.push_back(buf);
 						}
 					}
@@ -603,7 +623,7 @@ void PlayerMgr::PlayerUpdate()
 					{
 						for (int i = 0; i < grid_vector[m][n - 1].size(); i++)
 						{
-							shared_ptr<Player> buf = grid_vector[m][n - 1].at(i);
+							Player buf = grid_vector[m][n - 1].at(i);
 							buf_pvec.push_back(buf);
 						}
 					}
@@ -611,7 +631,7 @@ void PlayerMgr::PlayerUpdate()
 					{
 						for (int i = 0; i < grid_vector[m + 1][n].size(); i++)
 						{
-							shared_ptr<Player> buf = grid_vector[m + 1][n].at(i);
+							Player buf = grid_vector[m + 1][n].at(i);
 							buf_pvec.push_back(buf);
 						}
 					}
@@ -619,25 +639,33 @@ void PlayerMgr::PlayerUpdate()
 					{
 						for (int i = 0; i < grid_vector[m][n + 1].size(); i++)
 						{
-							shared_ptr<Player> buf = grid_vector[m][n + 1].at(i);
+							Player buf = grid_vector[m][n + 1].at(i);
 							buf_pvec.push_back(buf);
 						}
 					}
 
 				}
-				grid_zonbievector[m][n].at(i)->zonbie_run(buf_vec, buf_pvec, mousevelocity);
-				grid_zonbievector[m][n].at(i)->ZonbieUpdate(animno, 1);
-				grid_zonbievector[m][n].at(i)->boids_attack(buf_pvec, grid_zonbievector[m][n].at(i), unique_enemy_bomb_vector);
+
+
+				// 敵更新
+				grid_zonbievector[m][n].at(i).zonbie_run(buf_vec, buf_pvec, mousevelocity);
+				grid_zonbievector[m][n].at(i).ZonbieUpdate(animno, 1);
+				grid_zonbievector[m][n].at(i).boids_attack(buf_pvec, grid_zonbievector[m][n].at(i), unique_enemy_bomb_vector);
+				XMFLOAT4X4	world;
+				world = grid_zonbievector[m][n].at(i).GetMtx();
+				//DX11MtxFromQt(world, g_enemy[i].GetRotation());
+
+				zmat[zonbiecnt] = world;
+				zonbiecnt += 1;
+
 			}
 		}
 	}
 
+	cmodelinstance_zombie.Update(zmat);
+	zonbiecnt = 0;
 	velocityflg = false;
 	scatterflg = false;
-
-
-
-
 
 
 	if (scattercnt == 0)
@@ -650,7 +678,7 @@ void PlayerMgr::PlayerUpdate()
 		{
 			for (int i = 0;i < grid_vector[m][n].size();i++)
 			{
-				player_vector.emplace_back(std::move(grid_vector[m][n].at(i)));
+				instance_hyuman.emplace_back(std::move(grid_vector[m][n].at(i)));
 			}
 		}
 
@@ -662,42 +690,41 @@ void PlayerMgr::PlayerUpdate()
 		{
 			for (int i = 0;i < grid_zonbievector[m][n].size();i++)
 			{
-				zonbie_vector.emplace_back(std::move(grid_zonbievector[m][n].at(i)));
+				instance_zombie.emplace_back(std::move(grid_zonbievector[m][n].at(i)));
 			}
 		}
 	}
 
-	for (int i = 0; i < unique_enemy_vector.size(); i++)
+	//for (int i = 0; i < unique_enemy_vector.size(); i++)
+	//{
+
+	//	unique_enemy_vector[i]->UEnemy_run(instance_zombie);
+	//	unique_enemy_vector[i]->Update();
+
+	//}
+
+	/*for (int i = 0; i < ENEMYMAX; i++)
 	{
-
-		unique_enemy_vector[i]->UEnemy_run(zonbie_vector);
-		unique_enemy_vector[i]->Update();
-
-	}
-
-	for (int i = 0; i < unique_enemy_bomb_vector_num; i++)
-	{
-		if (unique_enemy_bomb_vector.at(i)->GetHp() > 0)
+		if (instance_e_bomb.at(i).bstatus == Player::BSTATUS::LIVE)
 		{
-			unique_enemy_bomb_vector.at(i)->UEnemy_run(zonbie_vector);
-			unique_enemy_bomb_vector.at(i)->Update();
+			unique_enemy_bomb_vector.at(i).UEnemy_run(instance_zombie);
+			unique_enemy_bomb_vector.at(i).Update();
 		}
+	}*/
 
-	}
+	//for (int i = 0; i < unique_enemy_bomb_vector_num; i++)
+	//{
+	//	if (unique_enemy_bomb_vector.at(i).GetHp() <= 0)
+	//	{
+	//		unique_enemy_bomb_vector.at(i).UEDelete(i, unique_enemy_bomb_vector);
+	//		unique_enemy_bomb_vector_num--;
+	//	}
 
-	for (int i = 0; i < unique_enemy_bomb_vector_num; i++)
-	{
-		if (unique_enemy_bomb_vector.at(i)->GetHp() <= 0)
-		{
-			unique_enemy_bomb_vector.at(i)->UEDelete(i, unique_enemy_bomb_vector);
-			unique_enemy_bomb_vector_num--;
-		}
-
-	}
+	//}
 	//static XMFLOAT4X4 mat[ENEMYMAX];
 	//// 敵更新
 	//for (int i = 0; i < ENEMYMAX; i++) {
-	//	g_enemy[i].UEnemy_run(zonbie_vector);
+	//	g_enemy[i].UEnemy_run(instance_zombie);
 	//	g_enemy[i].Update();
 	//	XMFLOAT4X4	world;
 	//	world = g_enemy[i].GetMtx();;
@@ -705,6 +732,26 @@ void PlayerMgr::PlayerUpdate()
 	//
 	//	mat[i] = world;
 	//}
+		static XMFLOAT4X4 mat[ENEMYMAX];
+	// 敵更新
+	for (int i = 0; i < ENEMYMAX; i++) {
+		if (instance_e_bomb.at(i).bstatus == Player::BSTATUS::LIVE)
+		{
+			instance_e_bomb.at(i).UEnemy_run(instance_zombie);
+			instance_e_bomb.at(i).Update();
+		}
+		XMFLOAT4X4	world;
+		world = instance_e_bomb.at(i).GetMtx();;
+		//DX11MtxFromQt(world, g_enemy[i].GetRotation());
+	
+		mat[i] = world;
+	}
+	cmodelinstance_unique_enemy.Update(mat);
+
+
+
+
+	
 
 	// インスタンスバッファを更新
 //	g_air.Update(mat);
@@ -731,7 +778,7 @@ void PlayerMgr::PlayerUpdate()
 		ImGui::SetNextWindowSize(ImVec2(300, 400));
 		//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
 
-		ImGui::DragInt("zonbie_num",&zonbie_vector_num);
+		//ImGui::DragInt("zonbie_num",&instance_zombie_num);
 		ImGui::DragInt("player_num",&player_vector_num);
 		ImGui::End();
 		ImGui::PopStyleColor();
@@ -740,91 +787,91 @@ void PlayerMgr::PlayerUpdate()
 
 
 }
+//
+//void PlayerMgr::BoidsCreate(float x, float z)
+//{
+//	shared_ptr<Player> pl;
+//	pl = std::make_shared<Player>();
+//	pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::PLAYER)].modelname));
+//	pl->Init();
+//	if ((x == 0)&&(z == 0))
+//	{
+//		pl->boid_Init(pl->GetPos().x, pl->GetPos().z);
+//	}
+//	else
+//	{
+//		pl->boid_Init(x, z);
+//	}
+////	pl->SetScale(10.0f, 10.0f, 10.0f);
+//	player_vector.emplace_back(std::move(pl));
+//}
+//
+//void PlayerMgr::PlayerCreate()
+//{
+//	std::unique_ptr<Player> p;
+//	p = std::make_unique<Player>();
+//	p->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::BOX)].modelname));
+//	p->CharengerInit();
+//	p->boid_player_Init(p->GetPos().x, p->GetPos().z);
+////	p->inside = true;
+//	ImPlayer = std::move(p);
+//}
+//
+//void PlayerMgr::EnemyCreate()
+//{
+//	std::unique_ptr<Player> p;
+//	p = std::make_unique<Player>();
+//	p->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::BOX)].modelname));
+//	p->CharengerInit();
+//	p->boid_player_Init(p->GetPos().x, p->GetPos().z);
+//	
+//	ImEnemy = std::move(p);
+//}
+//
+//void PlayerMgr::BuildCreate(XMFLOAT3 pos)
+//{
+//	std::unique_ptr<Build> p;
+//	p = std::make_unique<Build>();
+//	p->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::BOX)].modelname));
+//	p->Init(pos);
+//	build_vector.emplace_back(std::move(p));
+//
+//}
+//
+//void PlayerMgr::ZonbieCreate()
+//{
+//	shared_ptr<Player> pl;
+//	pl = std::make_shared<Player>();
+//	pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::ONE)].modelname));
+//	pl->Init();
+//	pl->zonbie_Init(pl->GetPos().x, pl->GetPos().z);
+//	pl->SetScale(0.1f, 0.1f, 0.1f);
+//	instance_zombie_num++;
+//	instance_zombie.emplace_back(std::move(pl));
+//
+//}
 
-void PlayerMgr::BoidsCreate(float x, float z)
-{
-	shared_ptr<Player> pl;
-	pl = std::make_shared<Player>();
-	pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::PLAYER)].modelname));
-	pl->Init();
-	if ((x == 0)&&(z == 0))
-	{
-		pl->boid_Init(pl->GetPos().x, pl->GetPos().z);
-	}
-	else
-	{
-		pl->boid_Init(x, z);
-	}
-//	pl->SetScale(10.0f, 10.0f, 10.0f);
-	player_vector.emplace_back(std::move(pl));
-}
-
-void PlayerMgr::PlayerCreate()
-{
-	std::unique_ptr<Player> p;
-	p = std::make_unique<Player>();
-	p->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::BOX)].modelname));
-	p->CharengerInit();
-	p->boid_player_Init(p->GetPos().x, p->GetPos().z);
-//	p->inside = true;
-	ImPlayer = std::move(p);
-}
-
-void PlayerMgr::EnemyCreate()
-{
-	std::unique_ptr<Player> p;
-	p = std::make_unique<Player>();
-	p->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::BOX)].modelname));
-	p->CharengerInit();
-	p->boid_player_Init(p->GetPos().x, p->GetPos().z);
-	
-	ImEnemy = std::move(p);
-}
-
-void PlayerMgr::BuildCreate(XMFLOAT3 pos)
-{
-	std::unique_ptr<Build> p;
-	p = std::make_unique<Build>();
-	p->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::BOX)].modelname));
-	p->Init(pos);
-	build_vector.emplace_back(std::move(p));
-
-}
-
-void PlayerMgr::ZonbieCreate()
-{
-	shared_ptr<Player> pl;
-	pl = std::make_shared<Player>();
-	pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::ONE)].modelname));
-	pl->Init();
-	pl->zonbie_Init(pl->GetPos().x, pl->GetPos().z);
-	pl->SetScale(0.1f, 0.1f, 0.1f);
-	zonbie_vector_num++;
-	zonbie_vector.emplace_back(std::move(pl));
-
-}
-
-void PlayerMgr::UEnemyCreate()
-{
-	shared_ptr<UniqueEnemy> pl;
-	pl = std::make_shared<UniqueEnemy>();
-	pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::BOX)].modelname));
-	pl->Init();
-	unique_enemy_vector_num++;
-	unique_enemy_vector.emplace_back(std::move(pl));
-}
+//void PlayerMgr::UEnemyCreate()
+//{
+//	shared_ptr<UniqueEnemy> pl;
+//	pl = std::make_shared<UniqueEnemy>();
+//	pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::BOX)].modelname));
+//	pl->Init();
+//	unique_enemy_vector_num++;
+//	unique_enemy_vector.emplace_back(std::move(pl));
+//}
 
 void PlayerMgr::UEnemyBombCreate()
 {
-	shared_ptr<UniqueEnemy_Bomb> pl;
-	pl = std::make_shared<UniqueEnemy_Bomb>();
-	pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::PLAYER)].modelname));
-	//pl->SetInstanceModel(InstanceModelMgr::GetInstance().GetInstanceModelPtr(Scean::GetInstance()->g_modelinstancelist[static_cast<int>(Scean::MODELIID::PLAYER)].modelname));
-	
-	pl->Init();
-	
-	unique_enemy_bomb_vector_num++;
-	unique_enemy_bomb_vector.emplace_back(std::move(pl));
+	//shared_ptr<UniqueEnemy_Bomb> pl;
+	//pl = std::make_shared<UniqueEnemy_Bomb>();
+	//pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::PLAYER)].modelname));
+	////pl->SetInstanceModel(InstanceModelMgr::GetInstance().GetInstanceModelPtr(Scean::GetInstance()->g_modelinstancelist[static_cast<int>(Scean::MODELIID::PLAYER)].modelname));
+	//
+	//pl->Init();
+	//
+	//unique_enemy_bomb_vector_num++;
+	//unique_enemy_bomb_vector.emplace_back(std::move(pl));
 }
 
 

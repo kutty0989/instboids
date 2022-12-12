@@ -79,7 +79,7 @@ void Game::GameInit() {
 	DirectX::XMFLOAT3 eye(0, 100, -50);		// カメラの位置
 	DirectX::XMFLOAT3 lookat(0, -10, 0);		// 注視点
 	DirectX::XMFLOAT3 up(0,  1, 0);			// カメラの上向きベクトル
-	
+
 	CCamera::GetInstance()->Init(
 		10.0f,							// ニアクリップ
 		10000.0f,						// ファークリップ
@@ -90,7 +90,7 @@ void Game::GameInit() {
 
 	// 平行光源をセット
 	DX11LightInit(
-		DirectX::XMFLOAT4(1, 1, -1, 0));
+		DirectX::XMFLOAT4(0, 10, 1, 0));
 
 	// DIRECTINPUT初期化
 	CDirectInput::GetInstance().Init(

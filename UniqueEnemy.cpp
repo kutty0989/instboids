@@ -117,22 +117,41 @@ void UniqueEnemy::Update()
 		boid_accel = 0;
 	}
 
+	
+	DX11MtxIdentity(scale);
+	DX11MtxIdentity(trans);
+	DX11MtxIdentity(rot);
+	DX11MtxIdentity(world);
+
+	scale._11 = 5.0f;
+	scale._22 = 5.0f;
+	scale._33 = 5.0f;
+
 	angle.y = -GetKakudo(angley.x, angley.y);
 	angle.y += 180.0f;
 	if (angle.y < 360)
 	{
 		angle.y -= 360.0f;
 	}
+	float ang = angle.y;
+	SetAngle();
+	angle.y -= b_angle;
+	b_angle = ang;
+
+	DX11MtxMultiply(world, scale, rot);
 
 	m_pos.x = location.x;
 	m_pos.z = location.y;
 
-	SetAngle();
-	//SetScale(3.0f, 3.0f, 3.0f);
-	m_mtx._41 = m_pos.x;
-	m_mtx._42 = m_pos.y + 4.0f;
-	m_mtx._43 = m_pos.z;
+	trans._41 = m_pos.x;
+	trans._42 = m_pos.y + 4.0f;
+	trans._43 = m_pos.z;
 
+	world._41 = trans._41;
+	world._42 = trans._42;
+	world._43 = trans._43;
+
+	m_mtx = world;
 	
 	if (b_animecnt != manime.animecnt)
 	{

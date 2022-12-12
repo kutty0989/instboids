@@ -289,7 +289,9 @@ void  Seiha::Update(uint64_t dt) {
 	
 
 	MouseCircle::GetInstance()->Update();
-	CCamera::GetInstance()->Update(PlayerMgr::GetInstance()->ImPlayer->GetMtx());
+	XMFLOAT4X4 mat;
+	DX11MtxIdentity(mat);
+	CCamera::GetInstance()->Update(mat);
 	
 }
 void Seiha::Draw() 

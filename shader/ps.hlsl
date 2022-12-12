@@ -158,6 +158,7 @@ float4 main(VS_OUTPUT input) : SV_Target
 {
     float4 N = input.Normal;
     float4 L = LightDirection;
+    N = (1.0f, 1.0f, 1.0f, 1.0f);
     N.w = 0.0f; // 法線はベクトルなのでＷの値を０にする。
     L.w = 0.0f; // 光の方向はベクトルなのでＷの値を０にする。
 

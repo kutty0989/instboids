@@ -4,6 +4,7 @@
 #include"CDirectInput.h"
 
 bool CCamera::blowflg = false;
+
 void CCamera::FPSCamera(XMFLOAT3 pos, XMFLOAT3 axisz, XMFLOAT3 axisy)
 {
 	//注視点を計算
@@ -28,6 +29,7 @@ void CCamera::FPSCamera(XMFLOAT3 pos, XMFLOAT3 axisz, XMFLOAT3 axisy)
 	CCamera::GetInstance()->SetLookat(lookat);///注視点をセット
 	CCamera::GetInstance()->SetEye(eye);//カメラの位置をセット
 	CCamera::GetInstance()->SetUp(up);//カメラの上向きをセット
+
 
 	CCamera::GetInstance()->CreateCameraMatrix();//ビュー変換行列を作成
 
@@ -157,13 +159,15 @@ void CCamera::TPSCamera(XMFLOAT3 pos, XMFLOAT3 axisz, XMFLOAT3 axisy)
 	}
 
 
-	//カメラクラスにセット
-	CCamera::GetInstance()->SetLookat(lookat);///注視点をセット
-	CCamera::GetInstance()->SetEye(eye);//カメラの位置をセット
-	CCamera::GetInstance()->SetUp(up);//カメラの上向きをセット
 
-	CCamera::GetInstance()->CreateViewMatrix();
-	CCamera::GetInstance()->CreateCameraMatrix();//ビュー変換行列を作成
+		//カメラクラスにセット
+		CCamera::GetInstance()->SetLookat(lookat);///注視点をセット
+		CCamera::GetInstance()->SetEye(eye);//カメラの位置をセット
+		CCamera::GetInstance()->SetUp(up);//カメラの上向きをセット
+
+		CCamera::GetInstance()->CreateViewMatrix();
+		CCamera::GetInstance()->CreateCameraMatrix();//ビュー変換行列を作成
+	
 
 }
 

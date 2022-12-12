@@ -26,27 +26,27 @@ public:
 
 	bool Init();
 
-	void Draw(std::vector<shared_ptr<Player>>& zonbie_vector);
+	void Draw(std::vector<Player>& zonbie_vector);
 
 	void Update();
 
-	void UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector);
+	void UEnemy_run(std::vector<Player>& zonbie_vector);
 
-	void UEnemy_flock(std::vector<shared_ptr<Player>>& zonbie_vector);
+	void UEnemy_flock(std::vector<Player>& zonbie_vector);
 
 	void UEnemy_update();
 
 	Pvector UEnemy_Search();
 
-	Pvector UEnemy_Separation(std::vector<shared_ptr<Player>>& zonbie_vector);
+	Pvector UEnemy_Separation(std::vector<Player>& zonbie_vector);
 
-	Pvector UEnemy_Attack(std::vector<shared_ptr<Player>>& zonbie_vector);
+	Pvector UEnemy_Attack(std::vector<Player>& zonbie_vector);
 	
-	void UEnemy_Dmg(std::vector<shared_ptr<Player>>& zonbie_vector);
+	void UEnemy_Dmg(std::vector<Player>& zonbie_vector);
 
 	int UEnemy_GetAnime();
 
-	void  UEDelete(float arraynum, std::vector<std::shared_ptr< UniqueEnemy_Bomb>>& Player_Vector1);
+	void  UEDelete(float arraynum, std::vector<UniqueEnemy_Bomb>& Player_Vector1);
 
 
 	void SetModel(CModel* model)
