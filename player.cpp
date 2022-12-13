@@ -208,7 +208,7 @@ void Player::zonbie_Init(float x, float y, int nowzombiecnt)
 	CohW = 1.0;
 
 	boidshp.Init();
-	if (ZOMBIE <= nowzombiecnt)
+	if (ZOMBIE >= nowzombiecnt)
 	{
 		bstatus = BSTATUS::LIVE;
 		hp = zonbiehp;
@@ -549,9 +549,9 @@ void Player::boids_attack(std::vector<Player>& player_vector, Player& zonbie, st
 			float dd = i.location.distance(zonbie.location);					
 
 			//hpå∏éYèàóù
-			if (dd < zombirange)
+			if (dd < zombirange*40)
 			{
-				i.hp -= damage;
+				i.hp = 0;
 
 			}
 		}
