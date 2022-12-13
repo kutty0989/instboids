@@ -31,8 +31,8 @@ public:
 	std::vector <Player*> instance_vector;//“G‚Ì”ÍˆÍ“à‚Ìboids
 	std::vector<shared_ptr<Build>> build_vector;//Œš•¨
 	
-	std::vector<Player> buf_vec; 
-	std::vector<Player> buf_pvec;
+	std::vector<Player*> buf_vec; 
+	std::vector<Player*> buf_pvec;
 	std::shared_ptr<Player> ImPlayer;
 	std::shared_ptr<Player> ImEnemy;
 

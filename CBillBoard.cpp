@@ -152,7 +152,7 @@ void CBillBoard::Draw()
 
 	//4角形描画
 	devcontext->VSSetShader(m_pVertexShader, nullptr, 0);//頂点シェーダーをセット
-
+	devcontext->GSSetShader(nullptr, nullptr, 0);
 	devcontext->HSSetShader(nullptr, nullptr, 0);
 	devcontext->DSSetShader(nullptr, nullptr, 0);
 	devcontext->PSSetShader(m_pPixelShader, nullptr, 0);//ピクセルシェーダーをせっと

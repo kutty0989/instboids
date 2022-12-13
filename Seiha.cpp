@@ -308,13 +308,14 @@ void Seiha::Draw()
 	g_ground.Draw();
 
 	BillBoardMgr::GetInstance()->Draw();
+//	BoidsHp::GetInstance()->Draw();
 
 	PlayerMgr::GetInstance()->Draw();
 	
 	
 	//fire.DrawBillBoard(CCamera::GetInstance()->GetCameraMatrix());
 	
-	//BoidsHp::GetInstance()->Draw();
+	
 	MouseCircle::GetInstance()->Draw();
 
 

@@ -40,6 +40,7 @@ void BoidsHp::Update(XMFLOAT3 pos)
 
 void BoidsHp::Draw()
 {
+
 	//m_texture->Draw();
 	m_bill->DrawBillBoard(CCamera::GetInstance()->GetCameraMatrix());
 }

@@ -13,7 +13,7 @@
 class UniqueEnemy_Bomb;
 #define		ENEMYMAX		10
 #define		ZOMBIEMAX		100
-#define		ZOMBIE		    10
+#define		ZOMBIE		    1
 #define		HYUMANMAX		100
 
 
@@ -21,7 +21,7 @@ class Player :public GameObject {
 private:
 
 
-	//CModel* m_model;						// ３Ｄモデル
+	CModel* m_model;						// ３Ｄモデル
 	CModelInstance* m_instancemodel;						// ３Ｄモデル
 	BoidsHp boidshp; //hpbarのビルボード
 	float anglecos;
@@ -136,10 +136,10 @@ public:
 		m_mtx._33 = z;
 	}
 
-	//void SetModel(CModel* model)
-	//{
-	//	m_model = model;
-	//}
+	void SetModel(CModel* model)
+	{
+		m_model = model;
+	}
 	void SetInstanceModel(CModelInstance* model)
 	{
 		m_instancemodel = model;
@@ -209,7 +209,8 @@ public:
 	bool awayflg = false;//追いかけてどこかへいくフラグ
 	bool zexplosionflg = false;
 	int initZombie;
-
+	bool reborn_flg = false;
+	XMFLOAT2 rebornpos;
 	enum class Follow
 	{
 		FREE,
@@ -242,29 +243,29 @@ public:
 	/// <param name="arraynum">要素番号</param>
 	/// <param name="Player_Vector1"></param>
 	/// <param name="Player_Vector2"></param>
-	void Move_And_Delete(float arraynum, std::vector<Player>& Player_Vector1, std::vector<Player>& Player_Vector2);
+	void Move_And_Delete(float arraynum, std::vector<Player*> Player_Vector1, std::vector<Player*> Player_Vector2);
 
-	void Delete(float arraynum, std::vector<Player>& Player_Vector1);
+	void Delete(float arraynum, std::vector<Player*> Player_Vector1);
 
 	/// <summary>
 	/// 分離　近づきすぎたら離れるように
 	/// </summary>
 	/// <param name="Player_Vector">boidsの配列</param>
 	/// <returns>方向ベクトル</returns>
-	Pvector boid_Separation(std::vector<Player>& player_vector, std::vector<Player>& zonbie_vector);
+	Pvector boid_Separation(std::vector<Player*> player_vector, std::vector<Player*> zonbie_vector);
 	/// <summary>
 	/// 分離　プレイヤーの範囲にいるboidsが近づきすぎないように
 	/// </summary>
 	/// <param name="Player_Vector"></param>
 	/// <param name="implayer"></param>
 	/// <returns></returns>
-	Pvector boid_inSeparation(std::vector<Player>& player_vector);
+	Pvector boid_inSeparation(std::vector<Player*> player_vector);
 	/// <summary>
 	/// 整列 周りと速度と方向を合わせる
 	/// </summary>
 	/// <param name="Player_Vector"></param>
 	/// <returns></returns>
-	Pvector boid_Alignment(std::vector<Player>& player_vector);
+	Pvector boid_Alignment(std::vector<Player*> player_vector);
 
 	/// <summary>
 		/// プレイヤーの範囲にいるboidsがプレイヤーの速度と方向を合わせる
@@ -279,7 +280,7 @@ public:
 	/// </summary>
 	/// <param name="player_vector"></param>
 	/// <returns></returns>
-	Pvector boid_zonbieAway(std::vector<Player>& human_vector);
+	Pvector boid_zonbieAway(std::vector<Player*> human_vector);
 
 	/// <summary>
 	/// 探索　うろうろする
@@ -292,7 +293,7 @@ public:
 	/// </summary>
 	/// <param name="Player_Vector"></param>
 	/// <returns></returns>
-	Pvector boid_Cohesion(std::vector<Player>& player_vector);
+	Pvector boid_Cohesion(std::vector<Player*> player_vector);
 
 	/// <summary>
 	/// 分散　ゾンビがマウスの場所から離れていく
@@ -305,7 +306,7 @@ public:
 	/// <param name="Player_Vector"></param>
 	/// <param name="implayer"></param>
 	/// <returns></returns>
-	Pvector boid_inCohesion(std::vector<Player>& player_vector);
+	Pvector boid_inCohesion(std::vector<Player*> player_vector);
 	//Functions involving SFML and visualisation linking
 
 	/// <summary>
@@ -320,13 +321,13 @@ public:
 	/// <param name="Player_Vector"></param>
 	/// <param name="implayer"></param>
 	/// <returns></returns>
-	Pvector boid_view(std::vector<Player>& player_vector);
+	Pvector boid_view(std::vector<Player*> player_vector);
 	/// <summary>
 	/// mgrクラスで呼び出す関数　updateを纏めた物
 	/// </summary>
 	/// <param name="Player_Vector"></param>
 	/// <param name="implayer"></param>
-	void boid_run(std::vector<Player>& player_vector, std::vector<Player>& zonbie_vector);
+	void boid_run(std::vector<Player*> player_vector, std::vector<Player*> zonbie_vector);
 
 	/// <summary>
 	/// mgrクラスで呼び出す関数　updateを纏めた物
@@ -334,7 +335,7 @@ public:
 	/// <param name="player_vector"></param>
 	/// <param name="human_vector"></param>
 	/// <param name="mousevec"></param>
-	void zonbie_run(std::vector<Player>& player_vector, std::vector<Player>& human_vector, Pvector mousevec);
+	void zonbie_run(std::vector<Player*> player_vector, std::vector<Player*> human_vector, Pvector mousevec);
 	/// <summary>
 	/// 速度を元にboidsの位置を更新
 	/// </summary>
@@ -344,12 +345,12 @@ public:
 	/// </summary>
 	/// <param name="Player_Vector"></param>
 	/// <param name="implayer"></param>
-	void boid_flock(std::vector<Player>& player_vector, std::vector<Player>& zonbie_vector);
+	void boid_flock(std::vector<Player*> player_vector, std::vector<Player*> zonbie_vector);
 
 	/// <summary>
 	/// ゾンビに各ルールを適用し重みづけ
 	/// </summary>
-	void zonbie_flock(std::vector<Player>& zonbie_vector, std::vector<Player>& human_vector, Pvector mousevec);
+	void zonbie_flock(std::vector<Player*> zonbie_vector, std::vector<Player*> human_vector, Pvector mousevec);
 	/// <summary>
 	/// 画面外に出たときに反対の画面から出るように
 	/// </summary>
@@ -364,7 +365,7 @@ public:
 	/// <returns></returns>
 	float boid_angle(const Pvector& v);
 
-	void boids_attack(std::vector<Player>& player_vector, Player& zonbie, std::vector<UniqueEnemy_Bomb>& unique_enemy_vector);
+	void boids_attack(std::vector<Player*>& player_vector, Player& zonbie, std::vector<UniqueEnemy_Bomb>& unique_enemy_vector);
 
 	Pvector zonbie_damage();
 
