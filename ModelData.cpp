@@ -224,7 +224,7 @@ void ModelData::Draw(ID3D11DeviceContext* devcon, XMFLOAT4X4& mtxworld)
 		m_meshes[i].Draw(devcon);
 	}
 }
-
+//test
 //void ModelData::Drawinstance(ID3D11DeviceContext* devcon)
 //{
 //	// アニメーションデータを持っているか？
