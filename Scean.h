@@ -148,7 +148,7 @@ public:
 
 	std::vector<ModelDataInstanceList>  g_modelinstancelist = {
 		//{MODELIID::PLAYER,100,"assets/f1.x.dat","shader/vs.hlsl","shader/ps.hlsl","assets/3danime/"},
-		{MODELIID::PLAYER,100,"assets/3danime/Warzombie F Pedroso.fbx","shader/vsinstance.fx", "shader/ps.fx","assets/3danime/Ch21_1001_Diffuse.png"},
+		//{MODELIID::PLAYER,100,"assets/3danime/Warzombie F Pedroso.fbx","shader/vsinstance.fx", "shader/ps.fx","assets/3danime/Ch21_1001_Diffuse.png"},
 	//{MODELID::ONE,zonbie, "shader/vsoneskin.fx", "shader/ps.fx","assets/"},
 		//{MODELID::HUMAN,"assets/dice/PlayerBox.x","shader/vs.hlsl","shader/ps.hlsl","assets/dice/"},
 

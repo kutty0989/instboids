@@ -745,10 +745,11 @@ void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player
 	//これらの力を任意に重み付けする
 	//cen.mulScalar(CohW);
 	sep.mulScalar(SepW);
-	ali.mulScalar(AliW); // さまざまな特性の重みを変更する必要がある場合があります
+
 	coh.mulScalar(CohW);
 	awa.mulScalar(1.0f);
 	dmg.mulScalar(3.0f);
+	ali.mulScalar(AliW); // さまざまな特性の重みを変更する必要がある場合があります
 	//
 	//  力ベクトルを加速度に加える
 	if (zexplosionflg)
@@ -1052,6 +1053,7 @@ Pvector Player::boid_zonbieAlignment(Pvector mousepos)
 		{
 			vel = { 0,0 };
 			desired = { 0,0 };
+			velocity = { 0,0 };
 
 			ali_vel = mousepos;
 			acceleration = { ali_vel.x,ali_vel.y };

@@ -122,6 +122,8 @@ void UniqueEnemy_Bomb::Update()
 			boid_accel = 0;
 		}
 
+		sepcnt -= 1;
+		if (sepcnt < 0)sepcnt = 0;
 	
 	
 		DX11MtxIdentity(scale);
@@ -306,6 +308,7 @@ Pvector UniqueEnemy_Bomb::UEnemy_Separation(std::vector<Player>& zonbie_vector)
 		uesteer.normalize();
 		boid_accel = 2.5f;
 		uesteer.limit(maxForce);
+		sepcnt = 300;
 	}
 	return uesteer;
 }
@@ -322,12 +325,15 @@ Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<Player>& zonbie_vector)
 	{
 		for (auto& it : zonbie_vector)
 		{
-			float d = location.distance(it.location);
-			if (d < before_distanse) {
-				before_distanse = d;
-				nearplayer = it.location;
-				zpos = XMFLOAT3(it.m_mtx._41,it.m_mtx._42,it.m_mtx._43);
-				
+			if (it.bstatus == Player::BSTATUS::LIVE)
+			{
+				float d = location.distance(it.location);
+				if (d < before_distanse) {
+					before_distanse = d;
+					nearplayer = it.location;
+					zpos = XMFLOAT3(it.m_mtx._41, it.m_mtx._42, it.m_mtx._43);
+
+				}
 			}
 		}
 

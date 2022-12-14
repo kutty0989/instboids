@@ -271,7 +271,6 @@ void PlayerMgr::PlayerUpdate()
 				instance_zombie.at(i).bstatus = Player::BSTATUS::DEAD;
 			}
 		}
-
 	}
 
 
@@ -297,16 +296,7 @@ void PlayerMgr::PlayerUpdate()
 		}
 		else 
 		{
-			
-			////ainstance_hyuman.at(i).Update(false);
-			//for (int a = 0; a < ZOMBIEMAX; a++)
-			//{
-			//	if (instance_zombie.at(a).bstatus == Player::BSTATUS::DEAD)
-			//	{
-			//		instance_zombie.at(a).zombie_reborn(instance_hyuman.at(i).location.x, instance_hyuman.at(i).location.y);
-			//		break;
-			//	}
-			//}
+	
 			grid_bufvector.emplace_back(std::move((instance_hyuman.at(i))));
 		}
 	}

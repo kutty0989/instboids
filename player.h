@@ -12,9 +12,9 @@
 
 class UniqueEnemy_Bomb;
 #define		ENEMYMAX		10
-#define		ZOMBIEMAX		100
-#define		ZOMBIE		    1
-#define		HYUMANMAX		100
+#define		ZOMBIEMAX		500
+#define		ZOMBIE		    10
+#define		HYUMANMAX		400
 
 
 class Player :public GameObject {
@@ -197,6 +197,7 @@ public:
 	int zonbieanime = 0;//現在のアニメーション番号
 	int anglecnt = 0;//一定カウントごとに角度を変える
 	int awaycnt = 0;//速度を落とさず動く時間
+	int sepcnt = 0;
 	float boid_accel;//速度倍率
 	bool champion;//動かすキャラ
 	bool predator;//敵かどうかのフラグ
