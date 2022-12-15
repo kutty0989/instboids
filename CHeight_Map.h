@@ -153,7 +153,7 @@ public:
 	/// <param name="pad_rigx"></param>
 	/// <param name="pad_rigy"></param>
 	/// <returns></returns>
-	double GetGoHeightColor(XMFLOAT2 playerpos,float pad_rigx,float pad_rigy);
+	double GetGoHeightColor(XMFLOAT2 playerpos,float anglex,float angley);
 
 
 

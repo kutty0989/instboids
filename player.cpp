@@ -302,8 +302,6 @@ void Player::Update(bool input) {
 
 	if (bstatus == BSTATUS::LIVE)
 	{
-		Ground::GetInstance()->GetPlayerHeight(*this);
-
 		boid_borders();
 
 
@@ -318,7 +316,7 @@ void Player::Update(bool input) {
 		{
 			boid_accel = 1.0f;
 		}
-
+		if (boid_accel > 4.0f)boid_accel = 4.0f;
 
 		DX11MtxIdentity(scale);
 		DX11MtxIdentity(trans);
@@ -330,12 +328,20 @@ void Player::Update(bool input) {
 		scale._33 = 2.0f;
 
 		angle.y = 0.0f;
+		angley.x = velocity.x;
+		angley.y = velocity.y;
 		angle.y = -GetAtan(velocity.x, velocity.y);
 		angle.y -= 90.0f;
 		float ang = angle.y;
 		SetAngle();
 		angle.y -= b_angle;
 		b_angle = ang;
+
+
+		Ground::GetInstance()->GetPlayerHeight(*this);
+		velocity.mulScalar(boid_accel);
+		location.addVector(velocity);
+	
 
 		DX11MtxMultiply(world, scale, rot);
 
@@ -450,6 +456,7 @@ void Player::ZonbieUpdate(int animenum, int i)
 		trans._41 = m_pos.x;
 		trans._42 = m_pos.y + 4.0f;
 		trans._43 = m_pos.z;
+
 
 	
 
@@ -779,8 +786,8 @@ void Player::boid_update()
 		//  制限速度
 		velocity.mulScalar(hyumanmaxspeed);
 		//velocity.limit(hyumanmaxspeed);
-		velocity.mulScalar(boid_accel);
-		location.addVector(velocity);
+	
+
 		// 各サイクルで加速度を 0 にリセットする
 		acceleration.mulScalar(0);
 	}
@@ -1599,7 +1606,7 @@ void Player::SetNum()
 {
 
 	//人間の速さ
-	 hyumanmaxspeed = 1.5f;//1.5
+	 hyumanmaxspeed = 0.5f;//1.5
 	 hyumanrandspeed = 5.0f;//5
 
 	//hyumanali

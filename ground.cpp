@@ -116,7 +116,7 @@ void Ground::Update()
 	}
 
 }
-static int cnt = 0;
+ 
 
 void Ground::GetPlayerHeight(Player& player)
 {
@@ -125,23 +125,54 @@ void Ground::GetPlayerHeight(Player& player)
 
 		//debuglog(player.GetPos().x + GetWidthHeight() / 2);
 		//debuglog(player.Getpad_rig().x);
-	gocol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-		PlayerMgr::GetInstance()->Getpad_rig().x, PlayerMgr::GetInstance()->Getpad_rig().y);
+	gocol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x/ scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z/ scaling),
+		player.angley.x*10.0f, player.angley.y*10.0f);
 
 	defcol = gocol - col;
-	if (cnt == 0)
+
+	float teihen = sqrtf((player.angley.x * 10.0f * player.angley.x * 10.0f) + (player.angley.y * 10.0f * player.angley.y * 10.0f));
+
+	goangle = GetAtan(teihen, defcol*90.0f);
+
+	{	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
+	ImGui::Begin("col");
+
+	ImGui::SetNextWindowSize(ImVec2(300, 400));
+	float cccol = col;
+	float goocol = gocol;
+	float posx = player.GetPos().x / scaling + (GetWidthHeight() / 2);
+	float posy = GetWidthHeight() / 2 - player.GetPos().z / scaling;
+	float posxx = player.GetPos().x / scaling + (GetWidthHeight() / 2) + player.angley.x * 10.0f;
+	float posyy = GetWidthHeight() / 2 - player.GetPos().z / scaling - player.angley.y * 10.0f;
+	ImGui::DragFloat("col", &cccol);
+	ImGui::DragFloat("gocol", &goocol);
+	ImGui::DragFloat("anglex", &player.angley.x);
+	ImGui::DragFloat("angley", &player.angley.y);
+	ImGui::DragFloat("posx", &posx);
+	ImGui::DragFloat("posy", &posy);
+	ImGui::DragFloat("posxx", &posxx);
+	ImGui::DragFloat("posyy", &posyy);
+	ImGui::DragFloat("goangle", &goangle);
+	ImGui::DragFloat("accel", &player.boid_accel);
+
+	ImGui::End();
+	ImGui::PopStyleColor();
+	ImGui::PopStyleColor();
+
+	}
+	if (player.groundcnt == 0)
 	{
 		//player.SetAPower(cosvalues[(int)goangle]);
 		if (goangle >= 0)
 		{
-			player.SetAPower(cosC);
+			
+			player.boid_accel*=  cos(3.14 * goangle / 180);
 		}
 		if (goangle < 0)
 		{
-			sinC = sinC + 1.0f;
-			//float value = abs(goangle);
-			//value = sinvalues[(int)value] + 1;*/
-			player.SetAPower(sinC);
+			goangle = abs(goangle);
+			player.boid_accel *=1+ sin(3.14 * goangle / 180);
 		}
 	}
 	else
@@ -149,15 +180,19 @@ void Ground::GetPlayerHeight(Player& player)
 		player.SetAPower(1.0f);
 	}
 
-	float teihen = sqrtf((PlayerMgr::GetInstance()->Getpad_rig().x * PlayerMgr::GetInstance()->Getpad_rig().x) + (PlayerMgr::GetInstance()->Getpad_rig().y * PlayerMgr::GetInstance()->Getpad_rig().y));
-	goangle = GetAtan(teihen * 0.05f, defcol * CHeight_Map::GetInstance()->g_hight);
-	defcol *= 0.2f;
-	if (abs(defcol) > 1.0f)
+	
+	//defcol *= 0.2f;
+	//if (abs(defcol) > 1.0f)
+	//{
+	//	defcol = 1.0f;
+	//}
+//	cosC = GetcosC(teihen * 0.05f, defcol * CHeight_Map::GetInstance()->g_hight);
+	//sinC = GetsinC(teihen * 0.05f, defcol * CHeight_Map::GetInstance()->g_hight);
+	player.groundcnt++;
+	if (player.groundcnt > 3)
 	{
-		defcol = 1.0f;
+		player.groundcnt = 0;
 	}
-	cosC = GetcosC(teihen * 0.05f, defcol * CHeight_Map::GetInstance()->g_hight);
-	sinC = GetsinC(teihen * 0.05f, defcol * CHeight_Map::GetInstance()->g_hight);
 
 	player.SetPos(XMFLOAT3(player.GetPos().x, col * CHeight_Map::GetInstance()->g_hight, player.GetPos().z));//ƒvƒŒƒCƒ„[‚Ì‚™‚Ì‚‚³‚ğ•Ï‚¦‚Ä‚é
 

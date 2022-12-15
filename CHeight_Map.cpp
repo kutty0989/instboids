@@ -820,10 +820,10 @@ double CHeight_Map::GetHeightColor(XMFLOAT2 playerpos)
 }
 
 
-double CHeight_Map::GetGoHeightColor(XMFLOAT2 playerpos,float pad_rigx, float pad_rigy)
+double CHeight_Map::GetGoHeightColor(XMFLOAT2 playerpos,float anglex, float angley)
 {
-	float to_pposx = playerpos.x + pad_rigx*0.05f;
-	float to_pposy = playerpos.y - pad_rigy* 0.05f;
+	float to_pposx = playerpos.x + anglex;
+	float to_pposy = playerpos.y - angley;
 	double tocol =  GetHeightColor(XMFLOAT2(to_pposx,to_pposy));//行先のカラー　高さ
 
 	return tocol;

@@ -11,10 +11,10 @@
 //#include"UniqueEnemy_Bomb.h"
 
 class UniqueEnemy_Bomb;
-#define		ENEMYMAX		10
-#define		ZOMBIEMAX		500
-#define		ZOMBIE		    10
-#define		HYUMANMAX		400
+#define		ENEMYMAX		1
+#define		ZOMBIEMAX		2
+#define		ZOMBIE		    1
+#define		HYUMANMAX		100
 
 
 class Player :public GameObject {
@@ -41,10 +41,11 @@ private:
 	Pvector vel;
 	Pvector ali_vel;//フリック操作のベクトル
 
-	XMFLOAT2 angley;//角度保存用
+	
 
 
 public:
+	XMFLOAT2 angley;//角度保存用
 	XMFLOAT4X4 rot = {};
 	XMFLOAT4X4 scale = {};
 	XMFLOAT4X4 trans = {};
@@ -191,6 +192,7 @@ public:
 
 	
 public:
+	int groundcnt = 0;
 	float beforeangley;
 	XMFLOAT3 angle{ 0,0,0 };
 	int hp = 3;
