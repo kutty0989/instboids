@@ -745,7 +745,7 @@ void PlayerMgr::PlayerUpdate()
 				{
 					if (instance_zombie.at(a).bstatus == Player::BSTATUS::DEAD)
 					{
-						instance_zombie.at(a).zombie_reborn(instance_hyuman.at(i).GetMtx()._41, instance_hyuman.at(i).GetMtx()._43);
+						instance_zombie.at(a).zombie_reborn(instance_hyuman.at(i).GetMtx()._41, instance_hyuman.at(i).GetMtx()._42, instance_hyuman.at(i).GetMtx()._43);
 
 						break;
 					}

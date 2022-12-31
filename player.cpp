@@ -98,6 +98,10 @@ bool Player::hsepflg = false;
  //集合速度
   float Player:: cohspeed;//１．０
 
+  //zombieaway
+  float Player::zombiawayspeed;//1.5
+  float Player::zombieawaytime;//１０
+
  //ゾンビとのダメージ距離
   float Player:: zombirange;//15
   float Player:: damage;//１．０
@@ -182,7 +186,7 @@ void Player::boid_Init(float x, float y)
 	desSep = 15;
 	desAli = 55;
 	desCoh = 20;
-	SepW = 1.5;
+	SepW = 1.0;
 	AliW = 1.0;
 	CohW = 0.2;
 
@@ -238,7 +242,7 @@ void Player::boid_player_Init(float x, float y)
 	desSep = 5;
 	desAli = 40;
 	desCoh = 50;
-	SepW = 1.5;
+	SepW = 1.0;
 	AliW = 1.0;
 	CohW = 0.2;
 
@@ -258,19 +262,19 @@ void Player::follow_Init()
 	desSep = 15;
 	desAli = 40;
 	desCoh = 50;
-	SepW = 1.5;
+	SepW = 1.0;
 	AliW = 1.0;
 	CohW = 1.0;
 	boidshp.Init();
 }
 
 
-void Player::zombie_reborn(float x, float y)
+void Player::zombie_reborn(float x, float y,float z)
 {
 	bstatus = Player::BSTATUS::LIVE;
 	hp = zonbiehp;
 	rebornpos.x= x;
-	rebornpos.y =y;
+	rebornpos.y =z;
 	reborn_flg = true;
 }
 
@@ -310,7 +314,10 @@ void Player::Update(bool input) {
 			awaycnt -= 1;
 		}
 		if (awaycnt == 0) {
-			boid_accel -= 0.03f;
+			if (boid_accel > 2.0f)
+			{
+				boid_accel -= 0.03f;
+			}
 		}
 		if (boid_accel < 1.0f)
 		{
@@ -318,6 +325,7 @@ void Player::Update(bool input) {
 		}
 		if (boid_accel > 4.0f)boid_accel = 4.0f;
 
+		//各行列を初期化
 		DX11MtxIdentity(scale);
 		DX11MtxIdentity(trans);
 		DX11MtxIdentity(rot);
@@ -327,21 +335,54 @@ void Player::Update(bool input) {
 		scale._22 = 2.0f;
 		scale._33 = 2.0f;
 
-		angle.y = 0.0f;
+		angle.y = 0.0f;//角度リセット
+
+		//ベクトル保存
 		angley.x = velocity.x;
 		angley.y = velocity.y;
-		angle.y = -GetAtan(velocity.x, velocity.y);
-		angle.y -= 90.0f;
-		float ang = angle.y;
-		SetAngle();
-		angle.y -= b_angle;
-		b_angle = ang;
 
+		//boids計算から出た速度を元に向きを変更
+		angle.y = -GetAtan(velocity.x, velocity.y);
+		if (angle.y > 360)angle.y -= 360.0f;
+		else if (angle.y < 0)angle.y += 360.f;
+		//角度調整
+		angle.y -= 90.0f;
+		
+
+		
+		//左回転用の角度
+		l_angle = angle.y+90.f;
+		if (l_angle > 360)l_angle -= 360.0f;
+		else if (l_angle < 0)l_angle += 360.f;
+		//右回転用の角度
+		r_angle = angle.y-90.f;
+		if (r_angle > 360)r_angle -= 360.0f;
+		else if (r_angle < 0)r_angle += 360.f;
+		//180度回転用の角度
+		b_angle = angle.y + 180.f;
+		if (b_angle > 360)b_angle -= 360.0f;
+		else if (b_angle < 0)b_angle += 360.f;
+		
+		//それぞれの角度のベクトルを算出
+		lv_angle.x = cosf(((l_angle) * 3.14159265358979323846 / 180.0f));
+		lv_angle.y = sinf(((l_angle) * 3.14159265358979323846 / 180.0f));
+		rv_angle.x = cosf(((r_angle) * 3.14159265358979323846 / 180.0f));
+		rv_angle.y = sinf(((r_angle) * 3.14159265358979323846 / 180.0f));
+		bv_angle.x = cosf(((b_angle) * 3.14159265358979323846 / 180.0f));
+		bv_angle.y = sinf(((b_angle) * 3.14159265358979323846 / 180.0f));
 
 		Ground::GetInstance()->GetPlayerHeight(*this);
+		//今回の角度を保存
+		//float ang = angle.y;
 		velocity.mulScalar(boid_accel);
 		location.addVector(velocity);
 	
+		
+		
+		SetAngle();
+	
+	/*	angle.y -= b_angle;
+		b_angle = ang;*/
 
 		DX11MtxMultiply(world, scale, rot);
 
@@ -370,7 +411,8 @@ void Player::ZonbieUpdate(int animenum, int i)
 {
 	if (bstatus == BSTATUS::LIVE)
 	{
-	
+
+
 		boid_borders();
 		DX11MtxIdentity(scale);
 		DX11MtxIdentity(trans);
@@ -403,31 +445,8 @@ void Player::ZonbieUpdate(int animenum, int i)
 
 		}*/
 
-		if (awaycnt > 0)
-		{
-			awaycnt -= 1;
-		}
-		if (awaycnt == 0) {
-			boid_accel -= 0.05f;
-		}
-		if (boid_accel < 0)
-		{
-			boid_accel = 0;
-		}
 
-		if (boid_accel > 8.5f)
-		{
-			boid_accel = 8.5f;
-		}
 
-		if (boid_accel > 0.5)
-		{
-			zonbieanime = 1;
-		}
-		else if (boid_accel <= 0.5)
-		{
-			zonbieanime = 0;
-		}
 
 		angle.y = 0.0f;
 
@@ -439,20 +458,58 @@ void Player::ZonbieUpdate(int animenum, int i)
 		}
 
 
-
-		m_pos.x = location.x;
-		m_pos.z = location.y;
-
 		if (reborn_flg)
 		{
 			location.x = rebornpos.x;
 			location.y = rebornpos.y;
 			m_pos.x = location.x;
 			m_pos.z = location.y;
+			Ground::GetInstance()->GetPlayerHeight(*this);
 			reborn_flg = false;
 		}
+		else
+		{
+			Ground::GetInstance()->GetPlayerHeight(*this);
+			if (awaycnt > 0)
+			{
+				awaycnt -= 1;
+			}
+			if (awaycnt == 0) {
 
-		Ground::GetInstance()->GetPlayerHeight(*this);
+				boid_accel -= 0.05f;
+
+			}
+			if (boid_accel < 0)
+			{
+				boid_accel = 0;
+			}
+
+			if (boid_accel > 2.5f)
+			{
+				boid_accel = 2.5f;
+			}
+
+			acceleration.normalize();
+
+			acceleration.mulScalar(boid_accel);
+
+			//  更新速度
+			velocity.addVector(acceleration);
+
+			location.addVector(velocity);
+		
+
+			m_pos.x = location.x;
+			m_pos.z = location.y;
+
+		}
+
+//		Ground::GetInstance()->GetPlayerHeight(*this);
+
+
+		
+		
+
 		trans._41 = m_pos.x;
 		trans._42 = m_pos.y + 4.0f;
 		trans._43 = m_pos.z;
@@ -600,38 +657,38 @@ Pvector Player::boid_seek(const Pvector& v)
 	return acceleration;
 }
 
-//Pvector Player::boid_view(std::vector<Player*> player_vector, Player& implayer)
-//{
-//	// How far can it see?
-//	float sightDistance = 100;
-//	float periphery = PI / 4;
-//
-//	for (int i = 0; i < maxnum; i++) {
-//		// A vector that points to another boid and that angle
-//		desired ={0,0};
-//		desired = desired.subTwoVector(it->location, location);
-//
-//		// How far is it
-//		float d = location.distance(it->location);
-//		
-//		// What is the angle between the other boid and this one's current direction
-//		float desireda = velocity.angleBetween(desired);
-//
-//		// If it's within the periphery and close enough to see it
-//		if (desireda < periphery && d > 0 && d < sightDistance) {
-//			//視野角にいるboidだけで３法則
-//			//boid_flock(player_vector, implayer);
-//		}
-//	}
-//	return Pvector();
-//}
-//
-//
+Pvector Player::boid_view(std::vector<Player*> player_vector)
+{
+	// How far can it see?
+	float sightDistance = 100;
+	float periphery = PI / 2;
+
+	for (int i = 0; i < player_vector.size(); i++) {
+		// A vector that points to another boid and that angle
+		desired ={0,0};
+		desired = desired.subTwoVector(player_vector.at(i)->location, location);
+
+		// How far is it
+		float d = location.distance(player_vector.at(i)->location);
+		
+		// What is the angle between the other boid and this one's current direction
+		float desireda = velocity.angleBetween(desired);
+
+		// If it's within the periphery and close enough to see it
+		if (desireda < periphery && d > 0 && d < sightDistance) {
+			//視野角にいるboidだけで３法則
+			//boid_flock(player_vector,zonbie_vector);
+		}
+	}
+	return Pvector();
+}
+
+
 
 //std::vector<Player>> grid[100][100] = { {} };
 void Player::boid_run(std::vector<Player*> player_vector, std::vector<Player*> zonbie_vector)
 {
-	boid_flock(player_vector,zonbie_vector);
+	boid_flock(player_vector, zonbie_vector);
 	boid_update();
 
 }
@@ -649,6 +706,7 @@ Pvector ali = { 0,0 };
 Pvector coh = { 0,0 };
 Pvector awa = { 0,0 };
 Pvector dmg = { 0,0 };
+Pvector avo = { 0,0 };
 
 
 //ボイドの群れに三法則を適用する
@@ -657,33 +715,50 @@ void Player::boid_flock(std::vector<Player*> player_vector, std::vector<Player*>
 	sep = { 0,0 };
 	ali = { 0,0 };
 	coh = { 0,0 };
+	avo = { 0,0 };
 	
+
 	if (follow == Follow::FREE)
 	{
+		alifalse_cnt -= 1;
+	
+		if (alifalse_cnt < -10000)alifalse_cnt = -40;
 		if (hsepflg)
 		{
-			sep = boid_Separation(player_vector, zonbie_vector);
+			if (boid_accel < 2.0f)
+			{
+				sep = boid_Separation(player_vector, zonbie_vector);
+			}
 		}
 		if (haliflg)
 		{
-			ali = boid_Alignment(player_vector);
+			if (alifalse_cnt < 0)
+			{
+				
+				ali = boid_Alignment(player_vector);
+			}
 		}
+
+		
 		//if (hcohflg)
 		//{
 		////	coh = boid_Cohesion(player_vector);
 		//}
 		//
+	//	avo = boid_Avoid(zonbie_vector);
 	}
 
 	//これらの力を任意に重み付けする
 	//cen.mulScalar(CohW);
 	sep.mulScalar(SepW);
 	ali.mulScalar(AliW); // さまざまな特性の重みを変更する必要がある場合があります
+	avo.mulScalar(1.0f); // さまざまな特性の重みを変更する必要がある場合があります
 //	coh.mulScalar(CohW);
 	
 	//  力ベクトルを加速度に加える
 	applyForce(sep);
 	applyForce(ali);
+	applyForce(avo);
 	//applyForce(coh);
 	//applyForce(cen);
 
@@ -779,7 +854,7 @@ void Player::boid_update()
 	if (follow == Follow::FREE)
 	{
 		//スローダウンを急激にしないために
-		//acceleration.mulScalar(0.35f);
+		acceleration.mulScalar(0.35f);
 		//  更新速度
 		velocity.addVector(acceleration);
 		velocity.normalize();
@@ -813,36 +888,14 @@ void Player::boid_update()
 
 			//velocity.mulScalar(boid_accel);
 
-			if (boid_accel <= 0.5f)
+
+
+			velocity.mulScalar(0);
+			if (boid_accel <= 0.2f)
 			{
 				awayflg = false;
 			}
-
-			acceleration.normalize();
-
-			acceleration.mulScalar(boid_accel);
-
-			//  更新速度
-			velocity.addVector(acceleration);
-
-
-			//  制限速度
-		//velocity.limit(maxSpeed);
-		
-			
-				location.addVector(velocity);
-			
-
-		/*	if (boid_accel > 1.0)
-			{
-				velocity.normalize();
-				angley.x = velocity.x;
-				angley.y = velocity.y;
-			}*/
-			// 各サイクルで加速度を 0 にリセットする
-			velocity.mulScalar(0);
 		}
-
 	}	
 }
 
@@ -912,9 +965,10 @@ Pvector Player::boid_Separation(std::vector<Player*> player_vector, std::vector<
 			desired.mulScalar(900);
 			steer.addVector(desired);
 			count++;
-
+			alifalse_cnt = 15;
+		//	alifalse_flg = true;
 			boid_accel = sepspeed;
-			awaycnt = septime;
+		//	awaycnt = septime;
 		}
 	}
 	
@@ -925,12 +979,95 @@ Pvector Player::boid_Separation(std::vector<Player*> player_vector, std::vector<
 	if (steer.magnitude2x() > 0) {
 		// Steering = Desired - Velocity
 		steer.normalize();
-		steer.mulScalar(hyumanmaxspeed);
+		//steer.mulScalar(hyumanmaxspeed);
 		steer.subVector(velocity);
-		steer.limit(maxForce);
+		//steer.limit(maxForce);
 	
 	}
 	return steer;
+}
+
+Pvector Player::boid_Avoid(std::vector<Player*> player_vector)
+{
+	Pvector stt = { 0,0 };
+	for (auto& it : player_vector)
+	{
+		XMFLOAT3 diff = XMFLOAT3(it->GetPos().x-this->GetPos().x , 0.0f, it->GetPos().z-this->GetPos().z);//障害物との距離
+
+		//差を出す
+		float distance;
+		DX11Vec3Dot(distance,diff, diff);
+	
+		sqrt(distance);
+		float aboidrange = 450.0f;
+		float escaperange = 50.0f;
+
+		//避ける範囲内化
+		if (distance > aboidrange)  // 障害物を避ける範囲内にいるか？
+		{
+			return desired = { 0, 0 };
+		}
+		if (escaperange > distance)
+		{
+			return desired = { 0, 0 };
+		}
+
+		XMFLOAT3 target2ObstacleDirection;
+		DX11Vec3Normalize(target2ObstacleDirection, diff);
+
+		XMFLOAT3 forward= XMFLOAT3(this->angley.x,1.0f,this->angley.y);
+		
+		DX11Vec3Normalize(forward, forward);
+
+		float directionDot;
+		DX11Vec3Dot(directionDot, target2ObstacleDirection, forward);
+		
+		//
+		if (directionDot < 0) // 前方向に障害物がないか
+		{
+			return desired = { 0, 0 };
+		}
+
+		XMFLOAT3 forward2DiffCross;
+		XMFLOAT3 forward2DiffCrossv;
+	//	DX11Vec3Normalize(diff, diff);
+		DX11Vec3Cross(forward2DiffCross, diff,forward);
+		DX11Vec3Cross(forward2DiffCrossv, forward,diff);
+
+		float forward2ObstacleDistance;
+		DX11Vec3Length(forward2DiffCross, forward2ObstacleDistance);
+
+		if (forward2ObstacleDistance> escaperange) // 障害物から逃げる範囲と速度ベクトルの直線が重なっていないか
+		{
+			return desired = { 0, 0 };
+		}
+
+		const float crossElementSum = forward2DiffCross.x + forward2DiffCross.y + forward2DiffCross.z;
+		//const XMFLOAT3 axis;
+
+		if (crossElementSum != 0)
+		{
+			DX11Vec3Normalize(forward2DiffCross, forward2DiffCross);
+			DX11Vec3Normalize(forward2DiffCrossv, forward2DiffCrossv);
+		}
+		else
+		{
+			return desired = { 0, 0 };
+		}
+
+		desired = { forward2DiffCross.x,forward2DiffCross.z };
+
+		XMFLOAT4X4 vec;
+		float aa = GetKakudo(forward2DiffCross.x,forward2DiffCross.z);
+		DX11MtxRotationAxis(forward2DiffCross,aa,vec);
+		
+	//	stt = stt.subTwoVector(velocity, desired); //sum = desired(average)
+
+	}
+	//	const float3x3 avoidTorque = CalcAvoidObstacleTorque(boidData.position, velocity);
+//	const float3 avoidVelocity = mul(velocity, avoidTorque);
+	return desired;
+	
 }
 
 Pvector Player::boid_inSeparation(std::vector<Player*> player_vector)
@@ -947,6 +1084,8 @@ Pvector Player::boid_inSeparation(std::vector<Player*> player_vector)
 		if (PlayerMgr::GetInstance()->gatherflg)
 		{
 			Sepdist -= 0.1f;
+			//Sepdist = max(Sepdist, 10.0f);
+
 			if (Sepdist < 10.0f)
 			{
 				Sepdist = 10.0f;
@@ -955,6 +1094,7 @@ Pvector Player::boid_inSeparation(std::vector<Player*> player_vector)
 		else if (!PlayerMgr::GetInstance()->gatherflg)
 		{
 			Sepdist += 0.2f;
+		///	Sepdist = min(Sepdist, 25.0f);
 			if (Sepdist > 25.0f)
 			{
 				Sepdist = 25.0f;
@@ -1027,8 +1167,11 @@ Pvector Player::boid_Alignment(std::vector<Player*> player_vector)
 		{
 			float d = location.distance(it->location);
 			if ((d > 0) && (d < alidist)) { // 0 < d < 50
-				desired.addVector(it->velocity);
-				count++;
+				if (it->boid_accel < 2.0f)
+				{
+					desired.addVector(it->velocity);
+					count++;
+				}
 			}
 		}
 
@@ -1072,7 +1215,7 @@ Pvector Player::boid_zonbieAlignment(Pvector mousepos)
 			ali_vel.normalize();
 			ali_vel.mulScalar(-1.0f);
 			///velocity = mousepos;
-			this->boid_accel =Dashspeed;
+			this->boid_accel = Dashspeed;
 			insideflg = false;
 			awaycnt = Dashtime;
 		}
@@ -1118,9 +1261,9 @@ Pvector Player::boid_zonbieAway(std::vector<Player*> player_vector)
 			angley.y = acceleration.y;
 
 
-			this->boid_accel =1.5f;
+			this->boid_accel = zombiawayspeed;
 			awayflg = true;
-			awaycnt = 30;
+			awaycnt = zombieawaytime;
 		}
 	}
 	return desired;
@@ -1192,7 +1335,7 @@ Pvector Player::zonbie_Scatter()
 	
 	vel = { 0,0 };
 	desired = { 0,0 };
-	boid_accel =1.0f;
+	boid_accel = 2.0f;
 	XMFLOAT3 pos = {};
 	Pvector now_mousepos = { 0,0 };
 	now_mousepos.x = CDirectInput::GetInstance().GetMousePosX();
@@ -1260,6 +1403,8 @@ Pvector Player::zonbie_damage()
 	ali_vel = { 0,0 };
 	return desired;
 }
+
+
 
 //集合
 Pvector Player::boid_inCohesion(std::vector<Player*> player_vector)
@@ -1491,6 +1636,8 @@ void Player::SaveNum()
 	Save::GetInstance()->save2.data21 = cohspeed;
 	Save::GetInstance()->save2.data22 = zombirange;
 	Save::GetInstance()->save2.data23 = damage;
+	Save::GetInstance()->save2.data24 = zombieawaytime;
+	Save::GetInstance()->save2.data25 = zombiawayspeed;
 	Save::GetInstance()->save2.data50 = Searchcnt;
 
 
@@ -1527,6 +1674,8 @@ void Player::LoadNum()
 	cohspeed = Save::GetInstance()->save2.data21;
 	zombirange = Save::GetInstance()->save2.data22;
 	damage = Save::GetInstance()->save2.data23;
+	zombieawaytime = Save::GetInstance()->save2.data24;
+	zombiawayspeed = Save::GetInstance()->save2.data25;
 	Searchcnt = Save::GetInstance()->save2.data50;
 }
 
@@ -1593,6 +1742,11 @@ void Player::Gui()
 		{
 			ImGui::DragFloat("tog_speed", &cohspeed);
 		}
+		if (ImGui::CollapsingHeader(u8"away"))
+		{
+			ImGui::DragFloat("away_time", &zombieawaytime);
+			ImGui::DragFloat("away_speed", &zombiawayspeed);
+		}
 	}
 	ImGui::Checkbox("Paramater_Save", &save);
 	ImGui::Checkbox("Paramater_Load", &load);
@@ -1627,7 +1781,7 @@ void Player::SetNum()
 	 bombdist = 100.0f;//100
 	//zonbiesearch
 	 Searchcnt = 70;//70
-	 Seachspeed = 0.3f;//0.3f
+	 Seachspeed = 0.2f;//0.3f
 	 Seachtime = 50.0f;//50
 
 	 chasedist = 50.0f;//50
@@ -1640,6 +1794,9 @@ void Player::SetNum()
 	//zonbiesep
 	 Sepdist = 10.0f;//10
 	 Sepspeed = 1.0f;//1.0
+
+	 zombiawayspeed = 1.3f;//1.5
+	 zombieawaytime = 15.0f;//１０
 
 	//集合速度
 	 cohspeed = 1.0f;//１．０

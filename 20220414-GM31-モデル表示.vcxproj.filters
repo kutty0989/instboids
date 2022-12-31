@@ -808,9 +808,6 @@
     <FxCompile Include="shader\VSTess+Disp.hlsl">
       <Filter>ソース ファイル\shader</Filter>
     </FxCompile>
-    <FxCompile Include="shader\psvscommon.hlsl">
-      <Filter>ソース ファイル\shader</Filter>
-    </FxCompile>
     <FxCompile Include="shader\HSTess+Disp.hlsl">
       <Filter>ソース ファイル\shader</Filter>
     </FxCompile>
@@ -836,6 +833,9 @@
       <Filter>ソース ファイル\shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\ps.fx">
+      <Filter>ソース ファイル\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\psvscommon.hlsl">
       <Filter>ソース ファイル\shader</Filter>
     </FxCompile>
   </ItemGroup>

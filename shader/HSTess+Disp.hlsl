@@ -1,8 +1,5 @@
 #include	"psvscommon.hlsl"
 
-
-
-
 HS_CONSTANT_OUTPUT HSConstant(InputPatch<VS_OUTPUT, 3> ip, uint pid : SV_PrimitiveID)
 {
     HS_CONSTANT_OUTPUT Out;

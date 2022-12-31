@@ -48,6 +48,8 @@ public:
 		float data21;
 		float data22;
 		float data23;
+		float data24;
+		float data25;
 
 		int data50;
 	};
@@ -179,6 +181,8 @@ public:
 		fout.write((char*)&_saveData.data21, sizeof(_saveData.data1));
 		fout.write((char*)&_saveData.data22, sizeof(_saveData.data1));
 		fout.write((char*)&_saveData.data23, sizeof(_saveData.data1));
+		fout.write((char*)&_saveData.data24, sizeof(_saveData.data1));
+		fout.write((char*)&_saveData.data25, sizeof(_saveData.data1));
 		// 整数値配列読込
 		fout.write((char*)&_saveData.data50, sizeof(_saveData.data50));
 
@@ -222,6 +226,8 @@ public:
 		fin.read((char*)&saveData2.data21, sizeof(saveData2.data1));
 		fin.read((char*)&saveData2.data22, sizeof(saveData2.data1));
 		fin.read((char*)&saveData2.data23, sizeof(saveData2.data1));
+		fin.read((char*)&saveData2.data24, sizeof(saveData2.data1));
+		fin.read((char*)&saveData2.data25, sizeof(saveData2.data1));
 
 		// 整数値配列読込
 		fin.read((char*)&saveData2.data50, sizeof(saveData2.data50));

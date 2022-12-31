@@ -43,6 +43,8 @@ public:
 		float blendfour;
 	};
 
+	BlendBuffer cb10;
+
 	// ディスプレイスメントマップの高さ
 	static float g_hight;
 	static float g_devide;
@@ -52,6 +54,13 @@ public:
 
 
 	float	g_angle = 0.0f;
+
+	static float blendone;
+	static float blendtwo;
+	static float blendthere;
+	static float blendfour;
+
+
 
 	XMFLOAT3 m_pos = {};
 	XMFLOAT3 m_scale = {};
@@ -244,7 +253,14 @@ public:
 	 static bool mapload;
 	static std::vector<std::vector<double> > vData;
 	static std::vector<std::vector<double> > gData;
+
 	static std::vector<byte> bufsrc;
+
+
+	static int onetex;
+	static int twotex;
+	static int theretex;
+
 private:
 	DirectX::XMFLOAT4X4		m_worldmtx;				// ワールド変換行列
 	ComPtr<ID3D11Buffer>	m_vertexbuffer;			// 頂点バッファ

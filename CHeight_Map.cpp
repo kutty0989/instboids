@@ -598,14 +598,16 @@ static int multitex = 0;
 static bool soil = false;
 static bool snow = false;
 static bool grass = false;
-static int onetex = 0;
-static int twotex = 0;
-static int theretex = 0;
 
-float blendone = 1.0f;
-float blendtwo = 1.0f;
-float blendthere = 1.0f;
-float blendfour = 1.0f;
+int CHeight_Map::onetex = 0;
+int CHeight_Map::twotex = 0;
+int CHeight_Map::theretex = 0;
+
+float CHeight_Map::blendone = 1.0f;
+float CHeight_Map::blendtwo = 1.0f;
+float CHeight_Map::blendthere = 1.0f;
+float CHeight_Map::blendfour = 1.0f;
+
 
 void CHeight_Map::SetTexture()
 {
@@ -748,7 +750,7 @@ void CHeight_Map::SetTexture()
 	if (g_col >= 4)
 	{
 		
-		BlendBuffer cb10;
+		
 		cb10.blendone = blendone;//高さ変数を渡す
 		cb10.blendtwo = blendtwo;//高さ変数を渡す
 		cb10.blendthere = blendthere;//高さ変数を渡す
@@ -813,7 +815,7 @@ double CHeight_Map::GetHeightColor(XMFLOAT2 playerpos)
 	float xxcol = LeapID<float>(col, xcol, xx);//桁落ちした分進ませる
 	float yycol = LeapID<float>(col, ycol, yy);
 
-	col = (xxcol + yycol) / 2.0f;//ｘ成分とｙ成分を足して１点の（カラー）高さ情報
+	col = (xxcol + yycol) / 2.0f;//ｘ成分とｙ成分を足して１点の（カラー）高さlar
 
 	//debuglog(col);
 	return col;

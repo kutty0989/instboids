@@ -12,7 +12,7 @@
 
 class UniqueEnemy_Bomb;
 #define		ENEMYMAX		1
-#define		ZOMBIEMAX		2
+#define		ZOMBIEMAX		1
 #define		ZOMBIE		    1
 #define		HYUMANMAX		100
 
@@ -51,6 +51,13 @@ public:
 	XMFLOAT4X4 trans = {};
 	XMFLOAT4X4 world = {};
 	float b_angle = 0.0f;
+
+	XMFLOAT2 lv_angle;//自分から＋90度の角度
+	XMFLOAT2 rv_angle;//自分から-90度の角度
+	XMFLOAT2 bv_angle;//自分から＋180度の角度
+	float l_angle;
+	float r_angle;
+	float b_angle;
 
 	Pvector uedesired;//計算用の変数
 	Pvector uesteer;//計算用の変数
@@ -213,7 +220,9 @@ public:
 	bool zexplosionflg = false;
 	int initZombie;
 	bool reborn_flg = false;
-	XMFLOAT2 rebornpos;
+	bool alifalse_flg = false;
+	float alifalse_cnt = -10;
+	XMFLOAT3 rebornpos;
 	enum class Follow
 	{
 		FREE,
@@ -256,6 +265,9 @@ public:
 	/// <param name="Player_Vector">boidsの配列</param>
 	/// <returns>方向ベクトル</returns>
 	Pvector boid_Separation(std::vector<Player*> player_vector, std::vector<Player*> zonbie_vector);
+	
+	
+	Pvector boid_Avoid(std::vector<Player*> player_vector);
 	/// <summary>
 	/// 分離　プレイヤーの範囲にいるboidsが近づきすぎないように
 	/// </summary>
@@ -359,7 +371,7 @@ public:
 	/// </summary>
 	void boid_borders();
 
-	void zombie_reborn(float x, float y);
+	void zombie_reborn(float x, float y,float z);
 
 	/// <summary>
 	/// 角度を求める
@@ -371,6 +383,7 @@ public:
 	void boids_attack(std::vector<Player*>& player_vector, Player& zonbie, std::vector<UniqueEnemy_Bomb>& unique_enemy_vector);
 
 	Pvector zonbie_damage();
+
 
 
 	//グローバル変数の代わりに、ゲーム内の値と重みにアクセスするために使用され	float desSep;
@@ -459,6 +472,11 @@ public:
 	//ゾンビとのダメージ距離
 	static float zombirange;//15
 	static float damage;//１．０
+
+
+	//away
+	static float zombiawayspeed;//1.5
+	static float zombieawaytime;//１０
 
 	static bool save;
 	static bool load;

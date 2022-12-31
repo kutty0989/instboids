@@ -22,6 +22,8 @@ public:
 
 	void Finalize();
 
+	float TexSpeed(float boid_accel);
+
 	XMFLOAT3 GetPos();
 	float GetWidthHeight();
 	
@@ -41,6 +43,9 @@ private:
 
 	double col = 0.0;//プレイヤーの場所のカラー高さ情報
 	double gocol = 0.0;//向いてる方向の高さ情報
+	double nowcol = 0.0;//向いてる方向の高さ情報
+	double lgocol = 0.0;//向いてる方向の高さ情報
+	double rgocol = 0.0;//向いてる方向の高さ情報
 	double defcol = 0.0;//プレイヤーの場所と行先の差
 	float goangle = 0.0f;//プレイヤーと行先の角度
 };
