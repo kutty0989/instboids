@@ -104,6 +104,9 @@ public:
 		devcontext->IASetInputLayout(m_layout.Get());			// 頂点レイアウトセット
 
 		devcontext->VSSetShader(m_vs.Get(), nullptr, 0);		// 頂点シェーダーをセット
+		devcontext->GSSetShader(nullptr, nullptr, 0);		// 頂点シェーダーをセット
+		devcontext->DSSetShader(nullptr, nullptr, 0);		// 頂点シェーダーをセット
+		devcontext->HSSetShader(nullptr, nullptr, 0);		// 頂点シェーダーをセット
 		devcontext->PSSetShader(m_ps.Get(), nullptr, 0);		// ピクセルシェーダーをセット
 
 		devcontext->Draw(

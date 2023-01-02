@@ -18,6 +18,7 @@ public:
 	/// <param name="player"></param>
 	void GetPlayerHeight(Player& player);
 
+
 	void DefangleAccel(Player& player,float accel);
 
 	void Finalize();
@@ -46,6 +47,21 @@ private:
 	double nowcol = 0.0;//向いてる方向の高さ情報
 	double lgocol = 0.0;//向いてる方向の高さ情報
 	double rgocol = 0.0;//向いてる方向の高さ情報
+	double bgocol = 0.0;//向いてる方向の高さ情報
 	double defcol = 0.0;//プレイヤーの場所と行先の差
 	float goangle = 0.0f;//プレイヤーと行先の角度
+
+
+	int anglecnt = 0;
+	int anglechangecnt = 0;
+
+	enum class Angle_Direction
+	{
+		Normal,
+		Left,
+		Right,
+	};
+
+	Angle_Direction angle_direction = Angle_Direction::Normal;
+
 };

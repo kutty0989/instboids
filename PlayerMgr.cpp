@@ -174,6 +174,14 @@ void PlayerMgr::Draw()
 			instance_zombie.at(i).Draw(0);
 		}
 	}
+	for (int i = 0; i < HYUMANMAX; i++)
+	{
+		if (instance_hyuman.at(i).bstatus == Player::BSTATUS::LIVE)
+		{
+			instance_hyuman.at(i).HyumanDrawAxis();
+		}
+	}
+
 
 
 	unique_enemy_vector.clear();
@@ -544,6 +552,9 @@ void PlayerMgr::PlayerUpdate()
 			}
 		}
 	}
+
+	
+
 	for (int i = 0; i < grid_bufvector.size(); i++)
 	{
 		grid_bufvector.at(i).Update(false);
@@ -586,7 +597,7 @@ void PlayerMgr::PlayerUpdate()
 		instance_zombie.emplace_back(std::move(grid_bufzonbievector.at(i)));
 	}
 
-
+	
 
 	
 	static XMFLOAT4X4 mat[HYUMANMAX];
@@ -598,6 +609,7 @@ void PlayerMgr::PlayerUpdate()
 		//DX11MtxFromQt(world, g_enemy[i].GetRotation());
 	
 		mat[i] = world;
+		
 	}
 	cmodelinstance_hyuman.Update(mat);
 

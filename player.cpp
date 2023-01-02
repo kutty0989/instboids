@@ -180,7 +180,7 @@ void Player::boid_Init(float x, float y)
 	maxForce = 0.7f;
 
 	boid_accel = 1.0f;
-
+	follow = Follow::HYUMAN;
 	SetScale(0.001f, 0.001f, 0.001f);
 	champion = false;
 	desSep = 15;
@@ -230,21 +230,21 @@ void Player::boid_player_Init(float x, float y)
 {
 
 
-	acceleration = Pvector(0, 0);
-	velocity = Pvector(PlayerMgr::GetInstance()->StickXRig, PlayerMgr::GetInstance()->StickYRig);//加速度
-	//velocity = Pvector(0, 0);//加速度
-	location = Pvector(x, y);//ポジション
-	maxSpeed = hyumanmaxspeed;
-	maxForce = 0.5;
-	follow = Follow::PLAYER;
+	//acceleration = Pvector(0, 0);
+	//velocity = Pvector(PlayerMgr::GetInstance()->StickXRig, PlayerMgr::GetInstance()->StickYRig);//加速度
+	////velocity = Pvector(0, 0);//加速度
+	//location = Pvector(x, y);//ポジション
+	//maxSpeed = hyumanmaxspeed;
+	//maxForce = 0.5;
+	//follow = Follow::PLAYER;
 
-	champion = true;
-	desSep = 5;
-	desAli = 40;
-	desCoh = 50;
-	SepW = 1.0;
-	AliW = 1.0;
-	CohW = 0.2;
+	//champion = true;
+	//desSep = 5;
+	//desAli = 40;
+	//desCoh = 50;
+	//SepW = 1.0;
+	//AliW = 1.0;
+	//CohW = 0.2;
 
 }
 
@@ -284,8 +284,13 @@ void Player::Draw(int animenum) {
 	{
 		boidshp.Update(XMFLOAT3(m_mtx._41, m_mtx._42, m_mtx._43));
 		boidshp.Draw();
+		
 	}
 }
+void Player::HyumanDrawAxis() {
+	drawaxis(m_mtx, 22.0f, XMFLOAT3(m_mtx._41, m_mtx._42, m_mtx._43));
+}
+
 
 void Player::DrawWithAxis() {
 
@@ -342,43 +347,48 @@ void Player::Update(bool input) {
 		angley.y = velocity.y;
 
 		//boids計算から出た速度を元に向きを変更
-		angle.y = -GetAtan(velocity.x, velocity.y);
-		if (angle.y > 360)angle.y -= 360.0f;
+		angle.y = GetAtan(velocity.x, velocity.y);
+
+
+	/*	if (angle.y > 360)angle.y -= 360.0f;
 		else if (angle.y < 0)angle.y += 360.f;
-		//角度調整
-		angle.y -= 90.0f;
-		
+		velocity.x = -cosf(((angle.y) * 3.14159265358979323846 / 180.0f));
+		velocity.y = -sinf(((angle.y) * 3.14159265358979323846 / 180.0f));*/
+
 
 		
 		//左回転用の角度
-		l_angle = angle.y+90.f;
-		if (l_angle > 360)l_angle -= 360.0f;
-		else if (l_angle < 0)l_angle += 360.f;
+		left_angle = angle.y+45.f;
+		if (left_angle > 360)left_angle -= 360.0f;
+		else if (left_angle < 0)left_angle += 360.f;
 		//右回転用の角度
-		r_angle = angle.y-90.f;
-		if (r_angle > 360)r_angle -= 360.0f;
-		else if (r_angle < 0)r_angle += 360.f;
+		right_angle = angle.y-45.f;
+		if (right_angle > 360)right_angle -= 360.0f;
+		else if (right_angle < 0)right_angle += 360.f;
 		//180度回転用の角度
-		b_angle = angle.y + 180.f;
-		if (b_angle > 360)b_angle -= 360.0f;
-		else if (b_angle < 0)b_angle += 360.f;
+		opposite_angle = angle.y + 180.f;
+		if (opposite_angle > 360)opposite_angle -= 360.0f;
+		else if (opposite_angle < 0)opposite_angle += 360.f;
 		
 		//それぞれの角度のベクトルを算出
-		lv_angle.x = cosf(((l_angle) * 3.14159265358979323846 / 180.0f));
-		lv_angle.y = sinf(((l_angle) * 3.14159265358979323846 / 180.0f));
-		rv_angle.x = cosf(((r_angle) * 3.14159265358979323846 / 180.0f));
-		rv_angle.y = sinf(((r_angle) * 3.14159265358979323846 / 180.0f));
-		bv_angle.x = cosf(((b_angle) * 3.14159265358979323846 / 180.0f));
-		bv_angle.y = sinf(((b_angle) * 3.14159265358979323846 / 180.0f));
+		left_vec.x = cosf(((left_angle) * 3.14159265358979323846 / 180.0f));
+		left_vec.y = sinf(((left_angle) * 3.14159265358979323846 / 180.0f));
+		right_vec.x = cosf(((right_angle) * 3.14159265358979323846 / 180.0f));
+		right_vec.y = sinf(((right_angle) * 3.14159265358979323846 / 180.0f));
+		opposite_vec.x = cosf(((opposite_angle) * 3.14159265358979323846 / 180.0f));
+		opposite_vec.y = sinf(((opposite_angle) * 3.14159265358979323846 / 180.0f));
 
 		Ground::GetInstance()->GetPlayerHeight(*this);
 		//今回の角度を保存
 		//float ang = angle.y;
 		velocity.mulScalar(boid_accel);
 		location.addVector(velocity);
+
+
+		angle.y = -GetAtan(velocity.x, velocity.y);
+		//角度調整
+		angle.y -= 90.0f;
 	
-		
-		
 		SetAngle();
 	
 	/*	angle.y -= b_angle;
@@ -398,6 +408,7 @@ void Player::Update(bool input) {
 		world._43 = trans._43;
 
 		m_mtx = world;
+
 	}
 	else
 	{
@@ -718,7 +729,7 @@ void Player::boid_flock(std::vector<Player*> player_vector, std::vector<Player*>
 	avo = { 0,0 };
 	
 
-	if (follow == Follow::FREE)
+	if (follow == Follow::HYUMAN)
 	{
 		alifalse_cnt -= 1;
 	
@@ -851,7 +862,7 @@ void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player
 // 三法則で与えられる。
 void Player::boid_update()
 {
-	if (follow == Follow::FREE)
+	if (follow == Follow::HYUMAN)
 	{
 		//スローダウンを急激にしないために
 		acceleration.mulScalar(0.35f);
@@ -866,7 +877,7 @@ void Player::boid_update()
 		// 各サイクルで加速度を 0 にリセットする
 		acceleration.mulScalar(0);
 	}
-	else if (follow != Follow::FREE)
+	else if (follow != Follow::HYUMAN)
 	{
 		if (!champion)
 		{
@@ -927,7 +938,7 @@ Pvector Player::boid_Separation(std::vector<Player*> player_vector, std::vector<
 	{
 
 		// 現在のboidから見ているboidまでの距離を計算する
-		if (it->follow == Follow::FREE)
+		if (it->follow == Follow::HYUMAN)
 		{
 			float d = location.distance(it->location);
 			// これが仲間のボイドであり、近すぎる場合は、離れてください
@@ -1109,7 +1120,7 @@ Pvector Player::boid_inSeparation(std::vector<Player*> player_vector)
 	{
 
 		// 現在のboidから見ているboidまでの距離を計算する
-		if (it->follow != Follow::FREE)
+		if (it->follow != Follow::HYUMAN)
 		{
 			float d = location.distance(it->location);
 			if ((d > 0) && (d < Sepdist)) {
@@ -1163,7 +1174,7 @@ Pvector Player::boid_Alignment(std::vector<Player*> player_vector)
 	for (auto& it : player_vector)
 	{
 
-		if (it->follow == Follow::FREE)
+		if (it->follow == Follow::HYUMAN)
 		{
 			float d = location.distance(it->location);
 			if ((d > 0) && (d < alidist)) { // 0 < d < 50

@@ -12,8 +12,8 @@
 
 class UniqueEnemy_Bomb;
 #define		ENEMYMAX		1
-#define		ZOMBIEMAX		1
-#define		ZOMBIE		    1
+#define		ZOMBIEMAX		2
+#define		ZOMBIE		    10
 #define		HYUMANMAX		100
 
 
@@ -52,12 +52,12 @@ public:
 	XMFLOAT4X4 world = {};
 	float b_angle = 0.0f;
 
-	XMFLOAT2 lv_angle;//自分から＋90度の角度
-	XMFLOAT2 rv_angle;//自分から-90度の角度
-	XMFLOAT2 bv_angle;//自分から＋180度の角度
-	float l_angle;
-	float r_angle;
-	float b_angle;
+	XMFLOAT2 left_vec;//自分から＋90度の角度
+	XMFLOAT2 right_vec;//自分から-90度の角度
+	XMFLOAT2 opposite_vec;//自分から＋180度の角度
+	float left_angle;
+	float right_angle;
+	float opposite_angle;
 
 	Pvector uedesired;//計算用の変数
 	Pvector uesteer;//計算用の変数
@@ -114,6 +114,8 @@ public:
 	bool CharengerInit();
 
 	void Draw(int animenum);
+
+	void HyumanDrawAxis();
 
 	void DrawWithAxis();
 
@@ -225,9 +227,10 @@ public:
 	XMFLOAT3 rebornpos;
 	enum class Follow
 	{
-		FREE,
-		PLAYER,
+		
+	
 		ZONBIE,
+		HYUMAN,
 		ENEMY
 	};
 	enum class BSTATUS

@@ -131,54 +131,119 @@ void Ground::GetPlayerHeight(Player& player)
 	//高さを求める
 	col = g_heightmap->GetHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling));//プレイヤーが画像のどこにいて、その足元のカラー情報
 
+	gocol = 0.0;
+
 	//少し前の高さをだす
-	gocol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x/ scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z/ scaling),
-		player.angley.x*10.0f, player.angley.y*10.0f);
+	gocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x/ scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z/ scaling),
+		player.angley.x*7.0f, player.angley.y*7.0f);
+	gocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
+		player.angley.x * 14.0f, player.angley.y * 14.0f);
+	gocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
+		player.angley.x * 21.0f, player.angley.y * 21.0f);
+
+	gocol /= 3.0f;
 
 	nowcol = gocol;
 
-	//数フレームに一度、角度を変更
-	if (player.groundcnt == 0)
+	if (player.follow == Player::Follow::HYUMAN)
 	{
-		//左前方の高さを出す
-		lgocol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-			player.lv_angle.x * 10.0f, player.lv_angle.y * 10.0f);
-		//右前方の高さを出す
-		rgocol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-			player.rv_angle.x * 10.0f, player.rv_angle.y * 10.0f);
-		
-		bgocol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-			player.rv_angle.x * 10.0f, player.rv_angle.y * 10.0f);
-
-
-		if (gocol > lgocol)
+		//数フレームに一度、角度を変更
+		if (anglecnt == 0)
 		{
-			nowcol = lgocol;//きたい方向の高さを設定しなおし
-			player.angle.y += 1.0f;//角度を変更
-			float rad = player.angle.y* (3.1415926535 / 180.0f);
-			player.velocity.x = -sinf(rad);
-			player.velocity.y = -cosf(rad);
-			//ベクトル保存
-			player.angley.x = player.velocity.x;
-			player.angley.y = player.velocity.y;
+			lgocol = 0.0;
+
+			//左前方の高さを出す
+			lgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
+				player.left_vec.x * 7.0f, player.left_vec.y * 7.0f);
+			lgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
+				player.left_vec.x * 14.0f, player.left_vec.y * 14.0f);
+			lgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
+				player.left_vec.x * 21.0f, player.left_vec.y * 21.0f);
+
+			lgocol /= 3.0f;
+
+			rgocol = 0.0;
+			//右前方の高さを出す
+			rgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
+				player.right_vec.x * 7.0f, player.right_vec.y * 7.0f);
+			rgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
+				player.right_vec.x * 14.0f, player.right_vec.y * 14.0f);
+			rgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
+				player.right_vec.x * 21.0f, player.right_vec.y * 21.0f);
+
+			rgocol /= 3.0f;
+
+			bgocol = 0.0;
+
+			bgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
+				player.opposite_vec.x * 7.0f, player.opposite_vec.y * 7.0f);
+			bgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
+				player.opposite_vec.x * 14.0f, player.opposite_vec.y * 14.0f);
+			bgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
+				player.opposite_vec.x * 21.0f, player.opposite_vec.y * 21.0f);
+
+			bgocol /= 3.0;
+
+			if (nowcol > rgocol)
+			{
+				angle_direction = Angle_Direction::Right;
+			}
+			else if (nowcol > lgocol)
+			{
+				angle_direction = Angle_Direction::Left;
+			}
+
+
+			if (nowcol > bgocol)
+			{
+				if (lgocol > rgocol)
+				{
+					angle_direction = Angle_Direction::Right;
+				}
+				else
+				{
+					angle_direction = Angle_Direction::Left;
+				}
+
+			}
+
 		}
-		if (gocol > rgocol)
+
+		if (anglechangecnt == 0)
 		{
-			nowcol = rgocol;
-			player.angle.y -= 1.f;
-			float rad = player.angle.y * (3.1415926535 / 180.0f);
-			player.velocity.x = -sinf(rad);
-			player.velocity.y = -cosf(rad);
-			//ベクトル保存
-			player.angley.x = player.velocity.x;
-			player.angley.y = player.velocity.y;
+			if (angle_direction == Angle_Direction::Left)
+			{
+				nowcol = lgocol;//きたい方向の高さを設定しなおし
+				player.angle.y += 5.0f;//角度を変更
+				float rad = player.angle.y * (3.1415926535 / 180.0f);
+				player.velocity.x = cosf(rad);
+				player.velocity.y = sinf(rad);
+				//ベクトル保存
+				player.angley.x = player.velocity.x;
+				player.angley.y = player.velocity.y;
+			}
+			if (angle_direction == Angle_Direction::Right)
+			{
+				nowcol = rgocol;
+				player.angle.y -= 5.0f;
+				float rad = player.angle.y * (3.1415926535 / 180.0f);
+				player.velocity.x = cosf(rad);
+				player.velocity.y = sinf(rad);
+				//ベクトル保存
+				player.angley.x = player.velocity.x;
+				player.angley.y = player.velocity.y;
+			}
 		}
 	}
 
-	//100分の一だけ高さをずらす
-	float cccol = LeapID<double>(gocol, nowcol, 0.01f);
+	nowcol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
+		player.angley.x * 10.0f, player.angley.y * 10.0f);
 
-	defcol = cccol - col;
+
+	//100分の一だけ高さをずらす
+	//float cccol = LeapID<double>(gocol, nowcol, 0.01f);
+
+	defcol = nowcol - col;
 
 	//高さによってスピードを変更する
 	float time = (CHeight_Map::GetInstance()->g_hight) * 0.002f;
@@ -232,7 +297,7 @@ void Ground::GetPlayerHeight(Player& player)
 		if (goangle >= 0)
 		{
 			player.boid_accel *= cos(3.14 * goangle / 180);
-			if (player.follow == Player::Follow::PLAYER)
+			if (player.follow == Player::Follow::HYUMAN)
 			{
 				player.boid_accel = TexSpeed(player.boid_accel);
 			}
@@ -241,7 +306,7 @@ void Ground::GetPlayerHeight(Player& player)
 		{
 			goangle = abs(goangle);
 			player.boid_accel *= 1 + sin(3.14 * goangle / 180);
-			if (player.follow == Player::Follow::PLAYER)
+			if (player.follow == Player::Follow::HYUMAN)
 			{
 				player.boid_accel = TexSpeed(player.boid_accel);
 			}
@@ -249,9 +314,20 @@ void Ground::GetPlayerHeight(Player& player)
 	}
 	
 	player.groundcnt++;
-	if (player.groundcnt > 3)
+	if (player.groundcnt > 4)
 	{
 		player.groundcnt = 0;
+	}
+
+	anglecnt++;
+//	if (anglecnt > 40)
+	{
+		anglecnt = 0;
+	}
+	anglechangecnt++;
+//	if (anglechangecnt >2)
+	{
+		anglechangecnt = 0;
 	}
 
 	player.SetPos(XMFLOAT3(player.GetPos().x, col * CHeight_Map::GetInstance()->g_hight, player.GetPos().z));//プレイヤーのｙの高さを変えてる

@@ -5,7 +5,7 @@
 #include	"DX11util.h"
 #include	"CCamera.h"
 #include	"DX11Settransform.h"
-
+#include"drawaxis.h"
 
 bool CModelInstance::InitiInstancing(int num, const char* filename, const char* vsfile, const char* psfile, std::string texfoldername) {
 
@@ -357,7 +357,9 @@ void CModelInstance::Update(XMFLOAT4X4 mat[]) {
 	 //インスタンスバッファの初期行列をセット
 	for (int i = 0; i < m_instancecount; i++) {
 		*pstart = XMMatrixTranspose(XMLoadFloat4x4(&mat[i]));
+		drawaxis(mat[i], 1000, XMFLOAT3(mat->_41, mat->_42, mat->_43));
 		pstart++;
+
 	}
 
 	HRESULT hr = GetDX11DeviceContext()->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData);
@@ -366,6 +368,8 @@ void CModelInstance::Update(XMFLOAT4X4 mat[]) {
 
 		GetDX11DeviceContext()->Unmap(m_pInstanceBuffer, 0);
 	}
+
+	
 }
 
 void CModelInstance::TestUpdate(XMFLOAT4X4 mat[])
@@ -406,6 +410,8 @@ void CModelInstance::Draw() {
 
 void CModelInstance::DrawInstance() {
 	
+	
+
 	// デバイスコンテキストを取得
 	ID3D11DeviceContext* devcontext;
 	devcontext = GetDX11DeviceContext();
@@ -425,26 +431,6 @@ void CModelInstance::DrawInstance() {
 	GetDX11DeviceContext()->PSSetShader(m_pPixelShader, nullptr, 0);
 
 
-	//// パラメータの受け渡し
-	//D3D11_MAPPED_SUBRESOURCE pdata;
-	//devcontext->Map(mPerInstanceBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);
-	//PerInstanceData* instanceData = (PerInstanceData*)(pdata.pData);
-	//float defaultYPos = 1.5f;
-	//float offset = 1.31f;
-	//int oneLineNum = 40;
-	////instanceData.tex = { 1.0f, 1.0f };
-	//for (int i = 0; i < 100; i++)
-	//{
-	//	//とりあえずループ変数使って移動
-	//	float xPos = i % oneLineNum * offset - 2.0f;
-	//	float yPos = defaultYPos - (i / oneLineNum * offset);
-	//	XMMATRIX move = XMMatrixTranslation(xPos, yPos, 1.0f);
-	//	//行列情報をセット
-	//	instanceData[i].matrix = XMMatrixTranspose(mScale * mRotation * move);//*mView* mProj);
-	//	//色情報をセット
-	//	instanceData[i].color = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
-
-	//}
 	//テクスチャーをピクセルシェーダーに渡す
 	devcontext->PSSetSamplers(0, 1, CDirectXGraphics::GetInstance()->GetSampState());
 
@@ -470,14 +456,9 @@ void CModelInstance::DrawInstance() {
 	devcontext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	devcontext->PSSetShaderResources(0, 1, &m_srv);			// debug ts
 
-	//  sprintf_s(str, "m_Subset[0].m_VertexSuu %d mm_Subset[1].m_VertexSuu %d \0", m_xfile->m_Subset[0].m_VertexSuu, m_xfile->m_Subset[1].m_VertexSuu);
-	//	MessageBox(nullptr, str, str, MB_OK);
-
 	//sdevcontext->Unmap(mPerInstanceBuffer.Get(), 0);
 	devcontext->DrawIndexedInstanced(ind.size(), m_instancecount, 0, 0, 0);
-	//m_assimpfile.Drawinstance(devcontext);
-	// モデルインスタンシング描画
-	//m_datfile.DrawInstance(GetDX11DeviceContext(), m_pInstanceBuffer, m_instancecount);
+
 }
 
 void CModelInstance::TestInstance()
