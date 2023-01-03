@@ -288,7 +288,7 @@ void Player::Draw(int animenum) {
 	}
 }
 void Player::HyumanDrawAxis() {
-	drawaxis(m_mtx, 22.0f, XMFLOAT3(m_mtx._41, m_mtx._42, m_mtx._43));
+	drawaxis(m_mtx, 5.0f, XMFLOAT3(m_mtx._41, m_mtx._42, m_mtx._43));
 }
 
 
@@ -340,44 +340,7 @@ void Player::Update(bool input) {
 		scale._22 = 2.0f;
 		scale._33 = 2.0f;
 
-		angle.y = 0.0f;//角度リセット
-
-		//ベクトル保存
-		angley.x = velocity.x;
-		angley.y = velocity.y;
-
-		//boids計算から出た速度を元に向きを変更
-		angle.y = GetAtan(velocity.x, velocity.y);
-
-
-	/*	if (angle.y > 360)angle.y -= 360.0f;
-		else if (angle.y < 0)angle.y += 360.f;
-		velocity.x = -cosf(((angle.y) * 3.14159265358979323846 / 180.0f));
-		velocity.y = -sinf(((angle.y) * 3.14159265358979323846 / 180.0f));*/
-
-
-		
-		//左回転用の角度
-		left_angle = angle.y+45.f;
-		if (left_angle > 360)left_angle -= 360.0f;
-		else if (left_angle < 0)left_angle += 360.f;
-		//右回転用の角度
-		right_angle = angle.y-45.f;
-		if (right_angle > 360)right_angle -= 360.0f;
-		else if (right_angle < 0)right_angle += 360.f;
-		//180度回転用の角度
-		opposite_angle = angle.y + 180.f;
-		if (opposite_angle > 360)opposite_angle -= 360.0f;
-		else if (opposite_angle < 0)opposite_angle += 360.f;
-		
-		//それぞれの角度のベクトルを算出
-		left_vec.x = cosf(((left_angle) * 3.14159265358979323846 / 180.0f));
-		left_vec.y = sinf(((left_angle) * 3.14159265358979323846 / 180.0f));
-		right_vec.x = cosf(((right_angle) * 3.14159265358979323846 / 180.0f));
-		right_vec.y = sinf(((right_angle) * 3.14159265358979323846 / 180.0f));
-		opposite_vec.x = cosf(((opposite_angle) * 3.14159265358979323846 / 180.0f));
-		opposite_vec.y = sinf(((opposite_angle) * 3.14159265358979323846 / 180.0f));
-
+	
 		Ground::GetInstance()->GetPlayerHeight(*this);
 		//今回の角度を保存
 		//float ang = angle.y;
@@ -516,10 +479,6 @@ void Player::ZonbieUpdate(int animenum, int i)
 		}
 
 //		Ground::GetInstance()->GetPlayerHeight(*this);
-
-
-		
-		
 
 		trans._41 = m_pos.x;
 		trans._42 = m_pos.y + 4.0f;
@@ -718,6 +677,7 @@ Pvector coh = { 0,0 };
 Pvector awa = { 0,0 };
 Pvector dmg = { 0,0 };
 Pvector avo = { 0,0 };
+Pvector down = { 0,0 };
 
 
 //ボイドの群れに三法則を適用する
@@ -727,6 +687,7 @@ void Player::boid_flock(std::vector<Player*> player_vector, std::vector<Player*>
 	ali = { 0,0 };
 	coh = { 0,0 };
 	avo = { 0,0 };
+	down = { 0,0 };
 	
 
 	if (follow == Follow::HYUMAN)
@@ -739,37 +700,45 @@ void Player::boid_flock(std::vector<Player*> player_vector, std::vector<Player*>
 			if (boid_accel < 2.0f)
 			{
 				sep = boid_Separation(player_vector, zonbie_vector);
+				
+				avo = boid_Avoid(zonbie_vector);
+		
 			}
+
 		}
 		if (haliflg)
 		{
 			if (alifalse_cnt < 0)
 			{
-				
 				ali = boid_Alignment(player_vector);
+			
+			
 			}
 		}
 
+		down = boid_Down();
 		
 		//if (hcohflg)
 		//{
 		////	coh = boid_Cohesion(player_vector);
 		//}
 		//
-	//	avo = boid_Avoid(zonbie_vector);
+		
 	}
 
 	//これらの力を任意に重み付けする
 	//cen.mulScalar(CohW);
-	sep.mulScalar(SepW);
-	ali.mulScalar(AliW); // さまざまな特性の重みを変更する必要がある場合があります
+	sep.mulScalar(1.0f);
+	ali.mulScalar(1.0f); // さまざまな特性の重みを変更する必要がある場合があります
 	avo.mulScalar(1.0f); // さまざまな特性の重みを変更する必要がある場合があります
-//	coh.mulScalar(CohW);
+	down.mulScalar(1.0f);
 	
 	//  力ベクトルを加速度に加える
+
 	applyForce(sep);
-	applyForce(ali);
 	applyForce(avo);
+	applyForce(ali);
+	applyForce(down);
 	//applyForce(coh);
 	//applyForce(cen);
 
@@ -865,7 +834,7 @@ void Player::boid_update()
 	if (follow == Follow::HYUMAN)
 	{
 		//スローダウンを急激にしないために
-		acceleration.mulScalar(0.35f);
+	//	acceleration.mulScalar(0.35f);
 		//  更新速度
 		velocity.addVector(acceleration);
 		velocity.normalize();
@@ -1202,6 +1171,53 @@ Pvector Player::boid_Alignment(std::vector<Player*> player_vector)
 		desired = { 0,0 };
 		return desired;
 	}
+}
+
+Pvector Player::boid_Down()
+{
+	angle.y = 0.0f;//角度リセット
+
+//	velocity.addVector(acceleration);
+	velocity.normalize();
+
+	//ベクトル保存
+	angley.x = velocity.x;
+	angley.y = velocity.y;
+
+	//boids計算から出た速度を元に向きを変更
+	angle.y = GetAtan(velocity.x, velocity.y);
+
+
+	/*	if (angle.y > 360)angle.y -= 360.0f;
+		else if (angle.y < 0)angle.y += 360.f;
+		velocity.x = -cosf(((angle.y) * 3.14159265358979323846 / 180.0f));
+		velocity.y = -sinf(((angle.y) * 3.14159265358979323846 / 180.0f));*/
+
+
+
+		//左回転用の角度
+	left_angle = angle.y + 45.f;
+	if (left_angle > 360)left_angle -= 360.0f;
+	else if (left_angle < 0)left_angle += 360.f;
+	//右回転用の角度
+	right_angle = angle.y - 45.f;
+	if (right_angle > 360)right_angle -= 360.0f;
+	else if (right_angle < 0)right_angle += 360.f;
+	//180度回転用の角度
+	opposite_angle = angle.y + 180.f;
+	if (opposite_angle > 360)opposite_angle -= 360.0f;
+	else if (opposite_angle < 0)opposite_angle += 360.f;
+
+	//それぞれの角度のベクトルを算出
+	left_vec.x = cosf(((left_angle) * 3.14159265358979323846 / 180.0f));
+	left_vec.y = sinf(((left_angle) * 3.14159265358979323846 / 180.0f));
+	right_vec.x = cosf(((right_angle) * 3.14159265358979323846 / 180.0f));
+	right_vec.y = sinf(((right_angle) * 3.14159265358979323846 / 180.0f));
+	opposite_vec.x = cosf(((opposite_angle) * 3.14159265358979323846 / 180.0f));
+	opposite_vec.y = sinf(((opposite_angle) * 3.14159265358979323846 / 180.0f));
+
+	return Ground::GetInstance()->DownBoid(*this);
+
 }
 
 

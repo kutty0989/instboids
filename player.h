@@ -225,6 +225,9 @@ public:
 	bool alifalse_flg = false;
 	float alifalse_cnt = -10;
 	XMFLOAT3 rebornpos;
+
+	bool scatterflg = false;
+
 	enum class Follow
 	{
 		
@@ -284,6 +287,14 @@ public:
 	/// <param name="Player_Vector"></param>
 	/// <returns></returns>
 	Pvector boid_Alignment(std::vector<Player*> player_vector);
+
+
+	/// <summary>
+	/// 下る　周りを見て低いほうへ移動
+	/// </summary>
+	/// <param name="player_vector"></param>
+	/// <returns></returns>
+	Pvector boid_Down();
 
 	/// <summary>
 		/// プレイヤーの範囲にいるboidsがプレイヤーの速度と方向を合わせる

@@ -19,6 +19,9 @@ public:
 	void GetPlayerHeight(Player& player);
 
 
+	Pvector DownBoid(Player& player);
+
+
 	void DefangleAccel(Player& player,float accel);
 
 	void Finalize();

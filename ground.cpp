@@ -131,11 +131,17 @@ void Ground::GetPlayerHeight(Player& player)
 	//高さを求める
 	col = g_heightmap->GetHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling));//プレイヤーが画像のどこにいて、その足元のカラー情報
 
+	player.SetPos(XMFLOAT3(player.GetPos().x, col * CHeight_Map::GetInstance()->g_hight, player.GetPos().z));//プレイヤーのｙの高さを変えてる
+
+}
+Pvector Ground::DownBoid(Player& player)
+{
+
 	gocol = 0.0;
 
 	//少し前の高さをだす
-	gocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x/ scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z/ scaling),
-		player.angley.x*7.0f, player.angley.y*7.0f);
+	gocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
+		player.angley.x * 7.0f, player.angley.y * 7.0f);
 	gocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
 		player.angley.x * 14.0f, player.angley.y * 14.0f);
 	gocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
@@ -214,24 +220,24 @@ void Ground::GetPlayerHeight(Player& player)
 			if (angle_direction == Angle_Direction::Left)
 			{
 				nowcol = lgocol;//きたい方向の高さを設定しなおし
-				player.angle.y += 5.0f;//角度を変更
-				float rad = player.angle.y * (3.1415926535 / 180.0f);
-				player.velocity.x = cosf(rad);
-				player.velocity.y = sinf(rad);
-				//ベクトル保存
-				player.angley.x = player.velocity.x;
-				player.angley.y = player.velocity.y;
+				float angle = player.angle.y += 2.0f;//角度を変更
+				float rad = angle * (3.1415926535 / 180.0f);
+				Pvector returnvec;
+				returnvec.x = cosf(rad);
+				returnvec.y = sinf(rad);
+		
+				return returnvec;
 			}
 			if (angle_direction == Angle_Direction::Right)
 			{
 				nowcol = rgocol;
-				player.angle.y -= 5.0f;
-				float rad = player.angle.y * (3.1415926535 / 180.0f);
-				player.velocity.x = cosf(rad);
-				player.velocity.y = sinf(rad);
-				//ベクトル保存
-				player.angley.x = player.velocity.x;
-				player.angley.y = player.velocity.y;
+				float angle = player.angle.y -= 2.0f;
+				float rad = angle * (3.1415926535 / 180.0f);
+				Pvector returnvec;
+				returnvec.x = cosf(rad);
+				returnvec.y = sinf(rad);
+
+				return returnvec;
 			}
 		}
 	}
@@ -253,7 +259,7 @@ void Ground::GetPlayerHeight(Player& player)
 
 	//player.angley.x = player.velocity.x;
 	//player.angley.y = player.velocity.y;
-	
+
 	/*player.velocity.x = player.angley.x;
 	player.velocity.y = player.angley.y;*/
 
@@ -261,37 +267,9 @@ void Ground::GetPlayerHeight(Player& player)
 	float teihen = sqrtf((player.velocity.x * 10.0f * player.velocity.x * 10.0f) + (player.velocity.y * 10.0f * player.velocity.y * 10.0f));
 
 	//高さを元に角度を出す
-	goangle = GetAtan(teihen, defcol*90.0f);
+	goangle = GetAtan(teihen, defcol * 90.0f);
 
-	{	
-	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
-	ImGui::Begin("col");
-
-	ImGui::SetNextWindowSize(ImVec2(300, 400));
-	float cccol = col;
-	float goocol = gocol;
-	float posx = player.GetPos().x / scaling + (GetWidthHeight() / 2);
-	float posy = GetWidthHeight() / 2 - player.GetPos().z / scaling;
-	float posxx = player.GetPos().x / scaling + (GetWidthHeight() / 2) + player.angley.x * 10.0f;
-	float posyy = GetWidthHeight() / 2 - player.GetPos().z / scaling - player.angley.y * 10.0f;
-	ImGui::DragFloat("col", &cccol);
-	ImGui::DragFloat("gocol", &goocol);
-	ImGui::DragFloat("anglex", &player.angley.x);
-	ImGui::DragFloat("angley", &player.angley.y);
-	ImGui::DragFloat("posx", &posx);
-	ImGui::DragFloat("posy", &posy);
-	ImGui::DragFloat("posxx", &posxx);
-	ImGui::DragFloat("posyy", &posyy);
-	ImGui::DragFloat("goangle", &goangle);
-	ImGui::DragFloat("accel", &player.boid_accel);
-
-	ImGui::End();
-	ImGui::PopStyleColor();
-	ImGui::PopStyleColor();
-
-	}
-
+	
 	if (player.groundcnt == 0)
 	{
 		if (goangle >= 0)
@@ -312,7 +290,7 @@ void Ground::GetPlayerHeight(Player& player)
 			}
 		}
 	}
-	
+
 	player.groundcnt++;
 	if (player.groundcnt > 4)
 	{
@@ -320,17 +298,15 @@ void Ground::GetPlayerHeight(Player& player)
 	}
 
 	anglecnt++;
-//	if (anglecnt > 40)
+	//	if (anglecnt > 40)
 	{
 		anglecnt = 0;
 	}
 	anglechangecnt++;
-//	if (anglechangecnt >2)
+	//	if (anglechangecnt >2)
 	{
 		anglechangecnt = 0;
 	}
-
-	player.SetPos(XMFLOAT3(player.GetPos().x, col * CHeight_Map::GetInstance()->g_hight, player.GetPos().z));//プレイヤーのｙの高さを変えてる
 
 }
 //
