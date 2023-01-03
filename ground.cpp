@@ -242,6 +242,32 @@ Pvector Ground::DownBoid(Player& player)
 		}
 	}
 
+	anglecnt++;
+	//	if (anglecnt > 40)
+	{
+		anglecnt = 0;
+	}
+	anglechangecnt++;
+	//	if (anglechangecnt >2)
+	{
+		anglechangecnt = 0;
+	}
+
+}
+float Ground::AccelBoid(Player& player)
+{
+
+	gocol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
+		player.angley.x * 10.0f, player.angley.y * 10.0f);
+
+
+	nowcol = gocol;
+
+	nowcol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
+		player.angley.x * 10.0f, player.angley.y * 10.0f);
+
+
+
 	nowcol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
 		player.angley.x * 10.0f, player.angley.y * 10.0f);
 
@@ -257,11 +283,6 @@ Pvector Ground::DownBoid(Player& player)
 	defcol = LeapID<double>(0.0, defcol, time);//(CHeight_Map::GetInstance()->g_hight + 100) * 0.01f;
 
 
-	//player.angley.x = player.velocity.x;
-	//player.angley.y = player.velocity.y;
-
-	/*player.velocity.x = player.angley.x;
-	player.velocity.y = player.angley.y;*/
 
 	//‚‚³‚Ì·‚ðo‚·‚½‚ß‚Ì’ê•Ó‚ðŽZo
 	float teihen = sqrtf((player.velocity.x * 10.0f * player.velocity.x * 10.0f) + (player.velocity.y * 10.0f * player.velocity.y * 10.0f));
@@ -269,24 +290,26 @@ Pvector Ground::DownBoid(Player& player)
 	//‚‚³‚ðŒ³‚ÉŠp“x‚ðo‚·
 	goangle = GetAtan(teihen, defcol * 90.0f);
 
-	
+
+	float boid_accel = player.boid_accel;
+
 	if (player.groundcnt == 0)
 	{
 		if (goangle >= 0)
 		{
-			player.boid_accel *= cos(3.14 * goangle / 180);
+			boid_accel *= cos(3.14 * goangle / 180);
 			if (player.follow == Player::Follow::HYUMAN)
 			{
-				player.boid_accel = TexSpeed(player.boid_accel);
+				boid_accel = TexSpeed(boid_accel);
 			}
 		}
 		if (goangle < 0)
 		{
 			goangle = abs(goangle);
-			player.boid_accel *= 1 + sin(3.14 * goangle / 180);
+			boid_accel *= 1 + sin(3.14 * goangle / 180);
 			if (player.follow == Player::Follow::HYUMAN)
 			{
-				player.boid_accel = TexSpeed(player.boid_accel);
+				boid_accel = TexSpeed(boid_accel);
 			}
 		}
 	}
@@ -297,17 +320,8 @@ Pvector Ground::DownBoid(Player& player)
 		player.groundcnt = 0;
 	}
 
-	anglecnt++;
-	//	if (anglecnt > 40)
-	{
-		anglecnt = 0;
-	}
-	anglechangecnt++;
-	//	if (anglechangecnt >2)
-	{
-		anglechangecnt = 0;
-	}
 
+	return boid_accel;
 }
 //
 //void Ground::DefangleAccel(Player& player)

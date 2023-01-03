@@ -21,6 +21,8 @@ public:
 
 	Pvector DownBoid(Player& player);
 
+	float AccelBoid(Player& player);
+
 
 	void DefangleAccel(Player& player,float accel);
 

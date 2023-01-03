@@ -343,7 +343,9 @@ void Player::Update(bool input) {
 	
 		Ground::GetInstance()->GetPlayerHeight(*this);
 		//¡‰ñ‚ÌŠp“x‚ð•Û‘¶
-		//float ang = angle.y;
+		
+		boid_accel = Ground::GetInstance()->AccelBoid(*this);
+
 		velocity.mulScalar(boid_accel);
 		location.addVector(velocity);
 
