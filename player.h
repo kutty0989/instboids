@@ -12,7 +12,7 @@
 
 class UniqueEnemy_Bomb;
 #define		ENEMYMAX		1
-#define		ZOMBIEMAX		2
+#define		ZOMBIEMAX		10
 #define		ZOMBIE		    10
 #define		HYUMANMAX		100
 
@@ -226,7 +226,7 @@ public:
 	float alifalse_cnt = -10;
 	XMFLOAT3 rebornpos;
 
-	bool scatterflg = false;
+	bool zombie_scatterflg = false;
 
 	enum class Follow
 	{
@@ -328,7 +328,7 @@ public:
 	/// 分散　ゾンビがマウスの場所から離れていく
 	/// </summary>
 	/// <returns></returns>
-	Pvector zonbie_Scatter();
+	Pvector Zombie_Scatter();
 	/// <summary>
 	/// 結合　プレイヤーの範囲にいるboidsがプレイヤーに向かう
 	/// </summary>

@@ -266,15 +266,6 @@ float Ground::AccelBoid(Player& player)
 	nowcol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
 		player.angley.x * 10.0f, player.angley.y * 10.0f);
 
-
-
-	nowcol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-		player.angley.x * 10.0f, player.angley.y * 10.0f);
-
-
-	//100分の一だけ高さをずらす
-	//float cccol = LeapID<double>(gocol, nowcol, 0.01f);
-
 	defcol = nowcol - col;
 
 	//高さによってスピードを変更する

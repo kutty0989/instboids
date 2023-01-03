@@ -680,7 +680,15 @@ void PlayerMgr::PlayerUpdate()
 
 
 		XMFLOAT3 pppos = {};
-
+		if (scattercnt > 90)
+		{
+			scattercnt = 90;
+		}
+		if (scattercnt > 61)
+		{
+			scatterflg = true;
+			scattercnt = 0;
+		}
 		for (int i = 0; i < ZOMBIEMAX;i++)
 		{
 
@@ -696,18 +704,21 @@ void PlayerMgr::PlayerUpdate()
 			{
 				instance_zombie[i].insideflg = true;
 			}
+
+			if (scatterflg  == true)
+			{
+				if (dist < 250)
+				{
+					instance_zombie[i].zombie_scatterflg = true;
+				}
+			}
 		}
+
 	}
 	scattercnt--;
 	if (scattercnt < 0)scattercnt = 0;
-	if (scattercnt > 61)
-	{
-		scatterflg = true;
-	}
-	if (scattercnt > 90)
-	{
-		scattercnt = 90;
-	}
+
+
 
 	if (CDirectInput::GetInstance().GetMouseLButtonCheck())
 	{

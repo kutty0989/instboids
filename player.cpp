@@ -402,28 +402,6 @@ void Player::ZonbieUpdate(int animenum, int i)
 		axisZ.z = m_mtx._33;
 		axisZ.w = 0.0f;
 
-		//float ease_cnt = 1-(ease_nowcnt / 60.0f);
-		//ease_nowcnt--;
-
-		//if (ease_nowcnt > 0)
-		//{
-		//	boid_accel = ease_out(ease_cnt, 2.0f, 0.1f, 10.0f);
-		//}
-		//if (ease_nowcnt <= 0)
-		//{
-		//	ease_nowcnt = 0;
-		//}
-
-		/*if (this->insideflg)
-		{
-			this->boid_accel = PlayerMgr::GetInstance()->accel;
-			insideflg = false;
-
-		}*/
-
-
-
-
 		angle.y = 0.0f;
 
 		angle.y = -GetKakudo(angley.x, angley.y);
@@ -459,7 +437,10 @@ void Player::ZonbieUpdate(int animenum, int i)
 			{
 				boid_accel = 0;
 			}
-
+			if (boid_accel < 0.5f)
+			{
+				zombie_scatterflg = false;
+			}
 			if (boid_accel > 2.5f)
 			{
 				boid_accel = 2.5f;
@@ -755,56 +736,61 @@ void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player
 	dmg = { 0,0 };
 
 	
-	if ((boid_accel < 0.5f) || (PlayerMgr::GetInstance()->gatherflg))
-	{
-		if (zsepflg)
-		{
-			sep = boid_inSeparation(player_vector);
-		}
-	}
 
 	if (PlayerMgr::GetInstance()->scatterflg)
 	{
 		if (zscaflg)
 		{
 			awaycnt = 0;
-			coh = zonbie_Scatter();
+			coh = Zombie_Scatter();
 		}
 	}
 
-	if (PlayerMgr::GetInstance()->gatherflg)
+	//ï™éUÇµÇƒÇ¢ÇÈéûà»äOÇÕçsÇ§
+	if (!zombie_scatterflg)
 	{
-		if (zcohflg)
+		if ((boid_accel < 0.5f) || (PlayerMgr::GetInstance()->gatherflg))
 		{
-			awaycnt = 0;
-			coh = boid_inCohesion(player_vector);
-		}
-	}
-	if ((!PlayerMgr::GetInstance()->gatherflg) && (!PlayerMgr::GetInstance()->scatterflg))
-	{
-		if (zserflg)
-		{
-			if (boid_accel < 0.4f)
+			if (zsepflg)
 			{
-				awa = boid_zonbieSearch();
+				sep = boid_inSeparation(player_vector);
 			}
 		}
-	}
-	if (!PlayerMgr::GetInstance()->gatherflg) {
-		if (zawaflg)
+
+		if (PlayerMgr::GetInstance()->gatherflg)
 		{
-			if (boid_accel < 0.4f)
+			if (zcohflg)
 			{
-				awa = boid_zonbieAway(human_vector);
+				awaycnt = 0;
+				coh = boid_inCohesion(player_vector);
 			}
 		}
+		if ((!PlayerMgr::GetInstance()->gatherflg) && (!PlayerMgr::GetInstance()->scatterflg))
+		{
+			if (zserflg)
+			{
+				if (boid_accel < 0.4f)
+				{
+					awa = boid_zonbieSearch();
+				}
+			}
+		}
+		if (!PlayerMgr::GetInstance()->gatherflg) {
+			if (zawaflg)
+			{
+				if (boid_accel < 0.4f)
+				{
+					awa = boid_zonbieAway(human_vector);
+				}
+			}
+		}
+		if (zdashflg)
+		{
+			ali = boid_zonbieAlignment(mousevec);
+		}
+
+		dmg = zonbie_damage();
 	}
-	if (zdashflg)
-	{
-		ali = boid_zonbieAlignment(mousevec);
-	}
-	dmg = zonbie_damage();
-	
 	
 	//Ç±ÇÍÇÁÇÃóÕÇîCà”Ç…èdÇ›ïtÇØÇ∑ÇÈ
 	//cen.mulScalar(CohW);
@@ -1356,37 +1342,44 @@ Pvector Player::boid_Cohesion(std::vector<Player*> player_vector)
 /// ï™éUÇµÇƒÇ¢Ç≠
 /// </summary>
 /// <returns></returns>
-Pvector Player::zonbie_Scatter()
+Pvector Player::Zombie_Scatter()
 {
-	ali_vel = { 0,0 };
-	velocity = { 0,0 };
-	acceleration = { 0,0 };
-	
-	vel = { 0,0 };
-	desired = { 0,0 };
-	boid_accel = 2.0f;
-	XMFLOAT3 pos = {};
-	Pvector now_mousepos = { 0,0 };
-	now_mousepos.x = CDirectInput::GetInstance().GetMousePosX();
-	now_mousepos.y = CDirectInput::GetInstance().GetMousePosY();
-	now_mousepos.x -= Application::CLIENT_WIDTH / 2 * 1.0f;
-	now_mousepos.y = Application::CLIENT_HEIGHT / 2 * 1.0f - now_mousepos.y;
+	if (zombie_scatterflg)
+	{
+		if (PlayerMgr::GetInstance()->scatterflg)
+		{
+			ali_vel = { 0,0 };
+			velocity = { 0,0 };
+			acceleration = { 0,0 };
 
-	pos = Screenpos(this->GetPos());
-	pos.x -= Application::CLIENT_WIDTH / 2;
-	pos.y = Application::CLIENT_HEIGHT / 2 - pos.y;
+			vel = { 0,0 };
+			desired = { 0,0 };
+			boid_accel = 2.0f;
+			XMFLOAT3 pos = {};
+			Pvector now_mousepos = { 0,0 };
+			now_mousepos.x = CDirectInput::GetInstance().GetMousePosX();
+			now_mousepos.y = CDirectInput::GetInstance().GetMousePosY();
+			now_mousepos.x -= Application::CLIENT_WIDTH / 2 * 1.0f;
+			now_mousepos.y = Application::CLIENT_HEIGHT / 2 * 1.0f - now_mousepos.y;
 
-	vel.x = pos.x;
-	vel.y = pos.y;
+			pos = Screenpos(this->GetPos());
+			pos.x -= Application::CLIENT_WIDTH / 2;
+			pos.y = Application::CLIENT_HEIGHT / 2 - pos.y;
 
-	desired = desired.subTwoVector(now_mousepos, vel); //sum = desired(average)
-	desired.normalize();
-	desired.mulScalar(-1);
+			vel.x = pos.x;
+			vel.y = pos.y;
 
-	angley.x = desired.x;
-	angley.y = desired.y;
-	velocity = desired;
+			desired = desired.subTwoVector(now_mousepos, vel); //sum = desired(average)
+			desired.normalize();
+			desired.mulScalar(-1);
 
+			angley.x = desired.x;
+			angley.y = desired.y;
+			velocity = desired;
+
+			awaycnt = 10;
+		}
+	}
 	return desired;
 }
 
