@@ -15,6 +15,7 @@
 #include"Scean.h"
 #include"BulletMgr.h"
 #include"UniqueEnemy_Bomb.h"
+#include<random>
 
 class Scean;
 
@@ -308,6 +309,8 @@ struct FLOAT3
 
 
 void Player::Update(bool input) {
+
+
 
 	if (bstatus == BSTATUS::LIVE)
 	{
@@ -769,7 +772,7 @@ void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player
 		{
 			if (zserflg)
 			{
-				if (boid_accel < 0.4f)
+				if (boid_accel < 0.2f)
 				{
 					awa = boid_zonbieSearch();
 				}
@@ -1286,7 +1289,12 @@ Pvector Player::boid_zonbieAway(std::vector<Player*> player_vector)
 
 Pvector Player::boid_zonbieSearch()
 {
-	int cnt = rand() % Searchcnt;
+	std::random_device seed_gen;
+	std::mt19937 engine(seed_gen());
+	std::uniform_int_distribution<int32_t> rand4(0,10000);
+	std::uniform_int_distribution<int32_t> rand5(-150,150);
+	
+	int cnt = rand4(seed_gen)% Searchcnt;
 	if (cnt == 0)
 	{
 		vel = { 0,0 };
@@ -1294,8 +1302,8 @@ Pvector Player::boid_zonbieSearch()
 
 		ali_vel ={0,0};
 
-		float x = rand() % 100-50.0f;
-		float y = rand() % 100-50.0f;
+		float x = rand5(seed_gen);
+		float y = rand5(seed_gen);
 		desired = { 0,0 };
 		desired = { x,y };
 		desired.normalize();
@@ -1406,7 +1414,7 @@ Pvector Player::zonbie_damage()
 				vel = { 0,0 };
 				desired = { 0,0 };
 
-				this->hp -= 2;
+				this->hp -= 1;
 				desired = desired.subTwoVector(location,ali_vel); //sum = desired(average)
 				desired.normalize();
 			
