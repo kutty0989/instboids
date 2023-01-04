@@ -25,7 +25,6 @@ bool CDirectXGraphics::Init(HWND hWnd, unsigned int Width, unsigned int Height, 
 
 	m_Width = Width;
 	m_Height = Height;
-
 	// ƒhƒ‰ƒCƒo‚ÌŽí—Þ
 	D3D_DRIVER_TYPE driverTypes[] =
 	{

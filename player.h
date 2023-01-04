@@ -11,7 +11,7 @@
 //#include"UniqueEnemy_Bomb.h"
 
 class UniqueEnemy_Bomb;
-#define		ENEMYMAX		1
+#define		ENEMYMAX		10
 #define		ZOMBIEMAX		1010
 #define		ZOMBIE		    10
 #define		HYUMANMAX		1000
@@ -113,7 +113,7 @@ public:
 
 	bool CharengerInit();
 
-	void Draw(int animenum);
+	void UpdateHp();
 
 	void HyumanDrawAxis();
 

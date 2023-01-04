@@ -16,7 +16,9 @@ public:
 
 	void Create();
 
-	void Update(XMFLOAT3 pos,int hp);
+	void Update(XMFLOAT3 pos[]);
+	
+	void UpdateHp(int hp);
 
 	void Draw();
 

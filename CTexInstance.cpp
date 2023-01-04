@@ -165,12 +165,11 @@ bool CTexInstance::Update(XMFLOAT3 pos[])
 	devcontext->Map(mPerInstanceBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);
 	PerInstanceData* instanceData = (PerInstanceData*)(pdata.pData);
 
-	//instanceData.tex = { 1.0f, 1.0f };
 	for (int i = 0; i < mInstanceNum; i++)
 	{
 		//とりあえずループ変数使って移動
-		float xPos = pos->x;
-		float yPos = pos->y;
+		float xPos = pos[i].x;
+		float yPos = pos[i].z;
 		XMMATRIX move = XMMatrixTranslation(xPos, yPos, 1.0f);
 		//行列情報をセット
 		instanceData[i].matrix = XMMatrixTranspose(mScale * mRotation * move);//*mView* mProj);
@@ -183,20 +182,6 @@ bool CTexInstance::Update(XMFLOAT3 pos[])
 
 	devcontext->Unmap(mPerInstanceBuffer.Get(), 0);
 
-	//ID3D11DeviceContext* devcontext;
-	//devcontext = GetDX11DeviceContext();
-
-	//// デバイスを取得
-	//ID3D11Device* device;
-	//device = GetDX11Device();
-
-	//float clearColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
-	//devcontext->ClearRenderTargetView(mRenderTargetView.Get(), clearColor);
-
-	//RenderInstancing();
-
-
-//	mInput->SetPreBuffer();
 	return true;
 }
 

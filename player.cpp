@@ -218,7 +218,7 @@ void Player::zonbie_Init(float x, float y, int nowzombiecnt)
 	AliW = 1.0;
 	CohW = 1.0;
 
-	boidshp.Init();
+	//boidshp.Init();
 	if (ZOMBIE >= nowzombiecnt)
 	{
 		bstatus = BSTATUS::LIVE;
@@ -285,13 +285,12 @@ void Player::zombie_reborn(float x, float y,float z)
 	reborn_flg = true;
 }
 
-void Player::Draw(int animenum) {
+void Player::UpdateHp() {
 
 	if (follow == Follow::ZONBIE)
 	{
-		boidshp.Update(XMFLOAT3(m_mtx._41, m_mtx._42, m_mtx._43),hp);
-		boidshp.Draw();
-		
+		boidshp.UpdateHp(hp);
+		//boidshp.Draw();
 	}
 }
 void Player::HyumanDrawAxis() {
@@ -1143,21 +1142,24 @@ Pvector Player::boid_Alignment(std::vector<Player*> player_vector)
 
 	desired = { 0,0 };
 	int count = 0;
-	for (auto& it : player_vector)
+	if (boid_accel < 2.0f)
 	{
-
-		if (it->follow == Follow::HYUMAN)
+		for (auto& it : player_vector)
 		{
-			float d = location.distance(it->location);
-			if ((d > 0) && (d < alidist)) { // 0 < d < 50
-				if (it->boid_accel < 2.0f)
-				{
-					desired.addVector(it->velocity);
-					count++;
+
+			if (it->follow == Follow::HYUMAN)
+			{
+				float d = location.distance(it->location);
+				if ((d > 0) && (d < alidist)) { // 0 < d < 50
+					if (it->boid_accel < 2.0f)
+					{
+						desired.addVector(it->velocity);
+						count++;
+					}
 				}
 			}
-		}
 
+		}
 	}
 	// 整列するのに十分近いボイドがある場合...
 	if (count > 0) {
