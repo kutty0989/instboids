@@ -190,8 +190,7 @@
     <ClCompile Include="IMgui\imgui_tables.cpp" />
     <ClCompile Include="IMgui\imgui_widgets.cpp" />
     <ClCompile Include="instan.cpp" />
-    <ClCompile Include="instance.cpp" />
-    <ClCompile Include="instancemodel.cpp" />
+    <ClCompile Include="CTexInstance.cpp" />
     <ClCompile Include="line.cpp" />
     <ClCompile Include="Long_Notes.cpp" />
     <ClCompile Include="mesh.cpp" />
@@ -258,8 +257,7 @@
     <ClInclude Include="granate.h" />
     <ClInclude Include="ground.h" />
     <ClInclude Include="instan.h" />
-    <ClInclude Include="instance.h" />
-    <ClInclude Include="instancemodel.h" />
+    <ClInclude Include="CTexInstance.h" />
     <ClInclude Include="InstanceModelMgr.h" />
     <ClInclude Include="MeshData.h" />
     <ClInclude Include="MouseCircle.h" />

@@ -1,8 +1,8 @@
 #pragma once
 #include"CTex.h"
 #include"instan.h"
-#include"instance.h"
-#include"instancemodel.h"
+#include"CTexInstance.h"
+
 class MouseCircle {
 private:
 

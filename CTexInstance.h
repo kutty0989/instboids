@@ -39,7 +39,7 @@ struct PerInstanceData
 
 
 
-class DXManager
+class CTexInstance
 {
 public:
 
@@ -59,10 +59,10 @@ public:
 		return sts;
 	}
 
-	DXManager();
-	bool Update();
+	void Init(int num, const char* filename);
+	bool Update(XMFLOAT3 pos[]);
 	void RenderInstancing();
-	~DXManager();
+	~CTexInstance();
 
 	XMFLOAT2 c_uv[4] =
 	{

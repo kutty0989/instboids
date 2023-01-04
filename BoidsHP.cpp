@@ -6,18 +6,62 @@
 #include"CDirectInput.h"
 #include"IMgui/imgui.h"
 #include"CCamera.h"
+#include"CTexInstance.h"
 
+
+CTexInstance ctexinstance_hpin;
+CTexInstance ctexinstance_hpout;
 
 void BoidsHp::Init()
 {
+	//ctexinstance_hpin.Init(HYUMANMAX, "assets/3danime/tritop.png");
+
+
 	//XMFLOAT4 firecol = { 1.0f,1.0f,1.0f,1.0f };
 	//
+	//hpout = new CBillBoard();
+	//BoidsHp::Sethpout(CBillBoardMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_btexlist[static_cast<int>(Scean::BCGID::HPOUT)].cgname));
+	//hpout->Init(Player::GetInstance()->GetPos().x, 500.0f, Player::GetInstance()->GetPos().z + 100.0f, 50.0f, 50.0f, firecol);
 
-	//m_bill = new CBillBoard();
+	////hpout->LoadTexTure("assets/UI/circle.png");
+	//XMFLOAT2 fireUV[] =
+	//{
+	//	{0,1},
+	//	{0,0},
+	//	{1,1},
+	//	{1,0}
+	//};
+	//XMFLOAT2 inUV[] =
+	//{
+	//	{1,1},
+	//	{0,1},
+	//	{1,0},
+	//	{0,0}
+	//};
+	////hpout->PartMax(4,4);
+	//hpout->SetUV(fireUV);
+	//hpout->SetPosiotion(Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z + 30.0f);
+	//hpout->SetScale(1.0f, 1.0f, 1.0f);
+	//hpout->angle = 90.0f;
+
+	//hpin = new CBillBoard();
+	//BoidsHp::Sethpin(CBillBoardMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_btexlist[static_cast<int>(Scean::BCGID::HPIN)].cgname));
+	//hpin->Init(Player::GetInstance()->GetPos().x, 500.0f, Player::GetInstance()->GetPos().z + 100.0f, 50.0f, 50.0f, firecol);
+
+	////hpin->LoadTexTure("assets/UI/circle.png");
+
+	//hpin->PartMax(2,3);
+	//hpin->SetUV(inUV);
+	//hpin->SetPosiotion(Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z + 30.0f);
+	//hpin->SetScale(1.0f, 1.0f, 1.0f);
+	//hpin->angle = 90.0f;
+
+
+	//hpout = new CBillBoard();
 	//BoidsHp::SetTexture(CBillBoardMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_btexlist[static_cast<int>(Scean::BCGID::HPBER)].cgname));
-	//m_bill->Init(Player::GetInstance()->GetPos().x, 500.0f, Player::GetInstance()->GetPos().z + 100.0f, 50.0f, 50.0f, firecol);
+	//hpout->Init(Player::GetInstance()->GetPos().x, 500.0f, Player::GetInstance()->GetPos().z + 100.0f, 50.0f, 50.0f, firecol);
 
-	////m_bill->LoadTexTure("assets/UI/circle.png");
+	////hpout->LoadTexTure("assets/UI/circle.png");
 	//XMFLOAT2 fireUV[] =
 	//{
 	//	{0,0},
@@ -25,24 +69,78 @@ void BoidsHp::Init()
 	//	{1,0},
 	//	{1,1}
 	//};
-	//m_bill->PartMax(4,4);
-	//m_bill->SetUV(fireUV);
-	//m_bill->SetPosiotion(Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z + 30.0f);
-	//m_bill->SetScale(1.0f,1.0f,1.0f);
-	//m_bill->angle = 90.0f;
+	////hpout->PartMax(4,4);
+	//hpout->SetUV(fireUV);
+	//hpout->SetPosiotion(Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z + 30.0f);
+	//hpout->SetScale(1.0f,1.0f,1.0f);
+	//hpout->angle = 90.0f;
 }
 
-void BoidsHp::Update(XMFLOAT3 pos)
+void BoidsHp::Update(XMFLOAT3 pos,int hp)
 {
-//	m_bill->SetPosiotion(pos.x,pos.y, pos.z +25.0f);
+//	static XMFLOAT4X4 mat[ZOMBIEMAX];
+//
+//	for (int i = 0; i < ZOMBIEMAX; i++) {
+//
+//		XMFLOAT4X4	world;
+//		world = ctexinstance_hpin[i];
+//		//DX11MtxFromQt(world, g_enemy[i].GetRotation());
+//
+//		mat[i] = world;
+//
+//	}
+//	cmodelinstance_hyuman.Update(mat);
+//
+//	switch (hp)
+//	{
+//	case 5:
+//	{
+//		hpin->Part(0, 2);
+//		break;
+//	}
+//	case 4:
+//	{
+//		hpin->Part(1, 2);
+//		break;
+//	}
+//	case 3:
+//	{
+//		hpin->Part(0, 1);
+//		break;
+//	}
+//	case 2:
+//	{
+//		hpin->Part(1, 1);
+//		break;
+//	case 1:
+//	{
+//		hpin->Part(0, 0);
+//		break;
+//	}
+//	case 0:
+//	{
+//		hpin->Part(1, 0);
+//		break;
+//
+//	}
+//	}
+//	default:
+//		break;
+//	}
+//
+//
+//	hpout->SetPosiotion(pos.x,pos.y, pos.z +25.0f);
+//	hpin->SetPosiotion(pos.x,pos.y, pos.z +25.f);
 
 }
 
 void BoidsHp::Draw()
 {
-
-	//m_texture->Draw();
-////	m_bill->DrawBillBoard(CCamera::GetInstance()->GetCameraMatrix());
+//	ctexinstance_hpin.RenderInstancing();
+////	m_texture->Draw();
+//	hpout->DrawBillBoard(CCamera::GetInstance()->GetCameraMatrix());
+//	hpin->DrawBillBoard(CCamera::GetInstance()->GetCameraMatrix());
+//	
 }
 
 void BoidsHp::Finish()

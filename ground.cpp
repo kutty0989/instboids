@@ -220,7 +220,10 @@ Pvector Ground::DownBoid(Player& player)
 			if (angle_direction == Angle_Direction::Left)
 			{
 				nowcol = lgocol;//きたい方向の高さを設定しなおし
-				float angle = player.angle.y += 2.0f;//角度を変更
+				float anglescale = CHeight_Map::GetInstance()->g_hight;
+				anglescale /= 100;
+				anglescale *= 0.4f;
+				float angle = player.angle.y += anglescale;//角度を変更
 				float rad = angle * (3.1415926535 / 180.0f);
 				Pvector returnvec;
 				returnvec.x = cosf(rad);
@@ -231,7 +234,10 @@ Pvector Ground::DownBoid(Player& player)
 			if (angle_direction == Angle_Direction::Right)
 			{
 				nowcol = rgocol;
-				float angle = player.angle.y -= 2.0f;
+				float anglescale = CHeight_Map::GetInstance()->g_hight;
+				anglescale /= 100;
+				anglescale *= 0.4f;
+				float angle = player.angle.y -= anglescale;
 				float rad = angle * (3.1415926535 / 180.0f);
 				Pvector returnvec;
 				returnvec.x = cosf(rad);
@@ -256,15 +262,17 @@ Pvector Ground::DownBoid(Player& player)
 }
 float Ground::AccelBoid(Player& player)
 {
+	col = g_heightmap->GetHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling));//プレイヤーが画像のどこにいて、その足元のカラー情報
+
 
 	gocol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-		player.angley.x * 10.0f, player.angley.y * 10.0f);
+		player.velocity.x * 10.0f, player.velocity.y * 10.0f);
 
 
 	nowcol = gocol;
 
-	nowcol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-		player.angley.x * 10.0f, player.angley.y * 10.0f);
+	//nowcol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
+	//	player.angley.x * 10.0f, player.angley.y * 10.0f);
 
 	defcol = nowcol - col;
 
@@ -291,7 +299,10 @@ float Ground::AccelBoid(Player& player)
 			boid_accel *= cos(3.14 * goangle / 180);
 			if (player.follow == Player::Follow::HYUMAN)
 			{
-				boid_accel = TexSpeed(boid_accel);
+				if (Player::GetInstance()->texspeedflg)
+				{
+					boid_accel = TexSpeed(boid_accel);
+				}
 			}
 		}
 		if (goangle < 0)
@@ -300,13 +311,16 @@ float Ground::AccelBoid(Player& player)
 			boid_accel *= 1 + sin(3.14 * goangle / 180);
 			if (player.follow == Player::Follow::HYUMAN)
 			{
-				boid_accel = TexSpeed(boid_accel);
+				if (Player::GetInstance()->texspeedflg)
+				{
+					boid_accel = TexSpeed(boid_accel);
+				}
 			}
 		}
 	}
 
 	player.groundcnt++;
-	if (player.groundcnt > 4)
+	if (player.groundcnt > 5)
 	{
 		player.groundcnt = 0;
 	}

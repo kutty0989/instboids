@@ -3,6 +3,7 @@
 #include"CDirectInput.h"
 #include"BulletMgr.h"
 #include"player.h"
+
 const int INTERPOLATENUM = 4;			// 補間数
 
 bool UniqueEnemy_Bomb::Init()
@@ -115,13 +116,15 @@ void UniqueEnemy_Bomb::Update()
 			awaycnt -= 1;
 		}
 		if (awaycnt == 0) {
-			boid_accel -= 0.05f;
+			boid_accel -= 0.0f;
 		}
 		if (boid_accel < 0)
 		{
 			boid_accel = 0;
 		}
-
+		 escapecnt--;
+		//if (escapecnt < -10) escapecnt = -10;
+	
 		sepcnt -= 1;
 		if (sepcnt < 0)sepcnt = 0;
 	
@@ -158,28 +161,28 @@ void UniqueEnemy_Bomb::Update()
 		m_mtx = world;
 
 
-		if (b_animecnt != manime.animecnt)
-		{
-			animereset = true;
-			manime.m_Frame = 0;
-		}
-		else
-		{
-			animereset = false;
-		}
+		//if (b_animecnt != manime.animecnt)
+		//{
+		//	animereset = true;
+		//	manime.m_Frame = 0;
+		//}
+		//else
+		//{
+		//	animereset = false;
+		//}
 
-		b_animecnt = manime.animecnt;//前回のアニメ番号保存
+		//b_animecnt = manime.animecnt;//前回のアニメ番号保存
 
 
-		if (manime.m_cnt % INTERPOLATENUM == 0) {
-			manime.m_preFrame = manime.m_Frame;
-			manime.m_Frame++;
-			manime.m_factor = 0;
-		}
+		//if (manime.m_cnt % INTERPOLATENUM == 0) {
+		//	manime.m_preFrame = manime.m_Frame;
+		//	manime.m_Frame++;
+		//	manime.m_factor = 0;
+		//}
 
-		manime.m_factor = 1.0f / (float)(manime.m_cnt % INTERPOLATENUM + 1);
+		//manime.m_factor = 1.0f / (float)(manime.m_cnt % INTERPOLATENUM + 1);
 
-		manime.m_cnt++;
+		//manime.m_cnt++;
 	}
 	else if (hp <= 0)
 	{
@@ -216,7 +219,10 @@ void UniqueEnemy_Bomb::UEnemy_flock(std::vector<Player>& zonbie_vector)
 	
 		if (bserflg)
 		{
-			ueser = UEnemy_Search();
+			if (boid_accel < 0.3f)
+			{
+				ueser = UEnemy_Search();
+			}
 		}
 		if (bbombflg)
 		{
@@ -233,7 +239,7 @@ void UniqueEnemy_Bomb::UEnemy_flock(std::vector<Player>& zonbie_vector)
 
 
 	applyForce(ueser);
-	applyForce(uesep);
+	//applyForce(uesep);
 	applyForce(ueatt);
 
 }
@@ -336,23 +342,26 @@ Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<Player>& zonbie_vector)
 				}
 			}
 		}
+		//if (escapecnt < 0)
+		//{
+		//	if ((before_distanse > 0) && (before_distanse < 15))
+		//	{
+		//		uedesired = { 0,0 };
+		//		uedesired = uedesired.subTwoVector(location, nearplayer);
+		//		uedesired.normalize();
+		//		uedesired.mulScalar(300);
 
-		if ((before_distanse > 0) && (before_distanse < 15))
-		{
-			uedesired = { 0,0 };
-			uedesired = uedesired.subTwoVector(location, nearplayer);
-			uedesired.normalize();
-			uedesired.divScalar(900);
+		//		acceleration = uedesired;
+		//		angley.x = acceleration.x;
+		//		angley.y = acceleration.y;
+		//		this->boid_accel = 2.6f;
+		//		awaycnt = 500;
+		//		escapecnt = 300;
 
-			acceleration = uedesired;
-			angley.x = acceleration.x;
-			angley.y = acceleration.y;
-			this->boid_accel = 2.3f;
+		//		//unique_enemy_anime = UNIQUE_ENEMY_ANIME::ATTACK;
 
-			//unique_enemy_anime = UNIQUE_ENEMY_ANIME::ATTACK;
-
-		}
-
+		//	}
+		//}
 		if ((before_distanse > 20) && (before_distanse < desiredseparation))
 		{
 			uedesired = { 0,0 };
@@ -372,8 +381,12 @@ Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<Player>& zonbie_vector)
 			zonbienearflg = false;
 		}
 	}
-	
 	return uedesired;
+}
+
+Pvector UniqueEnemy_Bomb::UEnemy_Escape(std::vector<Player>& zonbie_vector)
+{
+	return Pvector();
 }
 
 void UniqueEnemy_Bomb::UEnemy_Dmg(std::vector<Player>& zonbie_vector)

@@ -43,6 +43,8 @@ public:
 		HPBER,
 		EXPLSION,
 		BLOOD,
+		HPOUT,
+		HPIN,
 		MAX
 
 	};
@@ -81,7 +83,9 @@ public:
 	std::vector<BCgDataList> g_btexlist = {
 		{BCGID::HPBER,"assets/UI/hp.png","shader/vs.hlsl","shader/pstexcol.hlsl"},
 		{BCGID::EXPLSION,"assets/effect/explsion.png","shader/vs.hlsl","shader/pstexcol.hlsl"},
-		{BCGID::BLOOD,"assets/effect/blood.png","shader/vs.hlsl","shader/pstexcol.hlsl"}
+		{BCGID::BLOOD,"assets/effect/blood.png","shader/vs.hlsl","shader/pstexcol.hlsl"},
+		{BCGID::HPOUT,"assets/UI/hpkara.png","shader/vs.hlsl","shader/pstexcol.hlsl"},
+		{BCGID::HPIN,"assets/UI/hpnaka5.png","shader/vs.hlsl","shader/pstexcol.hlsl"}
 
 		//{CGID::TiTLE,"assets/UI/Notes.png","shader/vs.hlsl","shader/pstexcol.hlsl"}
 	};

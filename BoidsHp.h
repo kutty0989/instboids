@@ -6,6 +6,8 @@ private:
 
 	
 	 CBillBoard* m_bill;
+	 CBillBoard* hpin;
+	 CBillBoard* hpout;
 
 public:
 	XMFLOAT2 mousepos;
@@ -14,7 +16,7 @@ public:
 
 	void Create();
 
-	void Update(XMFLOAT3 pos);
+	void Update(XMFLOAT3 pos,int hp);
 
 	void Draw();
 
@@ -34,6 +36,16 @@ private:
 	void SetTexture(CBillBoard* tex)
 	{
 		m_bill = tex;
+	}
+
+	void Sethpout(CBillBoard* tex)
+	{
+		hpout = tex;
+	}
+
+	void Sethpin(CBillBoard* tex)
+	{
+		hpin = tex;
 	}
 
 };

@@ -12,6 +12,7 @@
 #include"InstanceModelMgr.h"
 #include"enemy.h"
 
+
 BoundingSphere g_bsphere;//当たり判定の球オブジェクト
 BoundingSphere g_bsplayer;//自分用BS
 PlayerMgr::DIRECTION g_direction = PlayerMgr::DIRECTION::NEUTRAL;
@@ -280,7 +281,16 @@ void PlayerMgr::PlayerUpdate()
 			}
 		}
 	}
-
+	for (int i = 0; i < instance_hyuman.size();i++)
+	{
+		if (instance_hyuman.at(i).GetHp() == 0)
+		{
+			if (instance_hyuman.at(i).bstatus != Player::BSTATUS::DEAD)
+			{
+				instance_hyuman.at(i).bstatus = Player::BSTATUS::DEAD;
+			}
+		}
+	}
 
 	for (int m = 0; m < gridnum; m++)
 	{
@@ -337,91 +347,93 @@ void PlayerMgr::PlayerUpdate()
 		{
 			for (int i = 0;i < grid_zonbievector[m][n].size();i++)
 			{
-
-				buf_vec.clear();
-				buf_pvec.clear();
-
-
-
-				for (int w = 0; w < grid_zonbievector[m][n].size(); w++)
+				if (i == 0)
 				{
-					Player* buf = &grid_zonbievector[m][n].at(w);
-					buf_vec.push_back(buf);
-				}
 
-				if (m != 0)
-				{
-					for (int w = 0; w < grid_zonbievector[m - 1][n].size(); w++)
+					buf_vec.clear();
+					buf_pvec.clear();
+
+
+
+					for (int w = 0; w < grid_zonbievector[m][n].size(); w++)
 					{
-						Player* buf = &grid_zonbievector[m - 1][n].at(w);
+						Player* buf = &grid_zonbievector[m][n].at(w);
 						buf_vec.push_back(buf);
 					}
-				}
-				if (n != 0)
-				{
-					for (int w = 0; w < grid_zonbievector[m][n - 1].size(); w++)
+
+					if (m != 0)
 					{
-						Player* buf = &grid_zonbievector[m][n - 1].at(w);
-						buf_vec.push_back(buf);
+						for (int w = 0; w < grid_zonbievector[m - 1][n].size(); w++)
+						{
+							Player* buf = &grid_zonbievector[m - 1][n].at(w);
+							buf_vec.push_back(buf);
+						}
 					}
-				}
-				if (m != gridnum)
-				{
-					for (int w = 0; w < grid_zonbievector[m + 1][n].size(); w++)
+					if (n != 0)
 					{
-						Player* buf = &grid_zonbievector[m + 1][n].at(w);
-						buf_vec.push_back(buf);
+						for (int w = 0; w < grid_zonbievector[m][n - 1].size(); w++)
+						{
+							Player* buf = &grid_zonbievector[m][n - 1].at(w);
+							buf_vec.push_back(buf);
+						}
 					}
-				}
-				if (n != gridnum)
-				{
-					for (int w = 0; w < grid_zonbievector[m][n + 1].size(); w++)
+					if (m != gridnum)
 					{
-						Player* buf = &grid_zonbievector[m][n + 1].at(w);
-						buf_vec.push_back(buf);
+						for (int w = 0; w < grid_zonbievector[m + 1][n].size(); w++)
+						{
+							Player* buf = &grid_zonbievector[m + 1][n].at(w);
+							buf_vec.push_back(buf);
+						}
 					}
-				}
+					if (n != gridnum)
+					{
+						for (int w = 0; w < grid_zonbievector[m][n + 1].size(); w++)
+						{
+							Player* buf = &grid_zonbievector[m][n + 1].at(w);
+							buf_vec.push_back(buf);
+						}
+					}
 
 
-				for (int w = 0; w < grid_vector[m][n].size(); w++)
-				{
-					Player* buf = &grid_vector[m][n].at(w);
-					buf_pvec.push_back(buf);
-				}
-				if (m != 0)
-				{
-					for (int w = 0; w < grid_vector[m - 1][n].size(); w++)
+					for (int w = 0; w < grid_vector[m][n].size(); w++)
 					{
-						Player* buf = &grid_vector[m - 1][n].at(w);
+						Player* buf = &grid_vector[m][n].at(w);
 						buf_pvec.push_back(buf);
 					}
-				}
-				if (n != 0)
-				{
-					for (int w = 0; w < grid_vector[m][n - 1].size(); w++)
+					if (m != 0)
 					{
-						Player* buf = &grid_vector[m][n - 1].at(w);
-						buf_pvec.push_back(buf);
+						for (int w = 0; w < grid_vector[m - 1][n].size(); w++)
+						{
+							Player* buf = &grid_vector[m - 1][n].at(w);
+							buf_pvec.push_back(buf);
+						}
 					}
-				}
-				if (m != gridnum)
-				{
-					for (int w = 0; w < grid_vector[m + 1][n].size(); w++)
+					if (n != 0)
 					{
-						Player* buf = &grid_vector[m + 1][n].at(w);
-						buf_pvec.push_back(buf);
+						for (int w = 0; w < grid_vector[m][n - 1].size(); w++)
+						{
+							Player* buf = &grid_vector[m][n - 1].at(w);
+							buf_pvec.push_back(buf);
+						}
 					}
-				}
-				if (n != gridnum)
-				{
-					for (int w = 0; w < grid_vector[m][n + 1].size(); w++)
+					if (m != gridnum)
 					{
-						Player* buf = &grid_vector[m][n + 1].at(w);
-						buf_pvec.push_back(buf);
+						for (int w = 0; w < grid_vector[m + 1][n].size(); w++)
+						{
+							Player* buf = &grid_vector[m + 1][n].at(w);
+							buf_pvec.push_back(buf);
+						}
 					}
-				}
+					if (n != gridnum)
+					{
+						for (int w = 0; w < grid_vector[m][n + 1].size(); w++)
+						{
+							Player* buf = &grid_vector[m][n + 1].at(w);
+							buf_pvec.push_back(buf);
+						}
+					}
 
-
+				}
 				// 敵更新
 				grid_zonbievector[m][n].at(i).zonbie_run(buf_vec, buf_pvec, mousevelocity);
 				grid_zonbievector[m][n].at(i).ZonbieUpdate(animno, 1);
@@ -451,17 +463,19 @@ void PlayerMgr::PlayerUpdate()
 		{
 			for (int i = 0;i < grid_vector[m][n].size();i++)
 			{
-				
+				if (i == 0)
+				{
+
 					buf_vec.clear();
 					buf_pvec.clear();
-				
+
 					for (int w = 0; w < grid_zonbievector[m][n].size(); w++)
 					{
 						Player* buf = &grid_zonbievector[m][n].at(w);
 
 						buf_vec.push_back(buf);
 					}
-				
+
 					if (m != 0)
 					{
 						for (int w = 0; w < grid_zonbievector[m - 1][n].size(); w++)
@@ -535,6 +549,7 @@ void PlayerMgr::PlayerUpdate()
 						}
 					}
 
+				}
 				
 
 				//XMFLOAT4X4	world;
@@ -554,7 +569,7 @@ void PlayerMgr::PlayerUpdate()
 	}
 
 	
-
+	//死んだaiを遠くへ飛ばす
 	for (int i = 0; i < grid_bufvector.size(); i++)
 	{
 		grid_bufvector.at(i).Update(false);
@@ -564,7 +579,7 @@ void PlayerMgr::PlayerUpdate()
 		grid_bufzonbievector.at(i).ZonbieUpdate(0, 0);
 	}
 
-	cmodelinstance_hyuman.Update(phmat);
+	//cmodelinstance_hyuman.Update(phmat);
 
 
 	for (int m = 0; m < gridnum; m++)

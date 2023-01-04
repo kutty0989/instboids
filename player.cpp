@@ -44,6 +44,9 @@ const int window_width = (CHeight_Map::GetInstance()->iPixSize - 60) * scaling;/
 bool Player::hsepflg = false;
  bool Player::haliflg = false;
 
+ bool Player::slopeflg = false;
+ bool Player::pocketflg = false;
+
 
  bool Player::zdashflg = false;
  bool Player::zscaflg = false;
@@ -57,6 +60,9 @@ bool Player::hsepflg = false;
 
  bool Player::bbombflg = false;
  bool Player::bserflg = false;
+ 
+ 
+ bool Player::texspeedflg = false;
 
 
  //人間の速さ
@@ -283,7 +289,7 @@ void Player::Draw(int animenum) {
 
 	if (follow == Follow::ZONBIE)
 	{
-		boidshp.Update(XMFLOAT3(m_mtx._41, m_mtx._42, m_mtx._43));
+		boidshp.Update(XMFLOAT3(m_mtx._41, m_mtx._42, m_mtx._43),hp);
 		boidshp.Draw();
 		
 	}
@@ -346,9 +352,10 @@ void Player::Update(bool input) {
 	
 		Ground::GetInstance()->GetPlayerHeight(*this);
 		//今回の角度を保存
-		
-		boid_accel = Ground::GetInstance()->AccelBoid(*this);
-
+		if (slopeflg)
+		{
+			boid_accel = Ground::GetInstance()->AccelBoid(*this);
+		}
 		velocity.mulScalar(boid_accel);
 		location.addVector(velocity);
 
@@ -683,27 +690,30 @@ void Player::boid_flock(std::vector<Player*> player_vector, std::vector<Player*>
 		if (alifalse_cnt < -10000)alifalse_cnt = -40;
 		if (hsepflg)
 		{
-			if (boid_accel < 2.0f)
+			
 			{
 				sep = boid_Separation(player_vector, zonbie_vector);
-				
-				avo = boid_Avoid(zonbie_vector);
-		
 			}
+			
+			
 
 		}
+
+		//avo = boid_Avoid(zonbie_vector);
+
 		if (haliflg)
 		{
 			if (alifalse_cnt < 0)
 			{
 				ali = boid_Alignment(player_vector);
-			
+		
 			
 			}
 		}
-
-		down = boid_Down();
-		
+		if (pocketflg)
+		{
+			down = boid_Down();
+		}
 		//if (hcohflg)
 		//{
 		////	coh = boid_Cohesion(player_vector);
@@ -714,7 +724,7 @@ void Player::boid_flock(std::vector<Player*> player_vector, std::vector<Player*>
 
 	//これらの力を任意に重み付けする
 	//cen.mulScalar(CohW);
-	sep.mulScalar(1.0f);
+	sep.mulScalar(1.5f);
 	ali.mulScalar(1.0f); // さまざまな特性の重みを変更する必要がある場合があります
 	avo.mulScalar(1.0f); // さまざまな特性の重みを変更する必要がある場合があります
 	down.mulScalar(1.0f);
@@ -894,24 +904,26 @@ Pvector Player::boid_Separation(std::vector<Player*> player_vector, std::vector<
 	//システム内のすべてのボイドについて、近すぎるかどうかを確認します
 
 	//for (int i = 0; i < sizeof(player_vector)/sizeof(player_vector[0]); i++)//0回
-	for (auto& it : player_vector)
+	if (boid_accel < 2.0f)
 	{
-
-		// 現在のboidから見ているboidまでの距離を計算する
-		if (it->follow == Follow::HYUMAN)
+		for (auto& it : player_vector)
 		{
-			float d = location.distance(it->location);
-			// これが仲間のボイドであり、近すぎる場合は、離れてください
-			if ((d > 0) && (d < sepdist)) {
-				desired = { 0,0 };
-				desired = desired.subTwoVector(location, it->location);
-				desired.normalize();
-				desired.divScalar(d);      // Weight by distance
-				steer.addVector(desired);
-				count++;
+
+			// 現在のboidから見ているboidまでの距離を計算する
+			if (it->follow == Follow::HYUMAN)
+			{
+				float d = location.distance(it->location);
+				// これが仲間のボイドであり、近すぎる場合は、離れてください
+				if ((d > 0) && (d < sepdist)) {
+					desired = { 0,0 };
+					desired = desired.subTwoVector(location, it->location);
+					desired.normalize();
+					desired.divScalar(d);      // Weight by distance
+					steer.addVector(desired);
+					count++;
+				}
 			}
 		}
-
 	}
 	for (auto& it : zonbie_vector)
 	{
@@ -936,7 +948,7 @@ Pvector Player::boid_Separation(std::vector<Player*> player_vector, std::vector<
 			desired.mulScalar(900);
 			steer.addVector(desired);
 			count++;
-			alifalse_cnt = 15;
+			alifalse_cnt = 25;
 		//	alifalse_flg = true;
 			boid_accel = sepspeed;
 		//	awaycnt = septime;
@@ -1162,6 +1174,7 @@ Pvector Player::boid_Alignment(std::vector<Player*> player_vector)
 		desired = { 0,0 };
 		return desired;
 	}
+
 }
 
 Pvector Player::boid_Down()
@@ -1585,6 +1598,9 @@ void Player::CheckBox()
 		{
 			ImGui::Checkbox("Hyuman_Separation", &hsepflg);
 			ImGui::Checkbox("Hyuman_Ali", &haliflg);
+			ImGui::Checkbox("Hyuman_TexSpeed", &texspeedflg);
+			ImGui::Checkbox("Hyuman_Slope", &slopeflg);
+			ImGui::Checkbox("Hyuman_Pocket", &pocketflg);
 
 		}
 		if (ImGui::CollapsingHeader(u8"Zombie"))
@@ -1614,7 +1630,9 @@ void Player::CheckBox()
 
 			hsepflg = true;
 			haliflg = true;
-
+			texspeedflg = true;
+			slopeflg = true;
+			pocketflg = true;
 
 			zdashflg = true;
 			zscaflg = true;
@@ -1624,6 +1642,7 @@ void Player::CheckBox()
 			zawaflg = true;
 
 			dmgflg = true;
+			
 			changeflg = true;
 
 			bbombflg = true;
@@ -1790,7 +1809,7 @@ void Player::SetNum()
 {
 
 	//人間の速さ
-	 hyumanmaxspeed = 0.5f;//1.5
+	 hyumanmaxspeed = 0.5f;//0.5
 	 hyumanrandspeed = 5.0f;//5
 
 	//hyumanali
@@ -1798,12 +1817,12 @@ void Player::SetNum()
 
 	//hyumnsep
 	 sepdist = 10.0f;//10
-	 sepzonbiedist = 30.0f;//30
-	 sepspeed = 2.0f;//2.0
+	 sepzonbiedist = 40.0f;//30
+	 sepspeed = 2.5f;//2.5
 	 septime = 30.0f;//30
 
 
-	 zonbiehp =2.0f;//２
+	 zonbiehp = 5.0f;//２
 	 zonbiemaxspeed = 8.5f;//8.5
 	 zonbiedownspeed= 0.05f;//0.05f
 

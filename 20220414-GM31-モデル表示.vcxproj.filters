@@ -438,13 +438,10 @@
     <ClCompile Include="granate.cpp">
       <Filter>ソース ファイル\game\UI</Filter>
     </ClCompile>
-    <ClCompile Include="instance.cpp">
+    <ClCompile Include="CTexInstance.cpp">
       <Filter>ソース ファイル\system\DX11\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="instan.cpp">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
-    </ClCompile>
-    <ClCompile Include="instancemodel.cpp">
       <Filter>ソース ファイル\system\DX11\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="CModelInstance.cpp">
@@ -761,13 +758,10 @@
     <ClInclude Include="granate.h">
       <Filter>ソース ファイル\game\UI</Filter>
     </ClInclude>
-    <ClInclude Include="instance.h">
+    <ClInclude Include="CTexInstance.h">
       <Filter>ソース ファイル\system\DX11\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="instan.h">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="instancemodel.h">
       <Filter>ソース ファイル\system\DX11\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="CModelInstance.h">

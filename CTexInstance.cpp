@@ -1,4 +1,4 @@
-#include"instance.h"
+#include"CTexInstance.h"
 #include"shaderhashmap.h"
 #include"CCamera.h"
 
@@ -15,7 +15,7 @@ const char* psfilenamein[] = {
 	"shader/instanceps.hlsl"
 };
 
-DXManager::DXManager()
+void CTexInstance::Init(int num, const char* filename)
 {	DXGI_SWAP_CHAIN_DESC scd = { 0 };
 	// デバイスコンテキストを取得
 	ID3D11DeviceContext* devcontext;
@@ -25,7 +25,9 @@ DXManager::DXManager()
 	device = GetDX11Device();
 
 
-	mInstanceNum = 40 * 500;
+	LoadTexture(filename);
+
+	mInstanceNum = num;
 
 
 	// ビューポートの設定
@@ -146,13 +148,41 @@ DXManager::DXManager()
 
 	auto proj = CCamera::GetInstance()->GetProjectionMatrix();
 	mProj = DirectX::XMLoadFloat4x4(&proj);
-	mScale = XMMatrixScalingFromVector(XMVectorSet(0.1f, 0.1f, 0.1f, 0.0f));
+	mScale = XMMatrixScalingFromVector(XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f));
 	mRotation = XMMatrixRotationX(0.0f) * XMMatrixRotationY(0.0f) * XMMatrixRotationZ(90.0f);
 
 }
 
-bool DXManager::Update()
+bool CTexInstance::Update(XMFLOAT3 pos[])
 {
+
+	// デバイスコンテキストを取得
+	ID3D11DeviceContext* devcontext;
+	devcontext = GetDX11DeviceContext();
+
+	// パラメータの受け渡し
+	D3D11_MAPPED_SUBRESOURCE pdata;
+	devcontext->Map(mPerInstanceBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);
+	PerInstanceData* instanceData = (PerInstanceData*)(pdata.pData);
+
+	//instanceData.tex = { 1.0f, 1.0f };
+	for (int i = 0; i < mInstanceNum; i++)
+	{
+		//とりあえずループ変数使って移動
+		float xPos = pos->x;
+		float yPos = pos->y;
+		XMMATRIX move = XMMatrixTranslation(xPos, yPos, 1.0f);
+		//行列情報をセット
+		instanceData[i].matrix = XMMatrixTranspose(mScale * mRotation * move);//*mView* mProj);
+		//色情報をセット
+		instanceData[i].color = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
+
+	}
+	//テクスチャーをピクセルシェーダーに渡す
+	devcontext->PSSetSamplers(0, 1, CDirectXGraphics::GetInstance()->GetSampState());
+
+	devcontext->Unmap(mPerInstanceBuffer.Get(), 0);
+
 	//ID3D11DeviceContext* devcontext;
 	//devcontext = GetDX11DeviceContext();
 
@@ -170,7 +200,7 @@ bool DXManager::Update()
 	return true;
 }
 
-void DXManager::RenderInstancing()
+void CTexInstance::RenderInstancing()
 {
 
 	// デバイスコンテキストを取得
@@ -186,30 +216,7 @@ void DXManager::RenderInstancing()
 	devcontext->HSSetShader(nullptr, nullptr, 0);
 	devcontext->DSSetShader(nullptr, nullptr, 0);
 	devcontext->PSSetShader(mPixelShader.Get(), NULL, 0);
-	// パラメータの受け渡し
-	D3D11_MAPPED_SUBRESOURCE pdata;
-	devcontext->Map(mPerInstanceBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);
-	PerInstanceData* instanceData = (PerInstanceData*)(pdata.pData);
-	float defaultYPos = 1.5f;
-	float offset = 1.31f;
-	int oneLineNum = 40;
-	//instanceData.tex = { 1.0f, 1.0f };
-	for (int i = 0; i < mInstanceNum; i++)
-	{
-		//とりあえずループ変数使って移動
-		float xPos = i % oneLineNum * offset - 2.0f;
-		float yPos = defaultYPos - (i / oneLineNum * offset);
-		XMMATRIX move = XMMatrixTranslation(xPos, yPos, 1.0f);
-		//行列情報をセット
-		instanceData[i].matrix = XMMatrixTranspose(mScale * mRotation * move);//*mView* mProj);
-		//色情報をセット
-		instanceData[i].color = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
-		
-	}
-	//テクスチャーをピクセルシェーダーに渡す
-	devcontext->PSSetSamplers(0, 1, CDirectXGraphics::GetInstance()->GetSampState());
 
-	devcontext->Unmap(mPerInstanceBuffer.Get(), 0);
 	devcontext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	devcontext->VSSetShaderResources(8, 1, mShaderResourceView.GetAddressOf());
 	devcontext->PSSetShaderResources(8, 1, mShaderResourceView.GetAddressOf());
@@ -219,6 +226,6 @@ void DXManager::RenderInstancing()
 	devcontext->DrawIndexedInstanced(mDrawNum, mInstanceNum, 0, 0, 0);
 }
 
-DXManager::~DXManager() {}
+CTexInstance::~CTexInstance() {}
 
 

@@ -14,6 +14,7 @@ class UniqueEnemy_Bomb :public Player
 	XMFLOAT3 zpos;
 	bool zonbienearflg = false;
 	int bombcnt = 0;
+	int escapecnt = 0;
 public:
 	XMFLOAT2 angley;
 
@@ -41,6 +42,8 @@ public:
 	Pvector UEnemy_Separation(std::vector<Player>& zonbie_vector);
 
 	Pvector UEnemy_Attack(std::vector<Player>& zonbie_vector);
+	
+	Pvector UEnemy_Escape(std::vector<Player>& zonbie_vector);
 	
 	void UEnemy_Dmg(std::vector<Player>& zonbie_vector);
 

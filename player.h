@@ -12,9 +12,9 @@
 
 class UniqueEnemy_Bomb;
 #define		ENEMYMAX		1
-#define		ZOMBIEMAX		10
+#define		ZOMBIEMAX		1010
 #define		ZOMBIE		    10
-#define		HYUMANMAX		100
+#define		HYUMANMAX		1000
 
 
 class Player :public GameObject {
@@ -443,6 +443,12 @@ public:
 	static bool bbombflg;
 	static bool bserflg;
 	
+	static bool texspeedflg;
+
+	static bool slopeflg;
+	static bool pocketflg;
+
+	
 	//êlä‘ÇÃë¨Ç≥
 	static float hyumanmaxspeed;//1.5
 	static float hyumanrandspeed;//5
@@ -458,7 +464,7 @@ public:
 	static float septime;//30
 
 
-	static float zonbiehp;//ÇQ
+	static float zonbiehp;//5
 	static float zonbiemaxspeed;//8.5
 	static float zonbiedownspeed;//0.05f
 	

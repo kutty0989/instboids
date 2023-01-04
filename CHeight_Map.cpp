@@ -153,7 +153,7 @@ bool CHeight_Map::Init(DirectX::XMFLOAT3 color) {
 	devcontext->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, 0, 0);	// コンスタントバッファ更新
 	devcontext->HSSetConstantBuffers(7, 1, &g_pConstantBuffer);				// HULLシェーダーへコンスタントバッファをb0レジスタへセット
 	
-	g_hight = 600.0f;
+	g_hight = 500.0f;
 	ConstantBuffer2 cb2;
 	cb2.hight = g_hight;//高さ変数を渡す
 	devcontext->UpdateSubresource(g_pConstantBuffer2, 0, nullptr, &cb2, 0, 0);		// コンスタントバッファ更新
