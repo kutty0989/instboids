@@ -14,7 +14,7 @@ CTexInstance ctexinstance_hpout;
 
 void BoidsHp::Init()
 {
-	ctexinstance_hpin.Init(ZOMBIEMAX, "assets/UI/hpnaka5.png");
+	ctexinstance_hpin.Init(ZOMBIEMAX, "assets/UI/kusa.jpg");
 
 
 	//XMFLOAT4 firecol = { 1.0f,1.0f,1.0f,1.0f };

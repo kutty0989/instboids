@@ -1,3 +1,5 @@
+
+
 SamplerState g_SamplerLinear : register(s0); // ÉTÉìÉvÉâÅ[
 
 
@@ -28,20 +30,20 @@ struct VS_OUT
     uint id : ID;
 };
 
-cbuffer ConstantBufferWorld : register(b0)
-{
-    matrix World;
-}
+//cbuffer ConstantBufferWorld : register(b0)
+//{
+//    matrix World;
+//}
 
-cbuffer ConstantBufferView : register(b1)
-{
-    matrix View;
-}
+//cbuffer ConstantBufferView : register(b1)
+//{
+//    matrix View;
+//}
 
-cbuffer ConstantBufferProjection : register(b2)
-{
-    matrix Projection;
-}
+//cbuffer ConstantBufferProjection : register(b2)
+//{
+//    matrix Projection;
+//}
 
 VS_OUT VS(VS_IN input)
 {
@@ -49,8 +51,8 @@ VS_OUT VS(VS_IN input)
     output.pos = mul(input.pos, g_pInstanceData[input.instanceID].instanceMat);
     output.id = input.instanceID;
     
-    output.pos = mul(output.pos, View);
-    output.pos = mul(output.pos, Projection);
+  //  output.pos = mul(output.pos, View);
+   // output.pos = mul(output.pos, Projection);
     output.uv = input.uv;
     output.color = input.color;
     

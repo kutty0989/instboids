@@ -206,14 +206,14 @@ void PlayerMgr::Draw()
 		}
 	}
 
+	BoidsHp::GetInstance()->Draw();
 
 
 	unique_enemy_vector.clear();
 	cmodelinstance_unique_enemy.DrawInstance();
 	cmodelinstance_hyuman.DrawInstance();
 	cmodelinstance_zombie.DrawInstance();
-	BoidsHp::GetInstance()->Draw();
-	
+
 //	g_ene.TestInstance();
 //	g_air.DrawInstance();
 	//for (int i = 0; i <3; i++)

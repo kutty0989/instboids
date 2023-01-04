@@ -13,9 +13,9 @@
 
 using namespace Microsoft::WRL;
 //ウィンドウの横幅
-static const UINT WindowWidth = 500;
+static const UINT WindowWidth = 1920;
 //ウィンドウの縦幅
-static const UINT WindowHeight = 400;
+static const UINT WindowHeight = 1080;
 
 // 一つの頂点情報を格納する構造体
 struct VERTEX

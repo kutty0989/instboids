@@ -16,7 +16,8 @@ const char* psfilenamein[] = {
 };
 
 void CTexInstance::Init(int num, const char* filename)
-{	DXGI_SWAP_CHAIN_DESC scd = { 0 };
+{
+	DXGI_SWAP_CHAIN_DESC scd = { 0 };
 	// デバイスコンテキストを取得
 	ID3D11DeviceContext* devcontext;
 	devcontext = GetDX11DeviceContext();
@@ -89,8 +90,8 @@ void CTexInstance::Init(int num, const char* filename)
 	// インデックスデータ用バッファの設定
 	int indexes[] =
 	{
-		0,1,2,
-		2,1,3,
+		0,2,1,
+		0,3,2,
 	};
 	mDrawNum = sizeof(indexes) / sizeof(indexes[0]);
 	D3D11_BUFFER_DESC bd_index;
@@ -143,44 +144,45 @@ void CTexInstance::Init(int num, const char* filename)
 	devcontext->IASetInputLayout(mInputLayout.Get());
 
 	auto camera = CCamera::GetInstance()->GetCameraMatrix();
-	
+	// パラメータの計算
+
 	mView = DirectX::XMLoadFloat4x4(&camera);
 
 	auto proj = CCamera::GetInstance()->GetProjectionMatrix();
 	mProj = DirectX::XMLoadFloat4x4(&proj);
-	mScale = XMMatrixScalingFromVector(XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f));
-	mRotation = XMMatrixRotationX(0.0f) * XMMatrixRotationY(0.0f) * XMMatrixRotationZ(90.0f);
+	mScale = XMMatrixScalingFromVector(XMVectorSet(0.1f, 0.1f, 0.1f, 1.0f));
+	mRotation = XMMatrixRotationX(0.0f) * XMMatrixRotationY(0.0f) * XMMatrixRotationZ(0.0f);
 
 }
 
 bool CTexInstance::Update(XMFLOAT3 pos[])
 {
 
-	// デバイスコンテキストを取得
-	ID3D11DeviceContext* devcontext;
-	devcontext = GetDX11DeviceContext();
+	//// デバイスコンテキストを取得
+	//ID3D11DeviceContext* devcontext;
+	//devcontext = GetDX11DeviceContext();
 
-	// パラメータの受け渡し
-	D3D11_MAPPED_SUBRESOURCE pdata;
-	devcontext->Map(mPerInstanceBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);
-	PerInstanceData* instanceData = (PerInstanceData*)(pdata.pData);
+	//// パラメータの受け渡し
+	//D3D11_MAPPED_SUBRESOURCE pdata;
+	//devcontext->Map(mPerInstanceBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);
+	//PerInstanceData* instanceData = (PerInstanceData*)(pdata.pData);
 
-	for (int i = 0; i < mInstanceNum; i++)
-	{
-		//とりあえずループ変数使って移動
-		float xPos = pos[i].x;
-		float yPos = pos[i].z;
-		XMMATRIX move = XMMatrixTranslation(xPos, yPos, 1.0f);
-		//行列情報をセット
-		instanceData[i].matrix = XMMatrixTranspose(mScale * mRotation * move);//*mView* mProj);
-		//色情報をセット
-		instanceData[i].color = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
+	//for (int i = 0; i < mInstanceNum; i++)
+	//{
+	//	//とりあえずループ変数使って移動
+	//	float xPos = pos[i].x;
+	//	float yPos = pos[i].z;
+	//	XMMATRIX move = XMMatrixTranslation(xPos, yPos, 1.0f);
+	//	//行列情報をセット
+	//	instanceData[i].matrix = XMMatrixTranspose(mScale * mRotation * move);//*mView* mProj);
+	//	//色情報をセット
+	//	instanceData[i].color = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
 
-	}
-	//テクスチャーをピクセルシェーダーに渡す
-	devcontext->PSSetSamplers(0, 1, CDirectXGraphics::GetInstance()->GetSampState());
+	//}
+	////テクスチャーをピクセルシェーダーに渡す
+	//devcontext->PSSetSamplers(0, 1, CDirectXGraphics::GetInstance()->GetSampState());
 
-	devcontext->Unmap(mPerInstanceBuffer.Get(), 0);
+	//devcontext->Unmap(mPerInstanceBuffer.Get(), 0);
 
 	return true;
 }
@@ -201,6 +203,26 @@ void CTexInstance::RenderInstancing()
 	devcontext->HSSetShader(nullptr, nullptr, 0);
 	devcontext->DSSetShader(nullptr, nullptr, 0);
 	devcontext->PSSetShader(mPixelShader.Get(), NULL, 0);
+
+	D3D11_MAPPED_SUBRESOURCE pdata;
+	devcontext->Map(mPerInstanceBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);
+	PerInstanceData* instanceData = (PerInstanceData*)(pdata.pData);
+	float defaultYPos = 1.5f;
+	float offset = 0.5f;
+	int oneLineNum = 40;
+	for (int i = 0; i < mInstanceNum; i++)
+	{
+		//とりあえずループ変数使って移動
+		float xPos = i % oneLineNum * offset - 2.0f;
+		float yPos = defaultYPos - (i / oneLineNum * offset);
+		XMMATRIX move = XMMatrixTranslation(xPos, yPos, 1.0f);
+		//行列情報をセット
+		instanceData[i].matrix = XMMatrixTranspose(mScale * mRotation * move*mView* mProj);
+		//色情報をセット
+		instanceData[i].color = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+	devcontext->Unmap(mPerInstanceBuffer.Get(), 0);
+
 
 	devcontext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	devcontext->VSSetShaderResources(8, 1, mShaderResourceView.GetAddressOf());
