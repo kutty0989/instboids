@@ -8,13 +8,15 @@
 #include"CCamera.h"
 #include"CTexInstance.h"
 
-
-CTexInstance ctexinstance_hpin;
-CTexInstance ctexinstance_hpout;
+//
+//CTexInstance ctexinstance_hpin;
+//CTexInstance ctexinstance_hpout;
 
 void BoidsHp::Init()
 {
-	ctexinstance_hpin.Init(ZOMBIEMAX, "assets/UI/kusa.jpg");
+	m_texture = new DXManager();
+	m_texture->LoadTexture("assets/UI/glow.jpg");
+	//ctexinstance_hpin.Init(ZOMBIEMAX, "assets/UI/kusa.jpg");
 
 
 	//XMFLOAT4 firecol = { 1.0f,1.0f,1.0f,1.0f };
@@ -79,7 +81,7 @@ void BoidsHp::Init()
 void BoidsHp::Update(XMFLOAT3 pos[])
 {
 
-	ctexinstance_hpin.Update(pos);
+//	ctexinstance_hpin.Update(pos);
 
 
 	/*hpout->SetPosiotion(pos.x,pos.y, pos.z +25.0f);
@@ -130,7 +132,8 @@ void BoidsHp::UpdateHp(int hp)
 
 void BoidsHp::Draw()
 {
-	ctexinstance_hpin.RenderInstancing();
+	m_texture->RenderInstancing();
+//	ctexinstance_hpin.RenderInstancing();
 //	m_texture->Draw();
 	//hpout->DrawBillBoard(CCamera::GetInstance()->GetCameraMatrix());
 	//hpin->DrawBillBoard(CCamera::GetInstance()->GetCameraMatrix());

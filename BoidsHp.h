@@ -1,10 +1,11 @@
 #pragma once
 #include"CBillBoard.h"
 #include"CTex.h"
+#include"CTexInstance.h"
 class BoidsHp {
 private:
 
-	
+	DXManager* m_texture;//テクスチャ
 	 CBillBoard* m_bill;
 	 CBillBoard* hpin;
 	 CBillBoard* hpout;

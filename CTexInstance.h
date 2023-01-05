@@ -13,9 +13,9 @@
 
 using namespace Microsoft::WRL;
 //ウィンドウの横幅
-static const UINT WindowWidth = 1920;
+static const UINT WindowWidth = 500;
 //ウィンドウの縦幅
-static const UINT WindowHeight = 1080;
+static const UINT WindowHeight = 400;
 
 // 一つの頂点情報を格納する構造体
 struct VERTEX
@@ -39,7 +39,7 @@ struct PerInstanceData
 
 
 
-class CTexInstance
+class DXManager
 {
 public:
 
@@ -59,10 +59,10 @@ public:
 		return sts;
 	}
 
-	void Init(int num, const char* filename);
-	bool Update(XMFLOAT3 pos[]);
+	DXManager();
+	bool Update();
 	void RenderInstancing();
-	~CTexInstance();
+	~DXManager();
 
 	XMFLOAT2 c_uv[4] =
 	{
@@ -103,3 +103,4 @@ private:
 	ID3D11Buffer* g_pConstantBuffer = nullptr;			// 定数バッファ
 
 };
+
