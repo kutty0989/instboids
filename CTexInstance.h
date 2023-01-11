@@ -13,9 +13,9 @@
 
 using namespace Microsoft::WRL;
 //ウィンドウの横幅
-static const UINT WindowWidth = 500;
+static const UINT WindowWidth = 1920;
 //ウィンドウの縦幅
-static const UINT WindowHeight = 400;
+static const UINT WindowHeight = 1080;
 
 // 一つの頂点情報を格納する構造体
 struct VERTEX
@@ -34,12 +34,13 @@ struct PerInstanceData
 {
 	DirectX::XMMATRIX matrix;
 	DirectX::XMVECTOR color;
+	
 
 };
 
 
 
-class DXManager
+class CTexInstance
 {
 public:
 
@@ -59,10 +60,12 @@ public:
 		return sts;
 	}
 
-	DXManager();
-	bool Update();
-	void RenderInstancing();
-	~DXManager();
+	CTexInstance(int num);
+	
+	bool Update(
+		DirectX::XMFLOAT3 color, XMFLOAT2 uv[4]);
+	void RenderInstancing(XMFLOAT4X4 pos[]);
+	~CTexInstance();
 
 	XMFLOAT2 c_uv[4] =
 	{
@@ -101,6 +104,10 @@ private:
 	int mDrawNum;
 	int mInstanceNum;
 	ID3D11Buffer* g_pConstantBuffer = nullptr;			// 定数バッファ
+	float					m_width = 1.0f;				// 幅
+	float					m_height = 1.0f;;				// 高さ
+	float m_Alpha = 1.0f;
 
+	VERTEX m_vertex[4];			// 矩形４頂点
 };
 

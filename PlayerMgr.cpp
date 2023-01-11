@@ -53,9 +53,11 @@ enemy g_test[5000];		// “G
 CModel *g_model;
 using namespace std;
 
+
 static XMFLOAT4X4 mat[HYUMANMAX];
 static XMFLOAT4X4 zmat[ZOMBIEMAX];
 static XMFLOAT3 zpos[ZOMBIEMAX];
+
 
 void PlayerMgr::Init()
 {
@@ -196,7 +198,6 @@ void PlayerMgr::Draw()
 		}
 	}
 
-	BoidsHp::GetInstance()->Update(zpos);
 
 	for (int i = 0; i < HYUMANMAX; i++)
 	{
@@ -205,9 +206,6 @@ void PlayerMgr::Draw()
 			instance_hyuman.at(i).HyumanDrawAxis();
 		}
 	}
-
-	BoidsHp::GetInstance()->Draw();
-
 
 	unique_enemy_vector.clear();
 	cmodelinstance_unique_enemy.DrawInstance();
@@ -661,6 +659,7 @@ void PlayerMgr::PlayerUpdate()
 		zmat[i] = world;
 	}
 	cmodelinstance_zombie.Update(zmat);
+	BoidsHp::GetInstance()->Update(zmat);
 
 	//for (int i = 0; i < unique_enemy_bomb_vector_num; i++)
 	//{

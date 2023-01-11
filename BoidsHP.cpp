@@ -12,10 +12,13 @@
 //CTexInstance ctexinstance_hpin;
 //CTexInstance ctexinstance_hpout;
 
+static XMFLOAT4X4 hpinmat[ZOMBIEMAX];
+
 void BoidsHp::Init()
 {
-	m_texture = new DXManager();
-	m_texture->LoadTexture("assets/UI/glow.jpg");
+	int num = ZOMBIEMAX;
+	m_texture = new CTexInstance(num);
+	m_texture->LoadTexture("assets/UI/hpkara.png");
 	//ctexinstance_hpin.Init(ZOMBIEMAX, "assets/UI/kusa.jpg");
 
 
@@ -78,11 +81,15 @@ void BoidsHp::Init()
 	//hpout->angle = 90.0f;
 }
 
-void BoidsHp::Update(XMFLOAT3 pos[])
+void BoidsHp::Update(XMFLOAT4X4 zpos[])
 {
-
-//	ctexinstance_hpin.Update(pos);
-
+	for (int i = 0; i < ZOMBIEMAX; i++)
+	{
+		hpinmat[i] = zpos[i];
+	}
+	
+	//ctexinstance_hpin.Update(pos);
+//	m_texture->Update(zpos);
 
 	/*hpout->SetPosiotion(pos.x,pos.y, pos.z +25.0f);
 	hpin->SetPosiotion(pos.x,pos.y, pos.z +25.f);*/
@@ -91,7 +98,16 @@ void BoidsHp::Update(XMFLOAT3 pos[])
 
 void BoidsHp::UpdateHp(int hp)
 {
+	XMFLOAT2 inUV[] =
+	{
+		{1,1},
+		{0,1},
+		{1,0},
+		{0,0}
+	};
 
+	XMFLOAT3 col = { 1.0f,1.0f,1.0f};
+	m_texture->Update(col, inUV);
 	//switch (hp)
 	//{
 	//case 5:
@@ -132,13 +148,16 @@ void BoidsHp::UpdateHp(int hp)
 
 void BoidsHp::Draw()
 {
-	m_texture->RenderInstancing();
+	m_texture->RenderInstancing(hpinmat);
 //	ctexinstance_hpin.RenderInstancing();
 //	m_texture->Draw();
 	//hpout->DrawBillBoard(CCamera::GetInstance()->GetCameraMatrix());
-	//hpin->DrawBillBoard(CCamera::GetInstance()->GetCameraMatrix());
+//	//hpin->DrawBillBoard(CCamera::GetInstance()->GetCameraMatrix());
 	
 }
+
+
+
 
 void BoidsHp::Finish()
 {

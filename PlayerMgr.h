@@ -36,7 +36,7 @@ public:
 	std::shared_ptr<Player> ImPlayer;
 	std::shared_ptr<Player> ImEnemy;
 
-	
+
 
 	void Init();
 

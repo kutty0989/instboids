@@ -318,6 +318,7 @@ void Seiha::Draw()
 	
 	
 	MouseCircle::GetInstance()->Draw();
+	BoidsHp::GetInstance()->Draw();
 
 
 	//	// “G•`‰æ

@@ -272,7 +272,7 @@ void Player::follow_Init()
 	SepW = 1.0;
 	AliW = 1.0;
 	CohW = 1.0;
-	boidshp.Init();
+	//boidshp.Init();
 }
 
 

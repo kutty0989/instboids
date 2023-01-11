@@ -5,11 +5,13 @@
 class BoidsHp {
 private:
 
-	DXManager* m_texture;//テクスチャ
+	CTexInstance* m_texture;//テクスチャ
 	 CBillBoard* m_bill;
 	 CBillBoard* hpin;
 	 CBillBoard* hpout;
 
+
+	
 public:
 	XMFLOAT2 mousepos;
 
@@ -17,7 +19,7 @@ public:
 
 	void Create();
 
-	void Update(XMFLOAT3 pos[]);
+	void Update(XMFLOAT4X4 pos[]);
 	
 	void UpdateHp(int hp);
 
@@ -31,7 +33,6 @@ public:
 		static BoidsHp instance;
 		return &instance;
 	}
-
 
 
 private:

@@ -1,7 +1,7 @@
 #include"CTexInstance.h"
 #include"shaderhashmap.h"
 #include"CCamera.h"
-
+#include<DirectXMath.h>
 using namespace DirectX;
 
 
@@ -15,7 +15,7 @@ const char* psfilenamein[] = {
 	"shader/instanceps.hlsl"
 };
 
-DXManager::DXManager()
+CTexInstance::CTexInstance(int num)
 {	DXGI_SWAP_CHAIN_DESC scd = { 0 };
 	// デバイスコンテキストを取得
 	ID3D11DeviceContext* devcontext;
@@ -25,21 +25,7 @@ DXManager::DXManager()
 	device = GetDX11Device();
 
 
-	mInstanceNum = 40 * 5;
-
-//	D3D_FEATURE_LEVEL fl = D3D_FEATURE_LEVEL_11_0;
-	//D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &fl, 1, D3D11_SDK_VERSION, &scd, &mSwapChain, &device, NULL, &devcontext);
-		//ID3D11Texture2D* pbbTex;
-	//swap->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pbbTex);
-	//device->CreateRenderTargetView(m_tex.Get(), NULL, mRenderTargetView.GetAddressOf());
-	//pbbTex->Release();
-
-	//auto swap = CDirectXGraphics::GetInstance()->GetSwapChain();
-
-	//ID3D11Texture2D* pbbTex;
-	//swap->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pbbTex);
-	//device->CreateRenderTargetView(pbbTex, NULL, mRenderTargetView.GetAddressOf());
-	//pbbTex->Release();
+	mInstanceNum = num;
 
 
 	// ビューポートの設定
@@ -77,12 +63,15 @@ DXManager::DXManager()
 
 	//ポリゴンの頂点データの作成とそのバッファの設定
 	
-		VERTEX	v[3] = {
-			// 座標													// カラー	// UV	
-			XMFLOAT3(-1.0f ,-1.0 , 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),	XMFLOAT2(0.0f,1.0f),
-			XMFLOAT3(-1.0 ,	1.0, 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(0.5f,1.0f),
-			XMFLOAT3(1.0 ,-1.0 , 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(1.0f,1.0f),
-			};
+
+	VERTEX	v[4] = {
+		// 座標													// カラー	// UV	
+		XMFLOAT3(-1.0f ,-1.0 , 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),	XMFLOAT2(0.0f,0.0f),
+		XMFLOAT3(1.0 ,-1.0f, 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(1.0f,0.0f),
+		XMFLOAT3(-1.0 ,1.0 , 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(0.0f,1.0f),
+		XMFLOAT3(1.0 ,1.0 , 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(1.0f,1.0f),
+	};
+
 
 	mDrawNum = sizeof(v) / sizeof(v[0]);
 
@@ -90,7 +79,7 @@ DXManager::DXManager()
 	bd.ByteWidth = sizeof(VERTEX) * mDrawNum;
 	bd.Usage = D3D11_USAGE_DEFAULT;
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = 0;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bd.MiscFlags = 0;
 	bd.StructureByteStride = 0;
 	D3D11_SUBRESOURCE_DATA vertexData;
@@ -101,7 +90,8 @@ DXManager::DXManager()
 	int indexes[] =
 	{
 		0,1,2,
-		2,1,3,
+		1,3,2
+
 	};
 	mDrawNum = sizeof(indexes) / sizeof(indexes[0]);
 	D3D11_BUFFER_DESC bd_index;
@@ -145,45 +135,77 @@ DXManager::DXManager()
 	cb.StructureByteStride = 0;
 	device->CreateBuffer(&cb, NULL, mConstantBuffer.GetAddressOf());
 
-	//パイプラインの構築
-	ID3D11Buffer* bufs[] = { mVertexBuffer.Get() };
-	UINT stride[] = { sizeof(VERTEX) };
-	UINT offset[] = { 0 };
-	devcontext->IASetVertexBuffers(0, sizeof(bufs) / sizeof(bufs[0]), bufs, stride, offset);
-	devcontext->IASetIndexBuffer(mIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-	devcontext->IASetInputLayout(mInputLayout.Get());
-
+	
 	auto camera = CCamera::GetInstance()->GetCameraMatrix();
 	
 	mView = DirectX::XMLoadFloat4x4(&camera);
 
 	auto proj = CCamera::GetInstance()->GetProjectionMatrix();
 	mProj = DirectX::XMLoadFloat4x4(&proj);
-	mScale = XMMatrixScalingFromVector(XMVectorSet(0.1f, 0.1f, 0.1f, 0.0f));
-	mRotation = XMMatrixRotationX(0.0f) * XMMatrixRotationY(0.0f) * XMMatrixRotationZ(00.0f);
+	mScale = XMMatrixScalingFromVector(XMVectorSet(40.1f, 40.1f, 10.1f, 0.0f));
+	mRotation = XMMatrixRotationX(0.0f) * XMMatrixRotationY(0.0f) * XMMatrixRotationZ(-1.57f);
 
 }
 
-bool DXManager::Update()
+bool CTexInstance::Update(
+	DirectX::XMFLOAT3 color,XMFLOAT2 uv[4])
 {
-	ID3D11DeviceContext* devcontext;
-	devcontext = GetDX11DeviceContext();
-
-	// デバイスを取得
-	ID3D11Device* device;
-	device = GetDX11Device();
-
-	float clearColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
-	devcontext->ClearRenderTargetView(mRenderTargetView.Get(), clearColor);
-
-	RenderInstancing();
 
 
-//	mInput->SetPreBuffer();
+	//VERTEX v[4] = {
+	//	// 座標													// カラー	// UV	
+	//	XMFLOAT3(-1.0f ,	-1.0f , 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(1.0f,1.0f),
+	//	XMFLOAT3(1.0 ,	-1.0, 0.0f),	XMFLOAT4(color.x,color.y,color.z,m_Alpha),		uv[1],
+	//	XMFLOAT3(-m_width ,	 m_height , 0.0f),	XMFLOAT4(color.x,color.y,color.z,m_Alpha),		uv[2],
+	//	XMFLOAT3(m_width ,	 m_height, 0.0f),	XMFLOAT4(color.x,color.y,color.z,m_Alpha),		uv[3]
+	//};
+	//for (int i = 0; i < 4; i++) {
+	//	m_vertex[i] = v[i];
+	//}
+
+	/*D3D11_MAPPED_SUBRESOURCE pData;
+	HRESULT hr = GetDX11DeviceContext()->Map(mVertexBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &pData);
+	if (SUCCEEDED(hr)) {
+		memcpy_s(pData.pData, pData.RowPitch, (void*)(m_vertex), sizeof(VERTEX) * 4);
+		GetDX11DeviceContext()->Unmap(mVertexBuffer.Get(), 0);
+	}
+*/
+
+
+//	ID3D11DeviceContext* devcontext;
+//	devcontext = GetDX11DeviceContext();
+//
+//	// デバイスを取得
+//	ID3D11Device* device;
+//	device = GetDX11Device();
+//
+//	// パラメータの受け渡し
+//	D3D11_MAPPED_SUBRESOURCE pdata;
+//	devcontext->Map(mPerInstanceBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);
+//	PerInstanceData* instanceData = (PerInstanceData*)(pdata.pData);
+//
+//	//instanceData.tex = { 1.0f, 1.0f };
+//	for (int i = 0; i < mInstanceNum; i++)
+//	{
+//		//とりあえずループ変数使って移動
+//		float xPos = pos[i]._41;
+//		float yPos = pos[i]._43;
+//		XMMATRIX move = XMMatrixTranslation(xPos, yPos, 1.0f);
+//		//行列情報をセット
+//		instanceData[i].matrix = XMMatrixTranspose(mScale * mRotation * move);//*mView* mProj);
+//		//色情報をセット
+//		instanceData[i].color = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
+//
+//	}
+//	memcpy_s(pdata.pData, pdata.RowPitch, (void*)(instanceData), sizeof(XMMATRIX) * mInstanceNum);
+//
+//	devcontext->Unmap(mPerInstanceBuffer.Get(), 0);
+//
+////	mInput->SetPreBuffer();
 	return true;
 }
 
-void DXManager::RenderInstancing()
+void CTexInstance::RenderInstancing(XMFLOAT4X4 pos[])
 {
 
 	// デバイスコンテキストを取得
@@ -192,8 +214,19 @@ void DXManager::RenderInstancing()
 	// デバイスを取得
 	ID3D11Device* device;
 	device = GetDX11Device();
-
 	
+	//パイプラインの構築
+	ID3D11Buffer* bufs[] = { mVertexBuffer.Get() };
+	UINT stride[] = { sizeof(VERTEX) };
+	UINT offset[] = { 0 };
+	devcontext->IASetVertexBuffers(0, sizeof(bufs) / sizeof(bufs[0]), bufs, stride, offset);
+	devcontext->IASetIndexBuffer(mIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	devcontext->IASetInputLayout(mInputLayout.Get());
+
+
+	//テクスチャーをピクセルシェーダーに渡す
+	devcontext->PSSetSamplers(0, 1, CDirectXGraphics::GetInstance()->GetSampState());
+
 	devcontext->VSSetShader(mVertexShader.Get(), NULL, 0);
 	devcontext->GSSetShader(nullptr, nullptr, 0);
 	devcontext->HSSetShader(nullptr, nullptr, 0);
@@ -203,35 +236,61 @@ void DXManager::RenderInstancing()
 	D3D11_MAPPED_SUBRESOURCE pdata;
 	devcontext->Map(mPerInstanceBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);
 	PerInstanceData* instanceData = (PerInstanceData*)(pdata.pData);
-	float defaultYPos = 1.5f;
-	float offset = 1.31f;
-	int oneLineNum = 40;
+	
 	//instanceData.tex = { 1.0f, 1.0f };
 	for (int i = 0; i < mInstanceNum; i++)
 	{
 		//とりあえずループ変数使って移動
-		float xPos = i % oneLineNum * offset - 2.0f;
-		float yPos = defaultYPos - (i / oneLineNum * offset);
-		XMMATRIX move = XMMatrixTranslation(xPos, yPos, 1.0f);
+		float xPos = pos[i]._41;
+		float yPos = pos[i]._43;
+		float zPos = pos[i]._42;
+		XMMATRIX move;// = XMMatrixTranslation(xPos, zPos, yPos);
+		auto cameramat = CCamera::GetInstance()->GetCameraMatrix();
+	
+		XMFLOAT4X4 m_mtx;
+		
+		m_mtx._11 = cameramat._11;
+		m_mtx._12 = cameramat._21;
+		m_mtx._13 = cameramat._31;
+
+		m_mtx._21 = cameramat._12;
+		m_mtx._22 = cameramat._22;
+		m_mtx._23 = cameramat._32;
+
+		m_mtx._31 = cameramat._13;
+		m_mtx._32 = cameramat._23;
+		m_mtx._33 = cameramat._33;
+
+		m_mtx._41 = xPos;
+		m_mtx._42 = yPos+30.f;
+		m_mtx._43 = zPos;
+
+		m_mtx._14 = 0;
+		m_mtx._24 = 0;
+		m_mtx._34 = 0;
+		m_mtx._44 = 1;
+
+		move = XMLoadFloat4x4(&m_mtx);
+		
 		//行列情報をセット
 		instanceData[i].matrix = XMMatrixTranspose(mScale * mRotation * move);//*mView* mProj);
 		//色情報をセット
 		instanceData[i].color = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
 		
 	}
-	//テクスチャーをピクセルシェーダーに渡す
-	devcontext->PSSetSamplers(0, 1, CDirectXGraphics::GetInstance()->GetSampState());
 
+	
 	devcontext->Unmap(mPerInstanceBuffer.Get(), 0);
+
 	devcontext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	devcontext->VSSetShaderResources(8, 1, mShaderResourceView.GetAddressOf());
 	devcontext->PSSetShaderResources(8, 1, mShaderResourceView.GetAddressOf());
 	devcontext->VSSetShaderResources(9, 1, m_srv.GetAddressOf());
 	devcontext->PSSetShaderResources(9, 1, m_srv.GetAddressOf());
 	// 描画実行
-	devcontext->DrawIndexedInstanced(6, mInstanceNum, 0, 0, 0);
+	devcontext->DrawIndexedInstanced(mDrawNum, mInstanceNum, 0, 0, 0);
 }
 
-DXManager::~DXManager() {}
+CTexInstance::~CTexInstance() {}
 
 
