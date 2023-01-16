@@ -68,6 +68,8 @@ public:
 
 	void Releace();
 
+	void ZombieBulletRemake(XMFLOAT4X4 mtx,XMFLOAT3 pos);
+
 	static PlayerMgr* GetInstance()
 	{
 		static PlayerMgr instance;

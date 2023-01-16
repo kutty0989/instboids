@@ -7,7 +7,7 @@
 #include"CTexMgr.h"
 
 
-#define ZombiBullet 200
+#define ZOMBIEBULLET 1000
 
 class Scean
 {

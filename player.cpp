@@ -398,9 +398,9 @@ void Player::ZonbieUpdate(int animenum, int i)
 	{
 
 		bulletcnt++;
-		if (bulletcnt == 300)
+		if (bulletcnt == 30)
 		{
-			BulletMgr::GetInstance()->zombiebulletRemake(this->GetMtx(),XMFLOAT3(this->GetMtx()._41, this->GetMtx()._42,this->GetMtx()._43));
+			PlayerMgr::GetInstance()->ZombieBulletRemake(this->GetMtx(),XMFLOAT3(this->GetMtx()._41, this->GetMtx()._42,this->GetMtx()._43));
 			bulletcnt = 0;
 		}
 

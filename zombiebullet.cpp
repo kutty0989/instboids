@@ -1,5 +1,6 @@
 #include "zombiebullet.h"
 #include"CModel.h"
+#include"player.h"
 bool ZombieBullet::Init()
 {
 	bool sts = true;
@@ -23,11 +24,11 @@ bool ZombieBullet::Init()
 void ZombieBullet::Remake(XMFLOAT3 pos)
 {
 
-	m_life = 100;
+	m_life = 30;
 	m_sts = ZOMBIEBSTS::LIVE;
-	m_mtx._41 = pos.x;
-	m_mtx._42 = pos.y;
-	m_mtx._43 = pos.z;
+	m_pos.x = pos.x;
+	m_pos.y = pos.y;
+	m_pos.z =  pos.z;
 }
 
 void ZombieBullet::Draw()
@@ -38,15 +39,39 @@ void ZombieBullet::Draw()
 	}
 }
 
-void ZombieBullet::Update()
+float length = 100;
+
+void ZombieBullet::Update(std::vector<Player*> playervec)
 {
 	if (m_sts == ZOMBIEBSTS::LIVE) {
+
+		for (int i = 0; i < playervec.size(); i++)
+		{
+			float disx = this->GetMtx()._41 - playervec.at(i)->location.x;
+			float disy = this->GetMtx()._43 - playervec.at(i)->location.y;
+			float dist = disx * disx + disy * disy;
+			if (length > dist)
+			{
+				m_sts = ZOMBIEBSTS::DEAD;
+				playervec.at(i)->m_sts = Player::STATUS::DEAD;
+				playervec.at(i)->hp = 0;
+			}
+		}
+
+
+
 		m_life--;
 
-		m_pos.x += m_mtx._31 * m_bulletspeed;
-		m_pos.y += m_mtx._32 * m_bulletspeed;
-		m_pos.z += m_mtx._33 * m_bulletspeed;
+		m_pos.x += m_direction.x * m_bulletspeed;
+		m_pos.y += m_direction.y * m_bulletspeed;
+		m_pos.z += m_direction.z * m_bulletspeed;
 	}
+	else
+	{
+		m_pos.x = 10000;
+		
+	}
+
 	if (m_life < 0)
 	{
 		m_sts = ZOMBIEBSTS::DEAD;

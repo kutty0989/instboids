@@ -36,22 +36,24 @@ int PlayerMgr::RStickRigY = 0;
 
 const int gridnum = 20;
 std::vector<Player> grid_vector[gridnum][gridnum] = {};
-std::vector<Player> grid_zonbievector[gridnum][gridnum] = {};
+std::vector<Player> grid_zombievector[gridnum][gridnum] = {};
 std::vector<ZombieBullet> grid_zombiebulletvector[gridnum][gridnum] = {};
 std::vector<Player> grid_bufvector;
-std::vector<Player> grid_bufzonbievector;
+std::vector<Player> grid_bufzombievector;
+std::vector<ZombieBullet> grid_bufzombiebulletvector;
 
 //std::vector<shared_ptr<UniqueEnemy>> bufunique_enemy_vector[3][1] = {};//É]ÉìÉr
 
 CModelInstance cmodelinstance_unique_enemy;
 CModelInstance cmodelinstance_zombie;
 CModelInstance cmodelinstance_hyuman;
+CModelInstance cmodelinstance_zombiebullet;
 
 
 std::vector<UniqueEnemy_Bomb> instance_e_bomb;
 std::vector<Player> instance_zombie;
 std::vector<Player> instance_hyuman;
-std::vector<ZombieBullet> zombie_bullet;
+std::vector<ZombieBullet> instance_zombiebullet;
 enemy g_test[5000];		// ìG
 CModel *g_model;
 using namespace std;
@@ -59,7 +61,9 @@ using namespace std;
 
 static XMFLOAT4X4 mat[HYUMANMAX];
 static XMFLOAT4X4 zmat[ZOMBIEMAX];
+static XMFLOAT4X4 zbmat[ZOMBIEBULLET];
 static XMFLOAT3 zpos[ZOMBIEMAX];
+
 
 
 void PlayerMgr::Init()
@@ -92,6 +96,7 @@ void PlayerMgr::Init()
 	cmodelinstance_unique_enemy.InitiInstancing(ENEMYMAX, "assets/3danime/sphere.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/sphere.png");
 	cmodelinstance_zombie.InitiInstancing(ZOMBIEMAX, "assets/3danime/cube.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/cube.png");
 	cmodelinstance_hyuman.InitiInstancing(HYUMANMAX, "assets/3danime/tritop.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/tritop.png");
+	cmodelinstance_zombiebullet.InitiInstancing(ZOMBIEBULLET, "assets/3danime/sphere.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/tritop.png");
 	//cmodelinstance_hyuman.InitiInstancing(HYUMANMAX, "assets/3danime/Warzombie F Pedroso.fbx", "shader/vsinstance.fx", "shader/ps.hlsl", "assets/3danime/Ch21_1001_Diffuse.png ");
 	//// ìGÇèâä˙âª
 	for (int i = 0; i < ENEMYMAX; i++) {
@@ -115,7 +120,12 @@ void PlayerMgr::Init()
 		buf.boid_Init(buf.GetPos().x, buf.GetPos().z);
 		instance_hyuman.emplace_back(buf);
 	}
-
+	for (int i = 0; i < ZOMBIEBULLET; i++) {
+		ZombieBullet buf;
+		buf.SetInstanceModel(&cmodelinstance_zombiebullet);
+		buf.Init();
+		instance_zombiebullet.emplace_back(buf);
+	}
 	
 	//// ìGÇèâä˙âª
 	//for (int i = 0; i < ENEMYMAX; i++) {
@@ -152,40 +162,7 @@ void PlayerMgr::Draw()
 	
 	BulletMgr::GetInstance()->Draw();
 
-	//for (int i = 0; i < instance_zombie_num; i++)
-	//{
-	//	instance_zombie[i]->Draw(i);
-	//}
-	////ëSï`âÊ
-	//for (auto& n : player_vector) {
-	//	n->Draw(0);
-	//}
-	//for (auto& n : unique_enemy_bomb_vector)
-	//{
-	//	n.Draw(instance_zombie);
-	//}
-//	InstanceModelMgr::GetInstance().InstanceDraw("assets/f1.x.dat");
-	//for (int i = 0; i < unique_enemy_vector_num; i++)
-	//{
-	//	if (unique_enemy_vector[i] != nullptr)
-	//	{
-	//		int animecnt = unique_enemy_vector[i]->UEnemy_GetAnime();
-	//	
 
-	//		shared_ptr <UniqueEnemy> buf = unique_enemy_vector[i];
-	//		bufunique_enemy_vector[animecnt]->push_back(move(buf));
-	//	}
-
-	//}
-
-
-	//for (int i = 0; i < ZOMBIEMAX; i++)
-	//{
-	//	if (instance_zombie.at(i).bstatus == Player::BSTATUS::LIVE)
-	//	{
-	//		instance_zombie.at(i).Draw(0);
-	//	}
-	//}
 
 
 	for (int i = 0; i < ZOMBIEMAX; i++) {
@@ -209,10 +186,12 @@ void PlayerMgr::Draw()
 		}
 	}
 
+
 	unique_enemy_vector.clear();
 	cmodelinstance_unique_enemy.DrawInstance();
 	cmodelinstance_hyuman.DrawInstance();
 	cmodelinstance_zombie.DrawInstance();
+	cmodelinstance_zombiebullet.DrawInstance();
 
 //	g_ene.TestInstance();
 //	g_air.DrawInstance();
@@ -271,6 +250,7 @@ void PlayerMgr::Finsh()
 	}*/
 	
 	instance_zombie.clear();
+	instance_zombiebullet.clear();
 
 	
 	ImPlayer->Finalize();
@@ -304,6 +284,16 @@ void PlayerMgr::PlayerUpdate()
 			}
 		}
 	}
+	for (int i = 0; i < instance_zombiebullet.size();i++)
+	{
+		if (instance_zombiebullet.at(i).m_life < 0)
+		{
+			if (instance_zombiebullet.at(i).m_sts != ZOMBIEBSTS::DEAD)
+			{
+				instance_zombiebullet.at(i).m_sts = ZOMBIEBSTS::DEAD;
+			}
+		}
+	}
 	for (int i = 0; i < instance_hyuman.size();i++)
 	{
 		if (instance_hyuman.at(i).GetHp() == 0)
@@ -320,12 +310,13 @@ void PlayerMgr::PlayerUpdate()
 		for (int n = 0; n < gridnum; n++)
 		{
 			grid_vector[m][n].clear();
-			grid_zonbievector[m][n].clear();
+			grid_zombievector[m][n].clear();
+			grid_zombiebulletvector[m][n].clear();
 		}
 	}
-	grid_bufzonbievector.clear();
+	grid_bufzombievector.clear();
 	grid_bufvector.clear();
-
+	grid_bufzombiebulletvector.clear();
 
 	for (int i = 0; i < HYUMANMAX; i++)
 	{
@@ -348,36 +339,36 @@ void PlayerMgr::PlayerUpdate()
 		{
 			int zcolumn = CHeight_Map::GetInstance()->iPixSize / int((instance_zombie.at(i).location.x + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
 			int zrow = CHeight_Map::GetInstance()->iPixSize / int((instance_zombie.at(i).location.y + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
-			grid_zonbievector[zcolumn][zrow].emplace_back(instance_zombie.at(i));
+			grid_zombievector[zcolumn][zrow].emplace_back(instance_zombie.at(i));
 			
 		}
 		else
 		{
-			grid_bufzonbievector.emplace_back(instance_zombie.at(i));
+			grid_bufzombievector.emplace_back(instance_zombie.at(i));
 			
 		}
 	}
 	instance_zombie.clear();
 
-	for (int i = 0; i < ZombiBullet; i++)
+	for (int i = 0; i < ZOMBIEBULLET; i++)
 	{
-		if(BulletMgr::GetInstance()->g_zombiebullets.at(i)->m_sts == ZOMBIEBSTS::LIVE)
+		if(instance_zombiebullet.at(i).m_sts == ZOMBIEBSTS::LIVE)
 		{
-			int zcolumn = CHeight_Map::GetInstance()->iPixSize / int(zombie_bullet.at(i).GetMtx()._41);
-			int zrow = CHeight_Map::GetInstance()->iPixSize / int(zombie_bullet.at(i).GetMtx()._43);
+			int zcolumn = CHeight_Map::GetInstance()->iPixSize / int((instance_zombiebullet.at(i).GetMtx()._41 + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
+			int zrow = CHeight_Map::GetInstance()->iPixSize / int((instance_zombiebullet.at(i).GetMtx()._43 + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
 
-			grid_zombiebulletvector[zcolumn][zrow].emplace_back(zombie_bullet.at(i));
+			grid_zombiebulletvector[zcolumn][zrow].emplace_back(instance_zombiebullet.at(i));
 
 		}
 		else
 		{
-			grid_bufzonbievector.emplace_back(instance_zombie.at(i));
+			grid_bufzombiebulletvector.emplace_back(instance_zombiebullet.at(i));
 
 		}
 	}
 
 
-	zombie_bullet.clear();
+	instance_zombiebullet.clear();
 
 	
 	//static XMFLOAT4X4 zmat[ZOMBIEMAX];
@@ -387,7 +378,7 @@ void PlayerMgr::PlayerUpdate()
 	{
 		for (int n = 0; n < gridnum; n++)
 		{
-			for (int i = 0;i < grid_zonbievector[m][n].size();i++)
+			for (int i = 0;i < grid_zombievector[m][n].size();i++)
 			{
 				if (i == 0)
 				{
@@ -397,9 +388,9 @@ void PlayerMgr::PlayerUpdate()
 
 
 
-					for (int w = 0; w < grid_zonbievector[m][n].size(); w++)
+					for (int w = 0; w < grid_zombievector[m][n].size(); w++)
 					{
-						Player* buf = &grid_zonbievector[m][n].at(w);
+						Player* buf = &grid_zombievector[m][n].at(w);
 						buf_vec.push_back(buf);
 					}
 
@@ -477,10 +468,10 @@ void PlayerMgr::PlayerUpdate()
 
 				}
 				// ìGçXêV
-				grid_zonbievector[m][n].at(i).zonbie_run(buf_vec, buf_pvec, mousevelocity);
-				grid_zonbievector[m][n].at(i).ZonbieUpdate(animno, 1);
+				grid_zombievector[m][n].at(i).zonbie_run(buf_vec, buf_pvec, mousevelocity);
+				grid_zombievector[m][n].at(i).ZonbieUpdate(animno, 1);
 		
-				grid_zonbievector[m][n].at(i).boids_attack(buf_pvec, grid_zonbievector[m][n].at(i), unique_enemy_bomb_vector);
+				grid_zombievector[m][n].at(i).boids_attack(buf_pvec, grid_zombievector[m][n].at(i), unique_enemy_bomb_vector);
 			}
 			
 		}
@@ -511,86 +502,21 @@ void PlayerMgr::PlayerUpdate()
 					buf_vec.clear();
 					buf_pvec.clear();
 
-					for (int w = 0; w < grid_zonbievector[m][n].size(); w++)
+					for (int w = 0; w < grid_zombievector[m][n].size(); w++)
 					{
-						Player* buf = &grid_zonbievector[m][n].at(w);
+						Player* buf = &grid_zombievector[m][n].at(w);
 
 						buf_vec.push_back(buf);
 					}
 
-				/*	if (m != 0)
-					{
-						for (int w = 0; w < grid_zonbievector[m - 1][n].size(); w++)
-						{
-							Player* buf = &grid_zonbievector[m - 1][n].at(w);
-
-							buf_vec.push_back(buf);
-						}
-					}
-					if (n != 0)
-					{
-						for (int w = 0; w < grid_zonbievector[m][n - 1].size(); w++)
-						{
-							Player* buf = &grid_zonbievector[m][n - 1].at(w);
-							buf_vec.push_back(buf);
-						}
-					}
-					if (m != gridnum)
-					{
-						for (int w = 0; w < grid_zonbievector[m + 1][n].size(); w++)
-						{
-							Player* buf = &grid_zonbievector[m + 1][n].at(w);
-							buf_vec.push_back(buf);
-						}
-					}
-					if (n != gridnum)
-					{
-						for (int w = 0; w < grid_zonbievector[m][n + 1].size(); w++)
-						{
-							Player* buf = &grid_zonbievector[m][n + 1].at(w);
-							buf_vec.push_back(buf);
-						}
-					}*/
-
+		
 
 					for (int w = 0; w < grid_vector[m][n].size(); w++)
 					{
 						Player* buf = &grid_vector[m][n].at(w);
 						buf_pvec.push_back(buf);
 					}
-		/*			if (m != 0)
-					{
-						for (int w = 0; w < grid_vector[m - 1][n].size(); w++)
-						{
-							Player* buf = &grid_vector[m - 1][n].at(w);
-							buf_pvec.push_back(buf);
-						}
-					}
-					if (n != 0)
-					{
-						for (int w = 0; w < grid_vector[m][n - 1].size(); w++)
-						{
-							Player* buf = &grid_vector[m][n - 1].at(w);
-							buf_pvec.push_back(buf);
-						}
-					}
-					if (m != gridnum)
-					{
-						for (int w = 0; w < grid_vector[m + 1][n].size(); w++)
-						{
-							Player* buf = &grid_vector[m + 1][n].at(w);
-							buf_pvec.push_back(buf);
-						}
-					}
-					if (n != gridnum)
-					{
-						for (int w = 0; w < grid_vector[m][n + 1].size(); w++)
-						{
-							Player* buf = &grid_vector[m][n + 1].at(w);
-							buf_pvec.push_back(buf);
-						}
-					}*/
-
+	
 				}
 				
 
@@ -615,24 +541,12 @@ void PlayerMgr::PlayerUpdate()
 	{
 		for (int n = 0; n < gridnum; n++)
 		{
-			for (int i = 0;i < grid_zonbievector[m][n].size();i++)
+			for (int i = 0;i < grid_zombiebulletvector[m][n].size();i++)
 			{
 				if (i == 0)
 				{
 
-					buf_vec.clear();
 					buf_pvec.clear();
-
-
-
-					for (int w = 0; w < grid_zonbievector[m][n].size(); w++)
-					{
-						Player* buf = &grid_zonbievector[m][n].at(w);
-						buf_vec.push_back(buf);
-					}
-
-				
-
 
 					for (int w = 0; w < grid_vector[m][n].size(); w++)
 					{
@@ -642,10 +556,7 @@ void PlayerMgr::PlayerUpdate()
 
 				}
 				// ìGçXêV
-				grid_zonbievector[m][n].at(i).zonbie_run(buf_vec, buf_pvec, mousevelocity);
-				grid_zonbievector[m][n].at(i).ZonbieUpdate(animno, 1);
-
-				grid_zonbievector[m][n].at(i).boids_attack(buf_pvec, grid_zonbievector[m][n].at(i), unique_enemy_bomb_vector);
+				grid_zombiebulletvector[m][n].at(i).Update(buf_pvec);
 			}
 
 		}
@@ -658,9 +569,14 @@ void PlayerMgr::PlayerUpdate()
 	{
 		grid_bufvector.at(i).Update(false);
 	}
-	for (int i = 0; i < grid_bufzonbievector.size(); i++)
+	for (int i = 0; i < grid_bufzombievector.size(); i++)
 	{
-		grid_bufzonbievector.at(i).ZonbieUpdate(0, 0);
+		grid_bufzombievector.at(i).ZonbieUpdate(0, 0);
+	}
+	buf_pvec.clear();
+	for (int i = 0; i < grid_bufzombiebulletvector.size(); i++)
+	{
+		grid_bufzombiebulletvector.at(i).Update(buf_pvec);
 	}
 
 	//cmodelinstance_hyuman.Update(phmat);
@@ -685,17 +601,32 @@ void PlayerMgr::PlayerUpdate()
 	{
 		for (int n = 0; n < gridnum; n++)
 		{
-			for (int i = 0;i < grid_zonbievector[m][n].size();i++)
+			for (int i = 0;i < grid_zombievector[m][n].size();i++)
 			{
-				instance_zombie.emplace_back(std::move(grid_zonbievector[m][n].at(i)));
+
+				instance_zombie.emplace_back(std::move(grid_zombievector[m][n].at(i)));
 			}
 		}
 	}
-	for (int i = 0; i < grid_bufzonbievector.size(); i++)
+	for (int i = 0; i < grid_bufzombievector.size(); i++)
 	{
-		instance_zombie.emplace_back(std::move(grid_bufzonbievector.at(i)));
+		instance_zombie.emplace_back(std::move(grid_bufzombievector.at(i)));
 	}
 
+	for (int m = 0; m < gridnum; m++)
+	{
+		for (int n = 0; n < gridnum; n++)
+		{
+			for (int i = 0;i < grid_zombiebulletvector[m][n].size();i++)
+			{
+				instance_zombiebullet.emplace_back(std::move(grid_zombiebulletvector[m][n].at(i)));
+			}
+		}
+	}
+	for (int i = 0; i < grid_bufzombiebulletvector.size(); i++)
+	{
+		instance_zombiebullet.emplace_back(std::move(grid_bufzombiebulletvector.at(i)));
+	}
 	
 
 	
@@ -722,7 +653,21 @@ void PlayerMgr::PlayerUpdate()
 		zmat[i] = world;
 	}
 	cmodelinstance_zombie.Update(zmat);
+
 	BoidsHp::GetInstance()->Update(zmat);
+
+
+
+
+	for (int i = 0; i < ZOMBIEBULLET; i++)
+	{
+		XMFLOAT4X4	world;
+		world = instance_zombiebullet.at(i).GetMtx();
+		//DX11MtxFromQt(world, g_enemy[i].GetRotation());
+
+		zbmat[i] = world;
+	}
+	cmodelinstance_zombiebullet.Update(zbmat);
 
 	//for (int i = 0; i < unique_enemy_bomb_vector_num; i++)
 	//{
@@ -906,6 +851,24 @@ void PlayerMgr::PlayerUpdate()
 		ImGui::PopStyleColor();
 	}
 
+
+
+}
+void PlayerMgr::ZombieBulletRemake(XMFLOAT4X4 mtx, XMFLOAT3 pos)
+{
+
+	for (int i = 0; i < grid_bufzombiebulletvector.size(); i++)
+	{
+		if (grid_bufzombiebulletvector.at(i).isLive() == false) {
+			//èâä˙à íuÉZÉbÉg
+			//(it)->SetInitialPos(it->GetMtx()._41, it->GetMtx()._42, it->GetMtx()._43);
+			//î≠éÀï˚å¸ÇÉZÉbÉg
+			grid_bufzombiebulletvector.at(i).SetDirection(mtx);
+			grid_bufzombiebulletvector.at(i).Remake(pos);
+			break;
+		}
+		else ++i;
+	}
 
 
 }

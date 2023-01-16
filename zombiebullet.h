@@ -3,9 +3,12 @@
 #include<vector>
 #include<memory>
 #include"gameobject.h"
+#include"CModelInstance.h"
+
 
 //前方宣言
 class CModel;
+class Player;
 
 //弾ステータス
 enum class ZOMBIEBSTS {
@@ -20,9 +23,10 @@ private:
 	DirectX::XMFLOAT3 m_direction;//発射方向
 	DirectX::XMFLOAT3 m_pos;
 	float m_speed = 2.0f;
-	float m_bulletspeed = 0.5f;
+	float m_bulletspeed = 1.5f;
 
 	DirectX::XMFLOAT3 m_scale;
+	CModelInstance* m_instancemodel;						// ３Ｄモデル
 
 
 public:
@@ -38,7 +42,7 @@ public:
 
 	void Draw();
 
-	void Update();
+	void Update(std::vector<Player*> playervec);
 
 	void Finalize() {};
 
@@ -67,6 +71,10 @@ public:
 		else {
 			return false;
 		}
+	}
+	void SetInstanceModel(CModelInstance* model)
+	{
+		m_instancemodel = model;
 	}
 
 	void SetInitialPos(float x, float y, float z)
