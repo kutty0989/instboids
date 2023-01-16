@@ -177,6 +177,7 @@
     <ClCompile Include="dx11mathutil.cpp" />
     <ClCompile Include="dx11util.cpp" />
     <ClCompile Include="enemy.cpp" />
+    <ClCompile Include="Explsion.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="granate.cpp" />
     <ClCompile Include="ground.cpp" />
@@ -255,6 +256,7 @@
     <ClInclude Include="DatFileLoader.h" />
     <ClInclude Include="DIController.h" />
     <ClInclude Include="ExcePtion.h" />
+    <ClInclude Include="Explsion.h" />
     <ClInclude Include="granate.h" />
     <ClInclude Include="ground.h" />
     <ClInclude Include="instan.h" />

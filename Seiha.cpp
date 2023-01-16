@@ -273,7 +273,6 @@ void  Seiha::Update(uint64_t dt) {
 
 
 	static bool music = true;
-	BillBoardMgr::GetInstance()->Update();
 
 	
 	//Notes_Arrange::GetInstance()->Update();
@@ -330,6 +329,8 @@ void Seiha::Draw()
 	g_skybox.Draw();
 	
 	g_ground.Draw();
+
+	//BillBoardMgr::GetInstance()->Update();
 
 	BillBoardMgr::GetInstance()->Draw();
 //	BoidsHp::GetInstance()->Draw();

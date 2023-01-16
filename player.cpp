@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include"PlayerMgr.h"
 #include"CHeight_Map.h"
-
+#include"billboardMgr.h"
 #include"BoundingSphere.h"
 #include<list>;
 #include<math.h>
@@ -32,8 +32,6 @@ static float bay;
 float scaling = Ground::GetInstance()->scaling;
 
 
-const int window_height = (CHeight_Map::GetInstance()->iPixSize - 60) * scaling;//マップの大きさ　縦
-const int window_width = (CHeight_Map::GetInstance()->iPixSize - 60) * scaling;//マップの大きさ　横
 
 
 #define w_height window_height 
@@ -203,6 +201,7 @@ void Player::zonbie_Init(float x, float y, int nowzombiecnt)
 {
 
 	acceleration = Pvector(0, 0);
+	bulletcreatecnt = rand() % 10 + 60;
 
 	location = Pvector(x / 10, y / 10);//ポジション
 	maxSpeed = 3.5;
@@ -309,13 +308,36 @@ void Player::DrawWithAxis() {
 struct FLOAT3
 {
 	float x, y, z;
+
 };
 
 
+float length = 200;
 
-void Player::Update(bool input) {
+void Player::Update(bool input, std::vector<ZombieBullet*> zbvec) {
 
 
+
+	if (bstatus == BSTATUS::LIVE)
+	{
+		for (int i = 0; i < zbvec.size(); i++)
+		{
+			if (zbvec.at(i)->m_sts == ZOMBIEBSTS::LIVE)
+			{
+				float disx = this->GetMtx()._41 - zbvec.at(i)->GetMtx()._41;
+				float disy = this->GetMtx()._43 - zbvec.at(i)->GetMtx()._43;
+				float dist = disx * disx + disy * disy;
+				if (length > dist)
+				{
+					this->hp = 0;
+					this->m_sts = Player::STATUS::DEAD;
+					zbvec.at(i)->m_sts = ZOMBIEBSTS::DEAD;
+
+					BillBoardMgr::GetInstance()->ExplsionCreate(XMFLOAT3(this->GetMtx()._41, this->GetMtx()._42, this->GetMtx()._43));
+				}
+			}
+		}
+	}
 
 	if (bstatus == BSTATUS::LIVE)
 	{
@@ -397,12 +419,7 @@ void Player::ZonbieUpdate(int animenum, int i)
 	if (bstatus == BSTATUS::LIVE)
 	{
 
-		bulletcnt++;
-		if (bulletcnt == 30)
-		{
-			PlayerMgr::GetInstance()->ZombieBulletRemake(this->GetMtx(),XMFLOAT3(this->GetMtx()._41, this->GetMtx()._42,this->GetMtx()._43));
-			bulletcnt = 0;
-		}
+		
 
 		boid_borders();
 		DX11MtxIdentity(scale);
@@ -429,12 +446,12 @@ void Player::ZonbieUpdate(int animenum, int i)
 
 		if (reborn_flg)
 		{
-			location.x = rebornpos.x;
+		/*	location.x = rebornpos.x;
 			location.y = rebornpos.y;
 			m_pos.x = location.x;
 			m_pos.z = location.y;
 			Ground::GetInstance()->GetPlayerHeight(*this);
-			reborn_flg = false;
+			reborn_flg = false;*/
 		}
 		else
 		{
@@ -508,7 +525,12 @@ void Player::ZonbieUpdate(int animenum, int i)
 		m_mtx = world;
 		
 		
-
+		bulletcnt++;
+		if (bulletcnt == 30)
+		{
+			PlayerMgr::GetInstance()->ZombieBulletRemake(this->GetMtx(), XMFLOAT3(this->GetMtx()._41, this->GetMtx()._42, this->GetMtx()._43));
+			bulletcnt = 0;
+		}
 	}
 	else
 	{
@@ -581,17 +603,17 @@ void Player::boids_attack(std::vector<Player*>& player_vector, Player& zonbie, s
 {
 	if (changeflg)
 	{
-		for (auto& i : player_vector)
-		{
-			float dd = i->location.distance(zonbie.location);					
+		//for (auto& i : player_vector)
+		//{
+		//	float dd = i->location.distance(zonbie.location);					
 
-			//hp減産処理
-			if (dd < zombirange)
-			{
-				i->hp = 0;
+		//	//hp減産処理
+		//	if (dd < zombirange)
+		//	{
+		//		i->hp = 0;
 
-			}
-		}
+		//	}
+		//}
 
 		for (auto& u : unique_enemy_vector)
 		{
@@ -599,7 +621,7 @@ void Player::boids_attack(std::vector<Player*>& player_vector, Player& zonbie, s
 
 			if (dd < 25)
 			{
-				u.hp -= 1;
+			//	u.hp -= 1;
 			}
 		}
 	}
@@ -889,10 +911,10 @@ void Player::boid_update()
 void Player::boid_borders()
 {
 
-	if (location.x < -window_width * 0.5f)	location.x += window_width;
-	if (location.y < -window_width * 0.5f)	location.y += window_height;
-	if (location.x > window_height * 0.5f)	location.x -= window_width;
-	if (location.y > window_height * 0.5f)	location.y -= window_height;
+	if (location.x < -PlayerMgr::GetInstance()->window_width * 0.5f)	location.x += PlayerMgr::GetInstance()->window_width;
+	if (location.y < -PlayerMgr::GetInstance()->window_width * 0.5f)	location.y += PlayerMgr::GetInstance()->window_height;
+	if (location.x > PlayerMgr::GetInstance()->window_height * 0.5f)	location.x -= PlayerMgr::GetInstance()->window_width;
+	if (location.y > PlayerMgr::GetInstance()->window_height * 0.5f)	location.y -= PlayerMgr::GetInstance()->window_height;
 }
 
 Pvector steer(0, 0);

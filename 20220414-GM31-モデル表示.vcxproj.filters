@@ -459,6 +459,9 @@
     <ClCompile Include="zombiebullet.cpp">
       <Filter>ソース ファイル\game\gameobject\Bullet</Filter>
     </ClCompile>
+    <ClCompile Include="Explsion.cpp">
+      <Filter>ソース ファイル\game\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dx11mathutil.h">
@@ -781,6 +784,9 @@
     </ClInclude>
     <ClInclude Include="zombiebullet.h">
       <Filter>ソース ファイル\game\gameobject\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Explsion.h">
+      <Filter>ソース ファイル\game\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -27,7 +27,7 @@ private:
 
 	DirectX::XMFLOAT3 m_scale;
 	CModelInstance* m_instancemodel;						// ‚R‚cƒ‚ƒfƒ‹
-
+	
 
 public:
 	XMFLOAT3 nowpos;
@@ -38,7 +38,7 @@ public:
 
 	bool Init();
 
-	void Remake(XMFLOAT3 pos);
+	void Remake(XMFLOAT3 pos,XMFLOAT3 div);
 
 	void Draw();
 
@@ -60,8 +60,8 @@ public:
 	}
 
 	void SetDirection(DirectX::XMFLOAT4X4 mtx) {
-		m_mtx = mtx;
-		m_direction = DirectX::XMFLOAT3(mtx._31, mtx._32, mtx._33);
+	//	m_mtx = mtx;
+		//m_direction = DirectX::XMFLOAT3(mtx._31, mtx._32, mtx._33);
 	}
 
 	bool isLive() {

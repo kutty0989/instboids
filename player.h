@@ -11,8 +11,9 @@
 //#include"UniqueEnemy_Bomb.h"
 
 class UniqueEnemy_Bomb;
+class ZombieBullet;
 #define		ENEMYMAX		10
-#define		ZOMBIEMAX		1010
+#define		ZOMBIEMAX		10
 #define		ZOMBIE		    1
 #define		HYUMANMAX		1000
 
@@ -120,7 +121,7 @@ public:
 
 	void DrawWithAxis();
 
-	void Update(bool input);
+	void Update(bool input,std::vector<ZombieBullet*> zbvec);
 
 	void ZonbieUpdate(int animnum, int i);
 
@@ -226,6 +227,7 @@ public:
 	bool alifalse_flg = false;
 	float alifalse_cnt = -10;
 	XMFLOAT3 rebornpos;
+	int bulletcreatecnt = 0;
 
 	bool zombie_scatterflg = false;
 

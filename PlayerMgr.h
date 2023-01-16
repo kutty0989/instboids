@@ -11,12 +11,15 @@
 #include"myutil.h"
 #include"UniqueEnemy.h"
 #include"UniqueEnemy_Bomb.h"
+#include"zombiebullet.h"
+#include"CHeight_Map.h"
 
 const int boids_num = 200;//全体のboidsの初期数
 const int zonbbie_num = 100;//ゾンビの初期数
 const int unique_enemy_num = 0;//近接の初期数
 const int unique_enemy_bomb_num = 10;//遠距離の初期数
 using namespace IKD;
+
 
 class PlayerMgr
 {
@@ -33,8 +36,13 @@ public:
 	
 	std::vector<Player*> buf_vec; 
 	std::vector<Player*> buf_pvec;
+	std::vector<ZombieBullet*> buf_zbvec;
 	std::shared_ptr<Player> ImPlayer;
 	std::shared_ptr<Player> ImEnemy;
+
+
+	const int window_height = (CHeight_Map::GetInstance()->iPixSize - 60) * CHeight_Map::ScaleMap;//マップの大きさ　縦
+	const int window_width = (CHeight_Map::GetInstance()->iPixSize - 60) * CHeight_Map::ScaleMap;//マップの大きさ　横
 
 
 

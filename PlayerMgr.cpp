@@ -304,7 +304,16 @@ void PlayerMgr::PlayerUpdate()
 			}
 		}
 	}
-
+	for (int i = 0; i < instance_zombiebullet.size();i++)
+	{
+		if (instance_zombiebullet.at(i).m_life == 0)
+		{
+			if (instance_zombiebullet.at(i).m_sts != ZOMBIEBSTS::DEAD)
+			{
+				instance_zombiebullet.at(i).m_sts = ZOMBIEBSTS::DEAD;
+			}
+		}
+	}
 	for (int m = 0; m < gridnum; m++)
 	{
 		for (int n = 0; n < gridnum; n++)
@@ -501,6 +510,7 @@ void PlayerMgr::PlayerUpdate()
 
 					buf_vec.clear();
 					buf_pvec.clear();
+					buf_zbvec.clear();
 
 					for (int w = 0; w < grid_zombievector[m][n].size(); w++)
 					{
@@ -516,6 +526,11 @@ void PlayerMgr::PlayerUpdate()
 						Player* buf = &grid_vector[m][n].at(w);
 						buf_pvec.push_back(buf);
 					}
+					for (int w = 0; w < grid_zombiebulletvector[m][n].size(); w++)
+					{
+						ZombieBullet* buf = &grid_zombiebulletvector[m][n].at(w);
+						buf_zbvec.push_back(buf);
+					}
 	
 				}
 				
@@ -525,7 +540,7 @@ void PlayerMgr::PlayerUpdate()
 				//DX11MtxFromQt(world, g_enemy[i].GetRotation());
 
 				grid_vector[m][n].at(i).boid_run(buf_pvec, buf_vec);
-				grid_vector[m][n].at(i).Update(false);
+				grid_vector[m][n].at(i).Update(false,buf_zbvec);
 
 
 				//world = grid_vector[m][n].at(i).GetMtx();
@@ -562,12 +577,12 @@ void PlayerMgr::PlayerUpdate()
 		}
 	}
 
-
+	buf_zbvec.clear();
 	
 	//死んだaiを遠くへ飛ばす
 	for (int i = 0; i < grid_bufvector.size(); i++)
 	{
-		grid_bufvector.at(i).Update(false);
+		grid_bufvector.at(i).Update(false,buf_zbvec);
 	}
 	for (int i = 0; i < grid_bufzombievector.size(); i++)
 	{
@@ -662,7 +677,7 @@ void PlayerMgr::PlayerUpdate()
 	for (int i = 0; i < ZOMBIEBULLET; i++)
 	{
 		XMFLOAT4X4	world;
-		world = instance_zombiebullet.at(i).GetMtx();
+		world = instance_zombiebullet[i].GetMtx();
 		//DX11MtxFromQt(world, g_enemy[i].GetRotation());
 
 		zbmat[i] = world;
@@ -808,7 +823,7 @@ void PlayerMgr::PlayerUpdate()
 			if (instance_hyuman.at(i).bstatus != Player::BSTATUS::DEAD)
 			{
 				instance_hyuman.at(i).bstatus = Player::BSTATUS::DEAD;
-				for (int a = 0; a < ZOMBIEMAX;a++)
+			/*	for (int a = 0; a < ZOMBIEMAX;a++)
 				{
 					if (instance_zombie.at(a).bstatus == Player::BSTATUS::DEAD)
 					{
@@ -816,7 +831,7 @@ void PlayerMgr::PlayerUpdate()
 
 						break;
 					}
-				}
+				}*/
 			}
 		}
 	}
@@ -863,8 +878,8 @@ void PlayerMgr::ZombieBulletRemake(XMFLOAT4X4 mtx, XMFLOAT3 pos)
 			//初期位置セット
 			//(it)->SetInitialPos(it->GetMtx()._41, it->GetMtx()._42, it->GetMtx()._43);
 			//発射方向をセット
-			grid_bufzombiebulletvector.at(i).SetDirection(mtx);
-			grid_bufzombiebulletvector.at(i).Remake(pos);
+		//	grid_bufzombiebulletvector.at(i).SetDirection(mtx);
+			grid_bufzombiebulletvector.at(i).Remake(pos,XMFLOAT3(mtx._31,mtx._32,mtx._33));
 			break;
 		}
 		else ++i;
