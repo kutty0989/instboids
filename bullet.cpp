@@ -9,6 +9,7 @@
 #include<iostream>
 #include"CCamera.h"
 #include"billboardMgr.h"
+
 constexpr float BULLETSPEED = 15.0f;
 constexpr uint32_t BULLETLIFE = 60;
 #define debuglog(a) std::cout<<a<<std::endl;
@@ -17,6 +18,7 @@ time_t ta;
 long cpu_time;
 double sec;
 double asec;
+
 bool Bullet::Init() {
 	bool sts = true;
 

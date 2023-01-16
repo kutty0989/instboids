@@ -6,6 +6,9 @@
 #include"CDirectInput.h"
 #include"CTexMgr.h"
 
+
+#define ZombiBullet 200
+
 class Scean
 {
 public:

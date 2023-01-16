@@ -16,7 +16,7 @@ const char* psfilenamein[] = {
 };
 
 CTexInstance::CTexInstance(int num)
-{	DXGI_SWAP_CHAIN_DESC scd = { 0 };
+{	//DXGI_SWAP_CHAIN_DESC scd = { 0 };
 	// デバイスコンテキストを取得
 	ID3D11DeviceContext* devcontext;
 	devcontext = GetDX11DeviceContext();
@@ -66,7 +66,7 @@ CTexInstance::CTexInstance(int num)
 
 	VERTEX	v[4] = {
 		// 座標													// カラー	// UV	
-		XMFLOAT3(-1.0f ,-1.0 , 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),	XMFLOAT2(0.0f,0.0f),
+		XMFLOAT3(-1.0f ,-1.0 , 0.0f),XMFLOAT4(1.0f,1.0f,1.0f,1.0f),	XMFLOAT2(0.0f,0.0f),
 		XMFLOAT3(1.0 ,-1.0f, 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(1.0f,0.0f),
 		XMFLOAT3(-1.0 ,1.0 , 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(0.0f,1.0f),
 		XMFLOAT3(1.0 ,1.0 , 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(1.0f,1.0f),
@@ -89,7 +89,7 @@ CTexInstance::CTexInstance(int num)
 	// インデックスデータ用バッファの設定
 	int indexes[] =
 	{
-		0,1,2,
+		0,2,1,
 		1,3,2
 
 	};
@@ -142,7 +142,7 @@ CTexInstance::CTexInstance(int num)
 
 	auto proj = CCamera::GetInstance()->GetProjectionMatrix();
 	mProj = DirectX::XMLoadFloat4x4(&proj);
-	mScale = XMMatrixScalingFromVector(XMVectorSet(40.1f, 40.1f, 10.1f, 0.0f));
+	mScale = XMMatrixScalingFromVector(XMVectorSet(10.1f, 10.1f, 10.1f, 0.0f));
 	mRotation = XMMatrixRotationX(0.0f) * XMMatrixRotationY(0.0f) * XMMatrixRotationZ(-1.57f);
 
 }
@@ -201,7 +201,7 @@ bool CTexInstance::Update(
 //
 //	devcontext->Unmap(mPerInstanceBuffer.Get(), 0);
 //
-////	mInput->SetPreBuffer();
+//	mInput->SetPreBuffer();
 	return true;
 }
 
@@ -242,8 +242,8 @@ void CTexInstance::RenderInstancing(XMFLOAT4X4 pos[])
 	{
 		//とりあえずループ変数使って移動
 		float xPos = pos[i]._41;
-		float yPos = pos[i]._43;
-		float zPos = pos[i]._42;
+		float yPos = pos[i]._42;
+		float zPos = pos[i]._43;
 		XMMATRIX move;// = XMMatrixTranslation(xPos, zPos, yPos);
 		auto cameramat = CCamera::GetInstance()->GetCameraMatrix();
 	

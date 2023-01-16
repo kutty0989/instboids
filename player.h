@@ -13,7 +13,7 @@
 class UniqueEnemy_Bomb;
 #define		ENEMYMAX		10
 #define		ZOMBIEMAX		1010
-#define		ZOMBIE		    10
+#define		ZOMBIE		    1
 #define		HYUMANMAX		1000
 
 
@@ -51,6 +51,7 @@ public:
 	XMFLOAT4X4 trans = {};
 	XMFLOAT4X4 world = {};
 	float b_angle = 0.0f;
+	int bulletcnt = 0;
 
 	XMFLOAT2 left_vec;//自分から＋90度の角度
 	XMFLOAT2 right_vec;//自分から-90度の角度

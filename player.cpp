@@ -397,6 +397,12 @@ void Player::ZonbieUpdate(int animenum, int i)
 	if (bstatus == BSTATUS::LIVE)
 	{
 
+		bulletcnt++;
+		if (bulletcnt == 300)
+		{
+			BulletMgr::GetInstance()->zombiebulletRemake(this->GetMtx(),XMFLOAT3(this->GetMtx()._41, this->GetMtx()._42,this->GetMtx()._43));
+			bulletcnt = 0;
+		}
 
 		boid_borders();
 		DX11MtxIdentity(scale);
@@ -680,7 +686,6 @@ void Player::boid_flock(std::vector<Player*> player_vector, std::vector<Player*>
 	coh = { 0,0 };
 	avo = { 0,0 };
 	down = { 0,0 };
-	
 
 	if (follow == Follow::HYUMAN)
 	{

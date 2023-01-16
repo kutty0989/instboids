@@ -50,8 +50,8 @@ VS_OUT VS(VS_IN input)
     output.pos = mul(input.pos, g_pInstanceData[input.instanceID].instanceMat);
     output.id = input.instanceID;
     
-    //output.pos = mul(output.pos, View);
-    //output.pos = mul(output.pos, Projection);
+    output.pos = mul(output.pos, View);
+    output.pos = mul(output.pos, Projection);
     output.uv = input.uv;
     output.color = input.color;
     

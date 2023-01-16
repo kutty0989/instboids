@@ -137,6 +137,7 @@ void Seiha::Initialize() {
 		}
 
 
+		BoidsHp::GetInstance()->Init();
 		//g_air.InitiInstancing(5000, "assets/f1/f1.x.dat", "assets/vsinstance.fx", "assets/ps.fx");
 	
 
@@ -286,7 +287,29 @@ void  Seiha::Update(uint64_t dt) {
 	DX11LightUpdate(XMFLOAT4(eye.x, eye.y, eye.z, 1.0f));
 
 	//
-	
+	if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_0))
+	{
+
+		D3D11_RASTERIZER_DESC rasterDesc;
+		rasterDesc.AntialiasedLineEnable = false;
+		rasterDesc.CullMode = D3D11_CULL_NONE;
+		//  rasterDesc.CullMode = D3D11_CULL_BACK;
+		rasterDesc.DepthBias = 0;
+		rasterDesc.DepthBiasClamp = 0.0f;
+		rasterDesc.DepthClipEnable = true;
+			rasterDesc.FillMode = D3D11_FILL_WIREFRAME;		// ƒƒCƒ„ƒtƒŒ[ƒ€‚É‚µ‚½‚¢‚Æ‚«
+		//rasterDesc.FillMode = D3D11_FILL_SOLID;
+		rasterDesc.FrontCounterClockwise = false;
+		rasterDesc.MultisampleEnable = false;
+		rasterDesc.ScissorEnable = false;
+		rasterDesc.SlopeScaledDepthBias = 0.0f;
+		// create the rasterrizer state from the description we just filled out 
+//		CDirectXGraphics::GetInstance()->GetDXDevice()->CreateRasterizerState(&rasterDesc, m_rasterState.Get());
+
+	}
+
+
+
 
 	MouseCircle::GetInstance()->Update();
 	XMFLOAT4X4 mat;

@@ -100,10 +100,10 @@ void BoidsHp::UpdateHp(int hp)
 {
 	XMFLOAT2 inUV[] =
 	{
-		{1,1},
-		{0,1},
+		{0,0},
 		{1,0},
-		{0,0}
+		{0,1},
+		{1,1}
 	};
 
 	XMFLOAT3 col = { 1.0f,1.0f,1.0f};

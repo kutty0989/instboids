@@ -243,6 +243,8 @@ bool CDirectXGraphics::Init(HWND hWnd, unsigned int Width, unsigned int Height, 
 	// bind the render target view and depth stencil buffer to the output render pipeline
 	m_lpImmediateContext->OMSetRenderTargets(1, m_lpRenderTargetView.GetAddressOf(), m_depthStencilView.Get());
 	// setup the raster description which will determine how and what polygons will be drawn
+	
+	//D3D11_RASTERIZER_DESC rasterDesc;
 	rasterDesc.AntialiasedLineEnable = false;
 	rasterDesc.CullMode = D3D11_CULL_NONE;
 	//  rasterDesc.CullMode = D3D11_CULL_BACK;
@@ -257,21 +259,21 @@ bool CDirectXGraphics::Init(HWND hWnd, unsigned int Width, unsigned int Height, 
 	rasterDesc.SlopeScaledDepthBias = 0.0f;
 
 	// create the rasterrizer state from the description we just filled out 
-	//hr = m_lpDevice->CreateRasterizerState(&rasterDesc, &m_rasterState);
+//	hr = m_lpDevice->CreateRasterizerState(&rasterDesc, &m_rasterState);
 	//if (FAILED(hr)) {
 	//	return false;
 	//}
 
-	rasterDesc.CullMode = D3D11_CULL_NONE;//描画する三角形の面の向きによるびょがするかどうかの指定　NONE行わない
-	rasterDesc.FillMode = D3D11_FILL_SOLID;//
-	rasterDesc.ScissorEnable = true;//シザー処理
-	hr = m_lpDevice->CreateRasterizerState(&rasterDesc, &m_cissorState);
+	//rasterDesc.CullMode = D3D11_CULL_NONE;//描画する三角形の面の向きによるびょがするかどうかの指定　NONE行わない
+	//rasterDesc.FillMode = D3D11_FILL_SOLID;//
+	//rasterDesc.ScissorEnable = true;//シザー処理
+	//hr = m_lpDevice->CreateRasterizerState(&rasterDesc, &m_cissorState);
 
-	if (FAILED(hr)) {
-		MessageBox(nullptr, "シザー矩形用のラスタライザーステートの作成失敗 error", "error", MB_OK);
+	//if (FAILED(hr)) {
+	//	MessageBox(nullptr, "シザー矩形用のラスタライザーステートの作成失敗 error", "error", MB_OK);
 
-		return false;
-	}
+	//	return false;
+	//}
 
 
 	//  set the rasterizer state

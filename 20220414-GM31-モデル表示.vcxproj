@@ -230,6 +230,7 @@
     <ClCompile Include="WinMain.cpp" />
     <ClCompile Include="XAudio2.cpp" />
     <ClCompile Include="XIController.cpp" />
+    <ClCompile Include="zombiebullet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationDataAssimp.h" />
@@ -338,6 +339,7 @@
     <ClInclude Include="voids.h" />
     <ClInclude Include="XAudio2.h" />
     <ClInclude Include="XIController.h" />
+    <ClInclude Include="zombiebullet.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shader\DSTess+Disp.hlsl">

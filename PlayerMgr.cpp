@@ -37,8 +37,10 @@ int PlayerMgr::RStickRigY = 0;
 const int gridnum = 20;
 std::vector<Player> grid_vector[gridnum][gridnum] = {};
 std::vector<Player> grid_zonbievector[gridnum][gridnum] = {};
+std::vector<ZombieBullet> grid_zombiebulletvector[gridnum][gridnum] = {};
 std::vector<Player> grid_bufvector;
 std::vector<Player> grid_bufzonbievector;
+
 //std::vector<shared_ptr<UniqueEnemy>> bufunique_enemy_vector[3][1] = {};//É]ÉìÉr
 
 CModelInstance cmodelinstance_unique_enemy;
@@ -49,6 +51,7 @@ CModelInstance cmodelinstance_hyuman;
 std::vector<UniqueEnemy_Bomb> instance_e_bomb;
 std::vector<Player> instance_zombie;
 std::vector<Player> instance_hyuman;
+std::vector<ZombieBullet> zombie_bullet;
 enemy g_test[5000];		// ìG
 CModel *g_model;
 using namespace std;
@@ -113,7 +116,6 @@ void PlayerMgr::Init()
 		instance_hyuman.emplace_back(buf);
 	}
 
-	BoidsHp::GetInstance()->Init();
 	
 	//// ìGÇèâä˙âª
 	//for (int i = 0; i < ENEMYMAX; i++) {
@@ -357,6 +359,25 @@ void PlayerMgr::PlayerUpdate()
 	}
 	instance_zombie.clear();
 
+	for (int i = 0; i < ZombiBullet; i++)
+	{
+		if(BulletMgr::GetInstance()->g_zombiebullets.at(i)->m_sts == ZOMBIEBSTS::LIVE)
+		{
+			int zcolumn = CHeight_Map::GetInstance()->iPixSize / int(zombie_bullet.at(i).GetMtx()._41);
+			int zrow = CHeight_Map::GetInstance()->iPixSize / int(zombie_bullet.at(i).GetMtx()._43);
+
+			grid_zombiebulletvector[zcolumn][zrow].emplace_back(zombie_bullet.at(i));
+
+		}
+		else
+		{
+			grid_bufzonbievector.emplace_back(instance_zombie.at(i));
+
+		}
+	}
+
+
+	zombie_bullet.clear();
 
 	
 	//static XMFLOAT4X4 zmat[ZOMBIEMAX];
@@ -588,6 +609,48 @@ void PlayerMgr::PlayerUpdate()
 			}
 		}
 	}
+	
+
+	for (int m = 0; m < gridnum; m++)
+	{
+		for (int n = 0; n < gridnum; n++)
+		{
+			for (int i = 0;i < grid_zonbievector[m][n].size();i++)
+			{
+				if (i == 0)
+				{
+
+					buf_vec.clear();
+					buf_pvec.clear();
+
+
+
+					for (int w = 0; w < grid_zonbievector[m][n].size(); w++)
+					{
+						Player* buf = &grid_zonbievector[m][n].at(w);
+						buf_vec.push_back(buf);
+					}
+
+				
+
+
+					for (int w = 0; w < grid_vector[m][n].size(); w++)
+					{
+						Player* buf = &grid_vector[m][n].at(w);
+						buf_pvec.push_back(buf);
+					}
+
+				}
+				// ìGçXêV
+				grid_zonbievector[m][n].at(i).zonbie_run(buf_vec, buf_pvec, mousevelocity);
+				grid_zonbievector[m][n].at(i).ZonbieUpdate(animno, 1);
+
+				grid_zonbievector[m][n].at(i).boids_attack(buf_pvec, grid_zonbievector[m][n].at(i), unique_enemy_bomb_vector);
+			}
+
+		}
+	}
+
 
 	
 	//éÄÇÒÇæaiÇâìÇ≠Ç÷îÚÇŒÇ∑
