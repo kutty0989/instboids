@@ -63,6 +63,7 @@ cbuffer HightBuffer : register(b8)
  
 };
 
+
 cbuffer ConstantBufferBoneMatrix : register(b9)
 {
     uint4 ViewportWidth; // ビューポート幅
@@ -77,6 +78,14 @@ cbuffer BlendBuffer : register(b10)
     float blendtwo;
     float blendthere;
     float blendfour;
+ 
+};
+
+cbuffer HpBuffer : register(b11)
+{
+
+    float hp;
+    float buff[3];
  
 };
 

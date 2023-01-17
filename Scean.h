@@ -48,6 +48,8 @@ public:
 		BLOOD,
 		HPOUT,
 		HPIN,
+		HPUBOUT,
+		HPUBIN,
 		MAX
 
 	};
@@ -88,7 +90,9 @@ public:
 		{BCGID::EXPLSION,"assets/effect/explsion.png","shader/vs.hlsl","shader/pstexcol.hlsl"},
 		{BCGID::BLOOD,"assets/effect/blood.png","shader/vs.hlsl","shader/pstexcol.hlsl"},
 		{BCGID::HPOUT,"assets/UI/hpkara.png","shader/vs.hlsl","shader/pstexcol.hlsl"},
-		{BCGID::HPIN,"assets/UI/hpnaka5.png","shader/vs.hlsl","shader/pstexcol.hlsl"}
+		{BCGID::HPIN,"assets/UI/hpnaka6.png","shader/vs.hlsl","shader/pstexcol.hlsl"},
+		{BCGID::HPUBOUT,"assets/UI/hpberub.png","shader/vs.hlsl","shader/pstexcol.hlsl"},
+		{BCGID::HPUBIN,"assets/UI/hpubin.png","shader/vsbillboard2.hlsl","shader/pstexcol.hlsl"}
 
 		//{CGID::TiTLE,"assets/UI/Notes.png","shader/vs.hlsl","shader/pstexcol.hlsl"}
 	};

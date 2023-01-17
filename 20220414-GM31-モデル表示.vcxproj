@@ -222,6 +222,7 @@
     <ClCompile Include="S_Enemy.cpp" />
     <ClCompile Include="S_Title.cpp" />
     <ClCompile Include="Timing_UI.cpp" />
+    <ClCompile Include="UniqueBombHp.cpp" />
     <ClCompile Include="UniqueEnemy.cpp" />
     <ClCompile Include="UniqueEnemy_bomb.cpp" />
     <ClCompile Include="updatespherecamera.cpp" />
@@ -333,6 +334,7 @@
     <ClInclude Include="CHeightMgr.h" />
     <ClInclude Include="Timing_UI.h" />
     <ClInclude Include="uncopyable.h" />
+    <ClInclude Include="UniqueBombHp.h" />
     <ClInclude Include="UniqueEnemy.h" />
     <ClInclude Include="UniqueEnemy_Bomb.h" />
     <ClInclude Include="updatespherecamera.h" />
@@ -427,6 +429,12 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="shader\vsbillboard2.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="shader\vsinstance.fx">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>

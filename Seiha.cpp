@@ -137,7 +137,7 @@ void Seiha::Initialize() {
 		}
 
 
-		BoidsHp::GetInstance()->Init();
+		//BoidsHp::GetInstance()->Init();
 		//g_air.InitiInstancing(5000, "assets/f1/f1.x.dat", "assets/vsinstance.fx", "assets/ps.fx");
 	
 
@@ -342,7 +342,7 @@ void Seiha::Draw()
 	
 	
 	MouseCircle::GetInstance()->Draw();
-	BoidsHp::GetInstance()->Draw();
+	//BoidsHp::GetInstance()->Draw();
 
 
 	//	// “G•`‰æ

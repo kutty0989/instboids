@@ -46,6 +46,8 @@ bool UniqueEnemy_Bomb::Init()
 	AliW = 1.0f;
 	CohW = 1.0f;
 
+	uniquebombhp.Init();
+
 	return true;
 }
 
@@ -55,6 +57,8 @@ void UniqueEnemy_Bomb::Draw(std::vector<Player>& zonbie_vector)
 	manime.animecnt = 0;
 	unique_enemy_anime = UNIQUE_ENEMY_ANIME::IDLE;
 	
+
+
 	//	m_model->Update(animecnt, m_mtx, animereset);
 		// モデル描画
 	um_model->Draw(m_mtx);
@@ -209,28 +213,8 @@ void UniqueEnemy_Bomb::Update(std::vector<Player*>& pvec, std::vector<ZombieBull
 		m_mtx = world;
 
 
-		//if (b_animecnt != manime.animecnt)
-		//{
-		//	animereset = true;
-		//	manime.m_Frame = 0;
-		//}
-		//else
-		//{
-		//	animereset = false;
-		//}
+		
 
-		//b_animecnt = manime.animecnt;//前回のアニメ番号保存
-
-
-		//if (manime.m_cnt % INTERPOLATENUM == 0) {
-		//	manime.m_preFrame = manime.m_Frame;
-		//	manime.m_Frame++;
-		//	manime.m_factor = 0;
-		//}
-
-		//manime.m_factor = 1.0f / (float)(manime.m_cnt % INTERPOLATENUM + 1);
-
-		//manime.m_cnt++;
 	}
 	else if (hp <= 0)
 	{
@@ -445,4 +429,15 @@ int UniqueEnemy_Bomb::UEnemy_GetAnime()
 void  UniqueEnemy_Bomb::UEDelete(float arraynum, std::vector<UniqueEnemy_Bomb>& Player_Vector1)
 {
 	Player_Vector1.erase(Player_Vector1.begin() + arraynum);
+}
+
+void UniqueEnemy_Bomb::UpdateHP()
+{
+	float maxhpp = maxhp;
+	float hpp = hp;
+	float hppercent= hpp / maxhpp;
+
+	uniquebombhp.Update(XMFLOAT3(m_mtx._41, m_mtx._42, m_mtx._43),hppercent);
+	
+	uniquebombhp.Draw();
 }

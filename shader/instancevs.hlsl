@@ -61,6 +61,6 @@ VS_OUT VS(VS_IN input)
 float4 PS(VS_OUT input) : SV_Target
 {
     float4 texcol = g_Tex.Sample(g_SamplerLinear, input.uv);
-    texcol.rgba = 1.0f;
+   
     return texcol;
 };

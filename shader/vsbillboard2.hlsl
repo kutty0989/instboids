@@ -1,19 +1,24 @@
 //--------------------------------------------------------------------------------------
-// ps.fx
+// vs.fx
 //--------------------------------------------------------------------------------------
 #include	"psvscommon.hlsl"
-
 //--------------------------------------------------------------------------------------
-//  ピクセルシェーダー
+// 頂点シェーダー
 //--------------------------------------------------------------------------------------
-float4 main(VS_OUTPUT input) : SV_Target
+VS_OUTPUT main(	float4 Pos		:	POSITION,
+				float4 Color	:	COLOR,
+				float2 Tex		:	TEXCOORD)
 {
-   
-	float4 texcol = g_Tex6.Sample(g_SamplerLinear, input.Tex);
+	VS_OUTPUT output = (VS_OUTPUT)0;
 
-	float4 col;
-	///col = texcol;
-	col = texcol * input.Color;
-	//col.a = input.Color.a*texcol.a;
-    return col;
+	output.Pos = mul(Pos, World);
+	output.WPos = output.Pos;
+	output.Pos = mul(output.Pos, View);
+	output.Pos = mul(output.Pos, Projection);
+	output.Tex = Tex;
+	output.Tex.y = hp;
+  
+	output.Color = Color;
+
+	return output;
 }

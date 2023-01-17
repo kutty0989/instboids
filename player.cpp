@@ -217,7 +217,7 @@ void Player::zonbie_Init(float x, float y, int nowzombiecnt)
 	AliW = 1.0;
 	CohW = 1.0;
 
-	//boidshp.Init();
+	boidshp.Init();
 	if (ZOMBIE >= nowzombiecnt)
 	{
 		bstatus = BSTATUS::LIVE;
@@ -289,7 +289,8 @@ void Player::UpdateHp() {
 	if (follow == Follow::ZONBIE)
 	{
 		boidshp.UpdateHp(hp);
-		//boidshp.Draw();
+		boidshp.Update(XMFLOAT3(this->GetMtx()._41,this->GetMtx()._42,this->GetMtx()._43));
+		boidshp.Draw();
 	}
 }
 void Player::HyumanDrawAxis() {
@@ -418,7 +419,17 @@ void Player::ZonbieUpdate(int animenum, int i)
 {
 	if (bstatus == BSTATUS::LIVE)
 	{
+		if (knockbackcnt > 0)
+		{
+			knockbackflg = true;
+		}
+		knockbackcnt -= 1;
 
+		if (knockbackcnt <= 0)
+		{
+			knockbackflg = false;
+			knockbackcnt = 0;
+		}
 		
 
 		boid_borders();
@@ -596,7 +607,7 @@ void Player::Delete(float arraynum, std::vector<Player*> Player_Vector1)
 }
 
 
-void Player::boids_attack(std::vector<Player*>& player_vector, Player& zonbie, std::vector<UniqueEnemy_Bomb>& unique_enemy_vector)
+void Player::boids_attack(std::vector<Player*>& player_vector, Player& zonbie, std::vector<UniqueEnemy_Bomb*>& unique_enemy_vector)
 {
 	if (changeflg)
 	{
@@ -614,7 +625,7 @@ void Player::boids_attack(std::vector<Player*>& player_vector, Player& zonbie, s
 
 		for (auto& u : unique_enemy_vector)
 		{
-			float dd = u.location.distance(zonbie.location);
+			float dd = u->location.distance(zonbie.location);
 
 			if (dd < 25)
 			{
@@ -680,9 +691,9 @@ void Player::boid_run(std::vector<Player*> player_vector, std::vector<Player*> z
 
 }
 
-void Player::zonbie_run(std::vector<Player*> player_vector, std::vector<Player*> human_vector, Pvector mousevec)
+void Player::zonbie_run(std::vector<Player*> player_vector, std::vector<Player*> human_vector, Pvector mousevec, std::vector<UniqueEnemy_Bomb*>& uniquebomb)
 {
-	zonbie_flock(player_vector,human_vector, mousevec);
+	zonbie_flock(player_vector,human_vector, mousevec,uniquebomb);
 	boid_update();
 }
 
@@ -763,7 +774,7 @@ void Player::boid_flock(std::vector<Player*> player_vector, std::vector<Player*>
 
 }
 
-void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player*> human_vector, Pvector mousevec)
+void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player*> human_vector, Pvector mousevec, std::vector<UniqueEnemy_Bomb*>& uniquebomb)
 {
 	sep = { 0,0 };
 	ali = { 0,0 };
@@ -783,7 +794,7 @@ void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player
 	}
 
 	//分散している時以外は行う
-	if (!zombie_scatterflg)
+	if ((!zombie_scatterflg)&&(!knockbackflg))
 	{
 		if ((boid_accel < 0.5f) || (PlayerMgr::GetInstance()->gatherflg))
 		{
@@ -825,8 +836,9 @@ void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player
 			ali = boid_zonbieAlignment(mousevec);
 		}
 
-		dmg = zonbie_damage();
+		dmg = zonbie_damage(uniquebomb);
 	}
+	
 	
 	//これらの力を任意に重み付けする
 	//cen.mulScalar(CohW);
@@ -1430,15 +1442,13 @@ Pvector Player::Zombie_Scatter()
 	return desired;
 }
 
-Pvector Player::zonbie_damage()
+Pvector Player::zonbie_damage(std::vector<UniqueEnemy_Bomb*>& uniquebomb)
 {
 	for (auto& b : BulletMgr::GetInstance()->g_bullets) {
 		if (b->explosion == true)
 		{
-			bombdist = 100;//視野　プレイヤーからの距離
+			bombdist = 50;//視野　プレイヤーからの距離
 		
-		
-			
 			ali_vel.x = b->GetMtx()._41;
 			ali_vel.y = b->GetMtx()._43;
 
@@ -1464,7 +1474,43 @@ Pvector Player::zonbie_damage()
 
 				boid_accel = 3.5f;
 				zexplosionflg = true;
+				knockbackcnt = 200;
+				
+			}
 
+		}
+	}
+	for (auto& b : uniquebomb){
+		if (b->ubstatus== UniqueEnemy_Bomb::UBSTATUS::LIVE)
+		{
+			bombdist = 30;//視野　プレイヤーからの距離
+
+			ali_vel.x = b->GetMtx()._41;
+			ali_vel.y = b->GetMtx()._43;
+
+			float d = location.distance(ali_vel);
+			if (d < bombdist)
+			{
+				//aa
+				//ali_vel = { 0,0 };
+				//velocity = { 0,0 };
+				acceleration = { 0,0 };
+
+				vel = { 0,0 };
+				desired = { 0,0 };
+
+				this->hp -= 1;
+				desired = desired.subTwoVector(location, ali_vel); //sum = desired(average)
+				desired.normalize();
+
+
+				angley.x = desired.x;
+				angley.y = desired.y;
+				velocity = desired;
+
+				boid_accel = 3.5f;
+				zexplosionflg = true;
+				knockbackcnt = 200;
 			}
 
 		}

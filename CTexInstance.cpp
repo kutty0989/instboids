@@ -16,7 +16,8 @@ const char* psfilenamein[] = {
 };
 
 CTexInstance::CTexInstance(int num)
-{	//DXGI_SWAP_CHAIN_DESC scd = { 0 };
+{	
+	DXGI_SWAP_CHAIN_DESC scd = { 0 };
 	// デバイスコンテキストを取得
 	ID3D11DeviceContext* devcontext;
 	devcontext = GetDX11DeviceContext();
@@ -66,10 +67,10 @@ CTexInstance::CTexInstance(int num)
 
 	VERTEX	v[4] = {
 		// 座標													// カラー	// UV	
-		XMFLOAT3(-1.0f ,-1.0 , 0.0f),XMFLOAT4(1.0f,1.0f,1.0f,1.0f),	XMFLOAT2(0.0f,0.0f),
-		XMFLOAT3(1.0 ,-1.0f, 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(1.0f,0.0f),
-		XMFLOAT3(-1.0 ,1.0 , 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(0.0f,1.0f),
-		XMFLOAT3(1.0 ,1.0 , 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(1.0f,1.0f),
+		XMFLOAT3(-1.0f ,1.0 , 0.0f),XMFLOAT4(1.0f,1.0f,1.0f,1.0f),	XMFLOAT2(0.0f,0.0f),
+		XMFLOAT3(-1.0 ,-1.0f, 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(1.0f,0.0f),
+		XMFLOAT3(1.0 ,1.0 , 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(0.0f,1.0f),
+		XMFLOAT3(1.0 ,-1.0 , 0.0f),	XMFLOAT4(1.0f,1.0f,1.0f,1.0f),		XMFLOAT2(1.0f,1.0f),
 	};
 
 
@@ -79,7 +80,7 @@ CTexInstance::CTexInstance(int num)
 	bd.ByteWidth = sizeof(VERTEX) * mDrawNum;
 	bd.Usage = D3D11_USAGE_DEFAULT;
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bd.CPUAccessFlags = 0;
 	bd.MiscFlags = 0;
 	bd.StructureByteStride = 0;
 	D3D11_SUBRESOURCE_DATA vertexData;
@@ -89,8 +90,8 @@ CTexInstance::CTexInstance(int num)
 	// インデックスデータ用バッファの設定
 	int indexes[] =
 	{
-		0,2,1,
-		1,3,2
+		0,1,2,
+		2,1,3
 
 	};
 	mDrawNum = sizeof(indexes) / sizeof(indexes[0]);
@@ -135,6 +136,14 @@ CTexInstance::CTexInstance(int num)
 	cb.StructureByteStride = 0;
 	device->CreateBuffer(&cb, NULL, mConstantBuffer.GetAddressOf());
 
+	//パイプラインの構築
+	ID3D11Buffer* bufs[] = { mVertexBuffer.Get() };
+	UINT stride[] = { sizeof(VERTEX) };
+	UINT offset[] = { 0 };
+	devcontext->IASetVertexBuffers(0, sizeof(bufs) / sizeof(bufs[0]), bufs, stride, offset);
+	devcontext->IASetIndexBuffer(mIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	devcontext->IASetInputLayout(mInputLayout.Get());
+
 	
 	auto camera = CCamera::GetInstance()->GetCameraMatrix();
 	
@@ -143,7 +152,7 @@ CTexInstance::CTexInstance(int num)
 	auto proj = CCamera::GetInstance()->GetProjectionMatrix();
 	mProj = DirectX::XMLoadFloat4x4(&proj);
 	mScale = XMMatrixScalingFromVector(XMVectorSet(10.1f, 10.1f, 10.1f, 0.0f));
-	mRotation = XMMatrixRotationX(0.0f) * XMMatrixRotationY(0.0f) * XMMatrixRotationZ(-1.57f);
+	mRotation = XMMatrixRotationX(0.0f) * XMMatrixRotationY(0.0f) * XMMatrixRotationZ(90.f);
 
 }
 
@@ -214,18 +223,16 @@ void CTexInstance::RenderInstancing(XMFLOAT4X4 pos[])
 	// デバイスを取得
 	ID3D11Device* device;
 	device = GetDX11Device();
-	
-	//パイプラインの構築
-	ID3D11Buffer* bufs[] = { mVertexBuffer.Get() };
-	UINT stride[] = { sizeof(VERTEX) };
-	UINT offset[] = { 0 };
-	devcontext->IASetVertexBuffers(0, sizeof(bufs) / sizeof(bufs[0]), bufs, stride, offset);
-	devcontext->IASetIndexBuffer(mIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-	devcontext->IASetInputLayout(mInputLayout.Get());
+	//
+	////パイプラインの構築
+	//ID3D11Buffer* bufs[] = { mVertexBuffer.Get() };
+	//UINT stride[] = { sizeof(VERTEX) };
+	//UINT offset[] = { 0 };
+	//devcontext->IASetVertexBuffers(0, sizeof(bufs) / sizeof(bufs[0]), bufs, stride, offset);
+	//devcontext->IASetIndexBuffer(mIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	//devcontext->IASetInputLayout(mInputLayout.Get());
 
 
-	//テクスチャーをピクセルシェーダーに渡す
-	devcontext->PSSetSamplers(0, 1, CDirectXGraphics::GetInstance()->GetSampState());
 
 	devcontext->VSSetShader(mVertexShader.Get(), NULL, 0);
 	devcontext->GSSetShader(nullptr, nullptr, 0);
@@ -279,7 +286,9 @@ void CTexInstance::RenderInstancing(XMFLOAT4X4 pos[])
 		
 	}
 
-	
+
+	//テクスチャーをピクセルシェーダーに渡す
+	devcontext->PSSetSamplers(0, 1, CDirectXGraphics::GetInstance()->GetSampState());
 	devcontext->Unmap(mPerInstanceBuffer.Get(), 0);
 
 	devcontext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

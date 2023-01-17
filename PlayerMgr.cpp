@@ -34,7 +34,7 @@ int PlayerMgr::unique_enemy_bomb_vector_num = 0;//エネミーの周りにいるボイドの初
 int PlayerMgr::RStickRigX = 0;
 int PlayerMgr::RStickRigY = 0;
 
-const int gridnum = 20;
+const int gridnum = 30;
 std::vector<Player> grid_vector[gridnum][gridnum] = {};
 std::vector<Player> grid_zombievector[gridnum][gridnum] = {};
 std::vector<ZombieBullet> grid_zombiebulletvector[gridnum][gridnum] = {};
@@ -197,6 +197,13 @@ void PlayerMgr::Draw()
 		}
 	}
 
+	for (int i = 0; i < UNIQUEBOMBMAX; i++)
+	{
+		if (instance_uniquebomb.at(i).ubstatus == UniqueEnemy_Bomb::UBSTATUS::LIVE)
+		{
+			instance_uniquebomb.at(i).UpdateHP();
+		}
+	}
 
 	unique_enemy_vector.clear();
 
@@ -430,7 +437,7 @@ void PlayerMgr::PlayerUpdate()
 
 					buf_vec.clear();
 					buf_pvec.clear();
-
+					buf_ubvec.clear();
 
 
 					for (int w = 0; w < grid_zombievector[m][n].size(); w++)
@@ -478,6 +485,13 @@ void PlayerMgr::PlayerUpdate()
 						Player* buf = &grid_vector[m][n].at(w);
 						buf_pvec.push_back(buf);
 					}
+
+					for (int w = 0; w < grid_uniquebombvector[m][n].size(); w++)
+					{
+						UniqueEnemy_Bomb* buf = &grid_uniquebombvector[m][n].at(w);
+						buf_ubvec.push_back(buf);
+					}
+
 	/*				if (m != 0)
 					{
 						for (int w = 0; w < grid_vector[m - 1][n].size(); w++)
@@ -513,10 +527,10 @@ void PlayerMgr::PlayerUpdate()
 
 				}
 				// 敵更新
-				grid_zombievector[m][n].at(i).zonbie_run(buf_vec, buf_pvec, mousevelocity);
+				grid_zombievector[m][n].at(i).zonbie_run(buf_vec, buf_pvec, mousevelocity,buf_ubvec);
 				grid_zombievector[m][n].at(i).ZonbieUpdate(animno, 1);
 		
-				grid_zombievector[m][n].at(i).boids_attack(buf_pvec, grid_zombievector[m][n].at(i), unique_enemy_bomb_vector);
+				grid_zombievector[m][n].at(i).boids_attack(buf_pvec, grid_zombievector[m][n].at(i), buf_ubvec);
 			}
 			
 		}
@@ -621,7 +635,7 @@ void PlayerMgr::PlayerUpdate()
 
 	buf_zbvec.clear();
 	buf_pvec.clear();
-
+	buf_ubvec.clear();
 
 
 	//弾行進
@@ -759,7 +773,7 @@ void PlayerMgr::PlayerUpdate()
 	}
 	cmodelinstance_zombie.Update(zmat);
 
-	BoidsHp::GetInstance()->Update(zmat);
+//	BoidsHp::GetInstance()->Update(zmat);
 
 
 

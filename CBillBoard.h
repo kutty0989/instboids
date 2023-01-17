@@ -44,6 +44,18 @@ class CBillBoard {
 	MyVertex m_Vertex[4] ={};//ビルボードの頂点座標
 	DirectX::XMFLOAT2 m_uv[4] ={};//テクスチャ座標
 	
+		// 定数バッファ
+	struct ConstantBuffer2
+	{
+		float hp;
+		float buf[3];
+
+	};
+	ID3D11Buffer* g_pConstantBuffer2 = nullptr;			// 定数バッファ
+
+	float hp;
+
+
 private:
 
 	//ビルボードの頂点座標を計算
@@ -145,6 +157,21 @@ public:
 		CreateBlendStateOne();//加算合成用ブレンドステート生成
 		CreateBelndStateDefault();//でファルとのブレンドステート生成
 
+		// 定数バッファ生成
+		sts = CreateConstantBuffer(GetDX11Device(), sizeof(ConstantBuffer2), &g_pConstantBuffer2);
+		if (!sts) {
+			MessageBox(nullptr, "CreateConstantBuffer2 error", "error", MB_OK);
+			return false;
+		}
+
+
+		hp = 1.0f;
+		ConstantBuffer2 cb2;
+		cb2.hp = hp;//高さ変数を渡す
+		devcontext->UpdateSubresource(g_pConstantBuffer2, 0, nullptr, &cb2, 0, 0);		// コンスタントバッファ更新
+		devcontext->DSSetConstantBuffers(8, 1, &g_pConstantBuffer2);					// DSへコンスタントバッファをb0レジスタへセット
+
+
 		return true;
 	}
 	void Dispose()
@@ -223,5 +250,8 @@ public:
 	//テクスチャ読み込み
 	bool LoadTexTure(const char* filname);
 
-	
+	void SetHp(float hpp)
+	{
+		hp = hpp;
+	}
 };

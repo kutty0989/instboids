@@ -2,19 +2,20 @@
 #pragma once
 #include"player.h"
 #include"CModelInstance.h"
-
+#include"UniqueBombHp.h"
 class UniqueEnemy_Bomb :public Player
 {
 
 	XMFLOAT4 axisX;//Xé≤
 	XMFLOAT4 axisY;//Yé≤
 	XMFLOAT4 axisZ;//Zé≤
-
+	UniqueBombHp uniquebombhp;
 	Pvector nearplayer;//àÍî‘ãﬂÇ¢ë∂ç›Çï€ë∂Ç∑ÇÈïœêî
 	XMFLOAT3 zpos;
 	bool zonbienearflg = false;
 	int bombcnt = 0;
 	int escapecnt = 0;
+	int maxhp = 25;
 public:
 	XMFLOAT2 angley;
 
@@ -51,6 +52,7 @@ public:
 
 	void  UEDelete(float arraynum, std::vector<UniqueEnemy_Bomb>& Player_Vector1);
 
+	void UpdateHP();
 
 	void SetModel(CModel* model)
 	{

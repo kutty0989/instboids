@@ -36,6 +36,7 @@ public:
 	
 	std::vector<Player*> buf_vec; 
 	std::vector<Player*> buf_pvec;
+	std::vector<UniqueEnemy_Bomb*> buf_ubvec;
 	std::vector<ZombieBullet*> buf_zbvec;
 	std::shared_ptr<Player> ImPlayer;
 	std::shared_ptr<Player> ImEnemy;

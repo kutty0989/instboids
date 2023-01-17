@@ -16,7 +16,7 @@ VS_OUTPUT main(	float4 Pos		:	POSITION,
 	output.Pos = mul(output.Pos, View);
 	output.Pos = mul(output.Pos, Projection);
 	output.Tex = Tex;
-
+  
 	output.Color = Color;
 
 	return output;

@@ -14,8 +14,8 @@ class UniqueEnemy_Bomb;
 class ZombieBullet;
 
 #define		ZOMBIEMAX		10
-#define		ZOMBIE		    5
-#define		HYUMANMAX		1000
+#define		ZOMBIE		    10
+#define		HYUMANMAX		5
 #define		UNIQUEBOMBMAX		10
 
 
@@ -229,7 +229,8 @@ public:
 	float alifalse_cnt = -10;
 	XMFLOAT3 rebornpos;
 	int bulletcreatecnt = 0;
-
+	int knockbackcnt = 0;
+	bool knockbackflg = false;
 	bool zombie_scatterflg = false;
 
 	enum class Follow
@@ -368,7 +369,7 @@ public:
 	/// <param name="player_vector"></param>
 	/// <param name="human_vector"></param>
 	/// <param name="mousevec"></param>
-	void zonbie_run(std::vector<Player*> player_vector, std::vector<Player*> human_vector, Pvector mousevec);
+	void zonbie_run(std::vector<Player*> player_vector, std::vector<Player*> human_vector, Pvector mousevec, std::vector<UniqueEnemy_Bomb*>& uniquebomb);
 	/// <summary>
 	/// 速度を元にboidsの位置を更新
 	/// </summary>
@@ -383,7 +384,7 @@ public:
 	/// <summary>
 	/// ゾンビに各ルールを適用し重みづけ
 	/// </summary>
-	void zonbie_flock(std::vector<Player*> zonbie_vector, std::vector<Player*> human_vector, Pvector mousevec);
+	void zonbie_flock(std::vector<Player*> zonbie_vector, std::vector<Player*> human_vector, Pvector mousevec, std::vector<UniqueEnemy_Bomb*>& uniquebomb);
 	/// <summary>
 	/// 画面外に出たときに反対の画面から出るように
 	/// </summary>
@@ -398,9 +399,9 @@ public:
 	/// <returns></returns>
 	float boid_angle(const Pvector& v);
 
-	void boids_attack(std::vector<Player*>& player_vector, Player& zonbie, std::vector<UniqueEnemy_Bomb>& unique_enemy_vector);
+	void boids_attack(std::vector<Player*>& player_vector, Player& zonbie, std::vector<UniqueEnemy_Bomb*>& unique_enemy_vector);
 
-	Pvector zonbie_damage();
+	Pvector zonbie_damage(std::vector<UniqueEnemy_Bomb*>& uniquebomb);
 
 
 

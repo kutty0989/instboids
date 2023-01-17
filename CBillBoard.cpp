@@ -115,8 +115,11 @@ void CBillBoard::Draw()
   //  TurnOnAlphablend();
 	TurnOffZbuffer();
 
+	
+
 	ID3D11DeviceContext* devcontext;
 	devcontext = GetDX11DeviceContext();
+
 
 	//シェーダーリソースビューをピクセルシェーダーへセット
 	devcontext->PSSetShaderResources(5, 1, &m_srv);
@@ -125,6 +128,7 @@ void CBillBoard::Draw()
 	DX11MtxTranslation(XMFLOAT3(m_x,m_y,m_z), t_mtx);
 	DX11MtxScale(scale.x,scale.y, scale.z, s_mtx);
 	DX11MtxIdentity(o_mtx);
+
 	DX11MtxRotationZ(angle, o_mtx);//回転行列
 	DirectX::XMFLOAT4X4 mtx;
 

@@ -1,17 +1,17 @@
+
 #pragma once
 #include"CBillBoard.h"
 #include"CTex.h"
 #include"CTexInstance.h"
-class BoidsHp {
+class UniqueBombHp {
 private:
 
-	CTexInstance* m_texture;//テクスチャ
-	 CBillBoard* m_bill;
-	 CBillBoard* hpin;
-	 CBillBoard* hpout;
-	 CBillBoard* hpub;
+
+	CBillBoard* hpin;
+	CBillBoard* hpout;
 
 
+	XMFLOAT3 posision;
 public:
 	XMFLOAT2 mousepos;
 
@@ -19,34 +19,30 @@ public:
 
 	void Create();
 
-	void Update(XMFLOAT3 pos);
-	
-	void UpdateHp(int hp);
+	void Update(XMFLOAT3 pos,float hp);
+
+	void UpdateHp(float hp);
 
 	void Draw();
 
 	void Finish();
 
 
-	static BoidsHp* GetInstance()
+	static UniqueBombHp* GetInstance()
 	{
-		static BoidsHp instance;
+		static UniqueBombHp instance;
 		return &instance;
 	}
 
 
 private:
 
-	void SetTexture(CBillBoard* tex)
-	{
-		m_bill = tex;
-	}
 
 	void Sethpout(CBillBoard* tex)
 	{
 		hpout = tex;
 	}
-	
+
 
 	void Sethpin(CBillBoard* tex)
 	{
