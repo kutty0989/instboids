@@ -29,11 +29,11 @@ public:
 
 	void Draw(std::vector<Player>& zonbie_vector);
 
-	void Update();
+	void Update(std::vector<Player*>& pvec, std::vector<ZombieBullet*>& zbvec);
 
-	void UEnemy_run(std::vector<Player>& zonbie_vector);
+	void UEnemy_run(std::vector<Player*>& zonbie_vector);
 
-	void UEnemy_flock(std::vector<Player>& zonbie_vector);
+	void UEnemy_flock(std::vector<Player*>& zonbie_vector);
 
 	void UEnemy_update();
 
@@ -41,11 +41,11 @@ public:
 
 	Pvector UEnemy_Separation(std::vector<Player>& zonbie_vector);
 
-	Pvector UEnemy_Attack(std::vector<Player>& zonbie_vector);
+	Pvector UEnemy_Attack(std::vector<Player*>& zonbie_vector);
 	
 	Pvector UEnemy_Escape(std::vector<Player>& zonbie_vector);
 	
-	void UEnemy_Dmg(std::vector<Player>& zonbie_vector);
+	void UEnemy_Dmg(std::vector<Player*>& zonbie_vector);
 
 	int UEnemy_GetAnime();
 
@@ -80,4 +80,13 @@ public:
 
 	modelanime manime;
 	UNIQUE_ENEMY_ANIME unique_enemy_anime = UNIQUE_ENEMY_ANIME::IDLE;
+
+	enum class UBSTATUS
+	{
+		LIVE,
+		DEAD,
+		ASPHTXIA
+	};
+
+	UBSTATUS ubstatus;
 };

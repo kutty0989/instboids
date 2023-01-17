@@ -38,9 +38,11 @@ const int gridnum = 20;
 std::vector<Player> grid_vector[gridnum][gridnum] = {};
 std::vector<Player> grid_zombievector[gridnum][gridnum] = {};
 std::vector<ZombieBullet> grid_zombiebulletvector[gridnum][gridnum] = {};
+std::vector<UniqueEnemy_Bomb> grid_uniquebombvector[gridnum][gridnum] = {};
 std::vector<Player> grid_bufvector;
 std::vector<Player> grid_bufzombievector;
 std::vector<ZombieBullet> grid_bufzombiebulletvector;
+std::vector<UniqueEnemy_Bomb> grid_bufuniquebombvector;
 
 //std::vector<shared_ptr<UniqueEnemy>> bufunique_enemy_vector[3][1] = {};//É]ÉìÉr
 
@@ -48,9 +50,10 @@ CModelInstance cmodelinstance_unique_enemy;
 CModelInstance cmodelinstance_zombie;
 CModelInstance cmodelinstance_hyuman;
 CModelInstance cmodelinstance_zombiebullet;
+CModelInstance cmodelinstance_uniquebomb;
 
 
-std::vector<UniqueEnemy_Bomb> instance_e_bomb;
+std::vector<UniqueEnemy_Bomb> instance_uniquebomb;
 std::vector<Player> instance_zombie;
 std::vector<Player> instance_hyuman;
 std::vector<ZombieBullet> instance_zombiebullet;
@@ -62,6 +65,7 @@ using namespace std;
 static XMFLOAT4X4 mat[HYUMANMAX];
 static XMFLOAT4X4 zmat[ZOMBIEMAX];
 static XMFLOAT4X4 zbmat[ZOMBIEBULLET];
+static XMFLOAT4X4 ubmat[UNIQUEBOMBMAX];
 static XMFLOAT3 zpos[ZOMBIEMAX];
 
 
@@ -93,19 +97,20 @@ void PlayerMgr::Init()
 	//}
 	//
 	//g_air.InitiInstancing(100, "assets/3danime/Warzombie F Pedroso.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/Ch21_1001_Diffuse.png");
-	cmodelinstance_unique_enemy.InitiInstancing(ENEMYMAX, "assets/3danime/sphere.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/sphere.png");
+	//cmodelinstance_unique_enemy.InitiInstancing(ENEMYMAX, "assets/3danime/sphere.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/sphere.png");
 	cmodelinstance_zombie.InitiInstancing(ZOMBIEMAX, "assets/3danime/cube.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/cube.png");
 	cmodelinstance_hyuman.InitiInstancing(HYUMANMAX, "assets/3danime/tritop.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/tritop.png");
 	cmodelinstance_zombiebullet.InitiInstancing(ZOMBIEBULLET, "assets/3danime/sphere.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/tritop.png");
+	cmodelinstance_uniquebomb.InitiInstancing(UNIQUEBOMBMAX, "assets/3danime/tritop.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/sphere.png");
 	//cmodelinstance_hyuman.InitiInstancing(HYUMANMAX, "assets/3danime/Warzombie F Pedroso.fbx", "shader/vsinstance.fx", "shader/ps.hlsl", "assets/3danime/Ch21_1001_Diffuse.png ");
 	//// ìGÇèâä˙âª
-	for (int i = 0; i < ENEMYMAX; i++) {
+	/*for (int i = 0; i < ENEMYMAX; i++) {
 		UniqueEnemy_Bomb buf;
 		buf.SetModel(&cmodelinstance_unique_enemy);
 		buf.Init();
 		instance_e_bomb.emplace_back(buf);
 
-	}
+	}*/
 	for (int i = 0; i < ZOMBIEMAX; i++) {
 		Player buf;
 		buf.SetInstanceModel(&cmodelinstance_zombie);
@@ -125,6 +130,12 @@ void PlayerMgr::Init()
 		buf.SetInstanceModel(&cmodelinstance_zombiebullet);
 		buf.Init();
 		instance_zombiebullet.emplace_back(buf);
+	}
+	for (int i = 0; i < UNIQUEBOMBMAX; i++) {
+		UniqueEnemy_Bomb buf;
+		buf.SetInstanceModel(&cmodelinstance_uniquebomb);
+		buf.Init();
+		instance_uniquebomb.emplace_back(buf);
 	}
 	
 	//// ìGÇèâä˙âª
@@ -188,10 +199,11 @@ void PlayerMgr::Draw()
 
 
 	unique_enemy_vector.clear();
-	cmodelinstance_unique_enemy.DrawInstance();
+
 	cmodelinstance_hyuman.DrawInstance();
 	cmodelinstance_zombie.DrawInstance();
 	cmodelinstance_zombiebullet.DrawInstance();
+	cmodelinstance_uniquebomb.DrawInstance();
 
 //	g_ene.TestInstance();
 //	g_air.DrawInstance();
@@ -251,6 +263,7 @@ void PlayerMgr::Finsh()
 	
 	instance_zombie.clear();
 	instance_zombiebullet.clear();
+	instance_uniquebomb.clear();
 
 	
 	ImPlayer->Finalize();
@@ -304,13 +317,14 @@ void PlayerMgr::PlayerUpdate()
 			}
 		}
 	}
-	for (int i = 0; i < instance_zombiebullet.size();i++)
+
+	for (int i = 0; i < instance_uniquebomb.size();i++)
 	{
-		if (instance_zombiebullet.at(i).m_life == 0)
+		if (instance_uniquebomb.at(i).GetHp() == 0)
 		{
-			if (instance_zombiebullet.at(i).m_sts != ZOMBIEBSTS::DEAD)
+			if (instance_uniquebomb.at(i).ubstatus != UniqueEnemy_Bomb::UBSTATUS::DEAD)
 			{
-				instance_zombiebullet.at(i).m_sts = ZOMBIEBSTS::DEAD;
+				instance_uniquebomb.at(i).ubstatus = UniqueEnemy_Bomb::UBSTATUS::DEAD;
 			}
 		}
 	}
@@ -321,11 +335,13 @@ void PlayerMgr::PlayerUpdate()
 			grid_vector[m][n].clear();
 			grid_zombievector[m][n].clear();
 			grid_zombiebulletvector[m][n].clear();
+			grid_uniquebombvector[m][n].clear();
 		}
 	}
 	grid_bufzombievector.clear();
 	grid_bufvector.clear();
 	grid_bufzombiebulletvector.clear();
+	grid_bufuniquebombvector.clear();
 
 	for (int i = 0; i < HYUMANMAX; i++)
 	{
@@ -378,6 +394,26 @@ void PlayerMgr::PlayerUpdate()
 
 
 	instance_zombiebullet.clear();
+
+	for (int i = 0; i < UNIQUEBOMBMAX; i++)
+	{
+		if (instance_uniquebomb.at(i).ubstatus == UniqueEnemy_Bomb::UBSTATUS::LIVE)
+		{
+			int zcolumn = CHeight_Map::GetInstance()->iPixSize / int((instance_uniquebomb.at(i).GetMtx()._41 + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
+			int zrow = CHeight_Map::GetInstance()->iPixSize / int((instance_uniquebomb.at(i).GetMtx()._43 + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
+
+			grid_uniquebombvector[zcolumn][zrow].emplace_back(instance_uniquebomb.at(i));
+
+		}
+		else
+		{
+			grid_bufuniquebombvector.emplace_back(instance_uniquebomb.at(i));
+
+		}
+	}
+
+
+	instance_uniquebomb.clear();
 
 	
 	//static XMFLOAT4X4 zmat[ZOMBIEMAX];
@@ -550,8 +586,45 @@ void PlayerMgr::PlayerUpdate()
 			}
 		}
 	}
-	
 
+	//îöíeÇÃìGçXêV
+	for (int m = 0; m < gridnum; m++)
+	{
+		for (int n = 0; n < gridnum; n++)
+		{
+			for (int i = 0;i < grid_uniquebombvector[m][n].size();i++)
+			{
+				if (i == 0)
+				{
+					buf_pvec.clear();
+					buf_zbvec.clear();
+
+					for (int w = 0; w < grid_zombiebulletvector[m][n].size(); w++)
+					{
+						ZombieBullet* buf = &grid_zombiebulletvector[m][n].at(w);
+						buf_zbvec.push_back(buf);
+					}
+					for (int w = 0; w < grid_zombievector[m][n].size(); w++)
+					{
+						Player* buf = &grid_zombievector[m][n].at(w);
+						buf_pvec.push_back(buf);
+					}
+
+				}
+
+				grid_uniquebombvector[m][n].at(i).UEnemy_run(buf_pvec);
+				grid_uniquebombvector[m][n].at(i).Update(buf_pvec,buf_zbvec);
+			}
+
+		}
+	}
+
+	buf_zbvec.clear();
+	buf_pvec.clear();
+
+
+
+	//íeçsêi
 	for (int m = 0; m < gridnum; m++)
 	{
 		for (int n = 0; n < gridnum; n++)
@@ -570,7 +643,7 @@ void PlayerMgr::PlayerUpdate()
 					}
 
 				}
-				// ìGçXêV
+
 				grid_zombiebulletvector[m][n].at(i).Update(buf_pvec);
 			}
 
@@ -578,7 +651,7 @@ void PlayerMgr::PlayerUpdate()
 	}
 
 	buf_zbvec.clear();
-	
+
 	//éÄÇÒÇæaiÇâìÇ≠Ç÷îÚÇŒÇ∑
 	for (int i = 0; i < grid_bufvector.size(); i++)
 	{
@@ -592,6 +665,10 @@ void PlayerMgr::PlayerUpdate()
 	for (int i = 0; i < grid_bufzombiebulletvector.size(); i++)
 	{
 		grid_bufzombiebulletvector.at(i).Update(buf_pvec);
+	}
+	for (int i = 0; i < grid_bufuniquebombvector.size(); i++)
+	{
+		grid_bufuniquebombvector.at(i).Update(buf_pvec,buf_zbvec);
 	}
 
 	//cmodelinstance_hyuman.Update(phmat);
@@ -642,7 +719,20 @@ void PlayerMgr::PlayerUpdate()
 	{
 		instance_zombiebullet.emplace_back(std::move(grid_bufzombiebulletvector.at(i)));
 	}
-	
+	for (int m = 0; m < gridnum; m++)
+	{
+		for (int n = 0; n < gridnum; n++)
+		{
+			for (int i = 0;i < grid_uniquebombvector[m][n].size();i++)
+			{
+				instance_uniquebomb.emplace_back(std::move(grid_uniquebombvector[m][n].at(i)));
+			}
+		}
+	}
+	for (int i = 0; i < grid_bufuniquebombvector.size(); i++)
+	{
+		instance_uniquebomb.emplace_back(std::move(grid_bufuniquebombvector.at(i)));
+	}
 
 	
 
@@ -705,21 +795,17 @@ void PlayerMgr::PlayerUpdate()
 	//	mat[i] = world;
 	//}
 
-		static XMFLOAT4X4 uemat[ENEMYMAX];
+		static XMFLOAT4X4 uemat[UNIQUEBOMBMAX];
 	// ìGçXêVu
-	for (int i = 0; i < ENEMYMAX; i++) {
-		if (instance_e_bomb.at(i).bstatus == Player::BSTATUS::LIVE)
-		{
-			instance_e_bomb.at(i).UEnemy_run(instance_zombie);
-			instance_e_bomb.at(i).Update();
-		}
+	for (int i = 0; i < UNIQUEBOMBMAX; i++) {
+		
 		XMFLOAT4X4	world;
-		world = instance_e_bomb.at(i).GetMtx();;
+		world = instance_uniquebomb.at(i).GetMtx();;
 		//DX11MtxFromQt(world, g_enemy[i].GetRotation());
 	
 		mat[i] = world;
 	}
-	cmodelinstance_unique_enemy.Update(mat);
+	cmodelinstance_uniquebomb.Update(mat);
 
 
 

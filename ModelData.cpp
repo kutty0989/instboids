@@ -210,11 +210,11 @@ void ModelData::LoadMaterial() {
 
 void ModelData::Draw(ID3D11DeviceContext* devcon, XMFLOAT4X4& mtxworld)
 {
-	// アニメーションデータを持っているか？
-	if (m_assimpscene.HasAnimation())
-	{	// ボーン行列を定数バッファに反映させる
-		UpdateBoneMatrixConstantBuffer();
-	}
+	//// アニメーションデータを持っているか？
+	//if (m_assimpscene.HasAnimation())
+	//{	// ボーン行列を定数バッファに反映させる
+	//	UpdateBoneMatrixConstantBuffer();
+	//}
 
 	for (int i = 0; i < m_meshes.size(); i++)
 	{   

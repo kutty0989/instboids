@@ -16,6 +16,11 @@ enum class BULLETSTATUS {
 class Bullet :public GameObject {
 private:
 	
+	XMFLOAT4X4 rot = {};
+	XMFLOAT4X4 scale = {};
+	XMFLOAT4X4 trans = {};
+	XMFLOAT4X4 world = {};
+	XMFLOAT3 angle{ 0,0,0 };
 	CModel* m_pmodel;//‚RDƒ‚ƒfƒ‹
 	DirectX::XMFLOAT3 m_direction;//”­ŽË•ûŒü
 	DirectX::XMFLOAT3 m_pos;

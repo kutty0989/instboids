@@ -499,9 +499,6 @@ void Player::ZonbieUpdate(int animenum, int i)
 		trans._42 = m_pos.y + 4.0f;
 		trans._43 = m_pos.z;
 
-
-	
-
 		scale._11 = 5.2f;
 		scale._22 = 5.2f;
 		scale._33 = 5.2f;

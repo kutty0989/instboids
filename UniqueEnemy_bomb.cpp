@@ -3,6 +3,7 @@
 #include"CDirectInput.h"
 #include"BulletMgr.h"
 #include"player.h"
+#include"billboardMgr.h"
 
 const int INTERPOLATENUM = 4;			// 補間数
 
@@ -34,7 +35,8 @@ bool UniqueEnemy_Bomb::Init()
 	maxSpeed = 1.8f;
 	maxForce = 0.7f;
 
-	hp = 50;
+	
+	hp = 25;
 
 	champion = false;
 	desSep = 5.0f;
@@ -57,8 +59,50 @@ void UniqueEnemy_Bomb::Draw(std::vector<Player>& zonbie_vector)
 		// モデル描画
 	um_model->Draw(m_mtx);
 }
-void UniqueEnemy_Bomb::Update()
+
+int leng = 500;
+
+void UniqueEnemy_Bomb::Update(std::vector<Player*>& pvec, std::vector<ZombieBullet*>& zbvec)
 {
+	if (ubstatus == UBSTATUS::LIVE)
+	{
+
+		for (int i = 0; i < zbvec.size(); i++)
+		{
+			if (zbvec.at(i)->m_sts == ZOMBIEBSTS::LIVE)
+			{
+				float disx = this->GetMtx()._41 - zbvec.at(i)->GetMtx()._41;
+				float disy = this->GetMtx()._43 - zbvec.at(i)->GetMtx()._43;
+				float dist = disx * disx + disy * disy;
+				if (leng > dist)
+				{
+					this->hp  -= 1;
+					
+					zbvec.at(i)->m_sts = ZOMBIEBSTS::DEAD;
+
+					BillBoardMgr::GetInstance()->ExplsionCreate(XMFLOAT3(this->GetMtx()._41, this->GetMtx()._42, this->GetMtx()._43));
+				}
+			}
+		}
+		for (int i = 0; i < pvec.size(); i++)
+		{
+			if (pvec.at(i)->m_sts == Player::STATUS::LIVE)
+			{
+				float disx = this->GetMtx()._41 - pvec.at(i)->GetMtx()._41;
+				float disy = this->GetMtx()._43 - pvec.at(i)->GetMtx()._43;
+				float dist = disx * disx + disy * disy;
+				if (leng > dist)
+				{
+					pvec.at(i)->hp -= 1;
+
+					//zbvec.at(i)->m_sts = ZOMBIEBSTS::DEAD;
+
+					//BillBoardMgr::GetInstance()->ExplsionCreate(XMFLOAT3(this->GetMtx()._41, this->GetMtx()._42, this->GetMtx()._43));
+				}
+			}
+		}
+	}
+
 	if (hp > 0)
 	{
 		boid_borders();
@@ -134,16 +178,20 @@ void UniqueEnemy_Bomb::Update()
 		DX11MtxIdentity(rot);
 		DX11MtxIdentity(world);
 
-		scale._11 = 5.2f;
-		scale._22 = 5.2f;
-		scale._33 = 5.2f;
+		scale._11 = 8.0f;
+		scale._22 = 8.0f;
+		scale._33 = 8.0f;
 
+		angle.y = 0.0f;
 
+		angle.y = -GetAtan(velocity.x, velocity.y);
+		angle.y -= 90.0f;
+		
+		velocity.mulScalar(0);
 
-		float ang = angle.y;
+		//float ang = angle.y;
 		SetAngle();
-		angle.y -= b_angle;
-		b_angle = ang;
+		
 
 		DX11MtxMultiply(world, scale, rot);
 
@@ -193,7 +241,7 @@ void UniqueEnemy_Bomb::Update()
 	}
 }
 
-void UniqueEnemy_Bomb::UEnemy_run(std::vector<Player>& zonbie_vector)
+void UniqueEnemy_Bomb::UEnemy_run(std::vector<Player*>& zonbie_vector)
 {
 	if (hp > 0)
 	{
@@ -207,7 +255,7 @@ void UniqueEnemy_Bomb::UEnemy_run(std::vector<Player>& zonbie_vector)
 }
 
 
-void UniqueEnemy_Bomb::UEnemy_flock(std::vector<Player>& zonbie_vector)
+void UniqueEnemy_Bomb::UEnemy_flock(std::vector<Player*>& zonbie_vector)
 {
 	ueser = { 0,0 };
 	uesep = { 0,0 };
@@ -254,7 +302,7 @@ void UniqueEnemy_Bomb::UEnemy_update()
 
 	location.addVector(velocity);
 
-	velocity.mulScalar(0);
+	acceleration.mulScalar(0);
 }
 
 
@@ -319,7 +367,7 @@ Pvector UniqueEnemy_Bomb::UEnemy_Separation(std::vector<Player>& zonbie_vector)
 	return uesteer;
 }
 
-Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<Player>& zonbie_vector)
+Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<Player*>& zonbie_vector)
 {
 	// ボイド間分離視野距離
 	float desiredseparation = 100;//視野　プレイヤーからの距離
@@ -331,38 +379,19 @@ Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<Player>& zonbie_vector)
 	{
 		for (auto& it : zonbie_vector)
 		{
-			if (it.bstatus == Player::BSTATUS::LIVE)
+			if (it->bstatus == Player::BSTATUS::LIVE)
 			{
-				float d = location.distance(it.location);
+				float d = location.distance(it->location);
 				if (d < before_distanse) {
 					before_distanse = d;
-					nearplayer = it.location;
-					zpos = XMFLOAT3(it.m_mtx._41, it.m_mtx._42, it.m_mtx._43);
+					nearplayer = it->location;
+					zpos = XMFLOAT3(it->m_mtx._41, it->m_mtx._42, it->m_mtx._43);
 
 				}
 			}
 		}
-		//if (escapecnt < 0)
-		//{
-		//	if ((before_distanse > 0) && (before_distanse < 15))
-		//	{
-		//		uedesired = { 0,0 };
-		//		uedesired = uedesired.subTwoVector(location, nearplayer);
-		//		uedesired.normalize();
-		//		uedesired.mulScalar(300);
 
-		//		acceleration = uedesired;
-		//		angley.x = acceleration.x;
-		//		angley.y = acceleration.y;
-		//		this->boid_accel = 2.6f;
-		//		awaycnt = 500;
-		//		escapecnt = 300;
-
-		//		//unique_enemy_anime = UNIQUE_ENEMY_ANIME::ATTACK;
-
-		//	}
-		//}
-		if ((before_distanse > 20) && (before_distanse < desiredseparation))
+		if (before_distanse < desiredseparation)
 		{
 			uedesired = { 0,0 };
 			uedesired = uedesired.subTwoVector(location, nearplayer);
@@ -389,17 +418,17 @@ Pvector UniqueEnemy_Bomb::UEnemy_Escape(std::vector<Player>& zonbie_vector)
 	return Pvector();
 }
 
-void UniqueEnemy_Bomb::UEnemy_Dmg(std::vector<Player>& zonbie_vector)
+void UniqueEnemy_Bomb::UEnemy_Dmg(std::vector<Player*>& zonbie_vector)
 {
 	float desiredseparation = 10;//視野　プレイヤーからの距離
 
 	for (auto& it : zonbie_vector)
 	{
 		
-			float d = location.distance(it.location);
+			float d = location.distance(it->location);
 			// 現在のボイドが捕食者ではなく、私たちが見ているボイドが
 			// 捕食者、次に大きな分離 Pvector を作成します
-			if ((d > 0) && (d < desiredseparation) && it.predator == true) {
+			if ((d > 0) && (d < desiredseparation) && it->predator == true) {
 
 				this->hp -= 1;
 			}
