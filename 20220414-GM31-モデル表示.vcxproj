@@ -204,6 +204,7 @@
     <ClCompile Include="Notes_Arrange.cpp" />
     <ClCompile Include="Notes_Object.cpp" />
     <ClCompile Include="obb.cpp" />
+    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="PlayerMgr.cpp" />
     <ClCompile Include="Save.cpp" />
@@ -272,6 +273,7 @@
     <ClInclude Include="NonCopyable.h" />
     <ClInclude Include="obb.h" />
     <ClInclude Include="OctreeMain.h" />
+    <ClInclude Include="Particle.h" />
     <ClInclude Include="PlayerMgr.h" />
     <ClInclude Include="Save.h" />
     <ClInclude Include="Score.h" />
@@ -356,6 +358,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Domain</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="shader\GSParticl.hlsl" />
     <FxCompile Include="shader\HSTess+Disp.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Hull</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>

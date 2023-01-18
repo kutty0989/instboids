@@ -471,6 +471,9 @@
     <ClCompile Include="TexMgr.cpp">
       <Filter>ソース ファイル\system\DX11\Sprite</Filter>
     </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dx11mathutil.h">
@@ -806,6 +809,9 @@
     <ClInclude Include="TexMgr.h">
       <Filter>ソース ファイル\system\DX11\Sprite</Filter>
     </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shader\ps.hlsl">
@@ -863,6 +869,9 @@
       <Filter>ソース ファイル\shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\vsbillboard2.hlsl">
+      <Filter>ソース ファイル\shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\GSParticl.hlsl">
       <Filter>ソース ファイル\shader</Filter>
     </FxCompile>
   </ItemGroup>

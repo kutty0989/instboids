@@ -361,6 +361,33 @@ bool CreateDomainShader(ID3D11Device* device,
 }
 
 
+bool CreateGeometryShader(ID3D11Device* device, const char* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3D11GeometryShader** ppGeometryShader)
+{
+	HRESULT hr;
+
+	ID3DBlob* pBlob = nullptr;
+
+	void* ShaderObject;
+	size_t	ShaderObjectSize;
+
+	// ファイルの拡張子に合わせてコンパイル
+	hr = CompileShader(szFileName, szEntryPoint, szShaderModel, &ShaderObject, ShaderObjectSize, &pBlob);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	// ジオメトリーシェーダーを生成
+	hr = device->CreateGeometryShader(ShaderObject, ShaderObjectSize, nullptr, ppGeometryShader);
+	if (FAILED(hr))
+	{
+		if (pBlob)pBlob->Release();
+		return false;
+	}
+
+	return true;
+}
+
 //--------------------------------------------------------------------------------------
 // 頂点シェーダーオブジェクトを生成する
 //--------------------------------------------------------------------------------------

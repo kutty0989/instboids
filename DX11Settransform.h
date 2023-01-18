@@ -101,6 +101,7 @@ public:
 			m_CBWorld.World = XMMatrixTranspose(mat);
 			devicecontext->UpdateSubresource(m_pConstantBufferWorld, 0, nullptr, &m_CBWorld, 0, 0);
 			devicecontext->VSSetConstantBuffers(0, 1, &m_pConstantBufferWorld);
+			devicecontext->GSSetConstantBuffers(0, 1, &m_pConstantBufferWorld);
 			devicecontext->PSSetConstantBuffers(0, 1, &m_pConstantBufferWorld);
 			devicecontext->DSSetConstantBuffers(0, 1, &m_pConstantBufferWorld);
 			break;
@@ -108,6 +109,7 @@ public:
 			m_CBView.View = XMMatrixTranspose(mat);
 			devicecontext->UpdateSubresource(m_pConstantBufferView, 0, nullptr, &m_CBView, 0, 0);
 			devicecontext->VSSetConstantBuffers(1, 1, &m_pConstantBufferView);
+			devicecontext->GSSetConstantBuffers(1, 1, &m_pConstantBufferView);
 			devicecontext->PSSetConstantBuffers(1, 1, &m_pConstantBufferView);
 			devicecontext->DSSetConstantBuffers(1, 1, &m_pConstantBufferView);
 
@@ -116,6 +118,7 @@ public:
 			m_CBProjection.Projection = XMMatrixTranspose(mat);
 			devicecontext->UpdateSubresource(m_pConstantBufferProjection, 0, nullptr, &m_CBProjection, 0, 0);
 			devicecontext->VSSetConstantBuffers(2, 1, &m_pConstantBufferProjection);
+			devicecontext->GSSetConstantBuffers(2, 1, &m_pConstantBufferProjection);
 			devicecontext->PSSetConstantBuffers(2, 1, &m_pConstantBufferProjection);
 			devicecontext->DSSetConstantBuffers(2, 1, &m_pConstantBufferProjection);
 			break;

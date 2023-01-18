@@ -148,6 +148,11 @@ bool CreateDomainShader(ID3D11Device* device,						// ドメインシェーダーオブジェ
 	LPCSTR szShaderModel,
 	ID3D11DomainShader** ppDomainShader);
 
+bool CreateGeometryShader(ID3D11Device* device,						// ジオメトリーシェーダーオブジェクトを生成
+	const char* szFileName,
+	LPCSTR szEntryPoint,
+	LPCSTR szShaderModel,
+	ID3D11GeometryShader** ppGeometryShader);
 bool CreateSRVfromFile(
 	const char* filename,
 	ID3D11Device* device,
