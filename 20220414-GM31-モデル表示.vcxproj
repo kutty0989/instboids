@@ -208,6 +208,7 @@
     <ClCompile Include="PlayerMgr.cpp" />
     <ClCompile Include="Save.cpp" />
     <ClCompile Include="Scean.cpp" />
+    <ClCompile Include="Score.cpp" />
     <ClCompile Include="Seiha.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="short_notes.cpp" />
@@ -221,6 +222,7 @@
     <ClCompile Include="S_Clear.cpp" />
     <ClCompile Include="S_Enemy.cpp" />
     <ClCompile Include="S_Title.cpp" />
+    <ClCompile Include="TexMgr.cpp" />
     <ClCompile Include="Timing_UI.cpp" />
     <ClCompile Include="UniqueBombHp.cpp" />
     <ClCompile Include="UniqueEnemy.cpp" />
@@ -272,6 +274,7 @@
     <ClInclude Include="OctreeMain.h" />
     <ClInclude Include="PlayerMgr.h" />
     <ClInclude Include="Save.h" />
+    <ClInclude Include="Score.h" />
     <ClInclude Include="Seiha.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="assimpscene.h" />
@@ -332,6 +335,7 @@
     <ClInclude Include="S_Enemy.h" />
     <ClInclude Include="S_Title.h" />
     <ClInclude Include="CHeightMgr.h" />
+    <ClInclude Include="TexMgr.h" />
     <ClInclude Include="Timing_UI.h" />
     <ClInclude Include="uncopyable.h" />
     <ClInclude Include="UniqueBombHp.h" />

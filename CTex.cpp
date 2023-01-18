@@ -235,6 +235,27 @@ void CTex::SetAlpha(float a)
 
 }
 
+void CTex::PartMax(float x, float y)
+{
+	PMaxX = x;
+	PMaxY = y;
+}
+
+void CTex::Part(float x, float y)
+{
+	float px = 1 / PMaxX;
+	float py = 1 / PMaxY;
+	c_uv[0].x = x * px;
+	c_uv[0].y = y * py;
+	c_uv[1].x = x * px + px;
+	c_uv[1].y = y * py;
+	c_uv[2].x = x * px;
+	c_uv[2].y = y * py+py;
+	c_uv[3].x = x * px + px;
+	c_uv[3].y = y * py + py;
+	
+}
+
 // 頂点データ更新
 void CTex::updateVertex(uint32_t width,
 	uint32_t height,

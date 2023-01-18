@@ -465,6 +465,12 @@
     <ClCompile Include="UniqueBombHp.cpp">
       <Filter>ソース ファイル\game\UI\HP</Filter>
     </ClCompile>
+    <ClCompile Include="Score.cpp">
+      <Filter>ソース ファイル\game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="TexMgr.cpp">
+      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dx11mathutil.h">
@@ -793,6 +799,12 @@
     </ClInclude>
     <ClInclude Include="UniqueBombHp.h">
       <Filter>ソース ファイル\game\UI\HP</Filter>
+    </ClInclude>
+    <ClInclude Include="Score.h">
+      <Filter>ソース ファイル\game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="TexMgr.h">
+      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

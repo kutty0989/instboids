@@ -19,7 +19,7 @@
 #include"CModelInstance.h"
 #include"enemy.h"
 #include"InstanceModelMgr.h"
-
+#include"TexMgr.h"
 #define debuglog(a) std::cout<<a<<std::endl;
 
 CModel			g_model;			// ŽålŒöƒ‚ƒfƒ‹
@@ -239,6 +239,8 @@ void Seiha::Initialize() {
 	
 	MouseCircle::GetInstance()->Init();
 
+	TexMgr::GetInstance()->Init();
+
 	//BPM_DATA::GetInstance()->BGM();
 
 	//Timing_UI::GetInstance()->Init();
@@ -309,7 +311,7 @@ void  Seiha::Update(uint64_t dt) {
 
 
 
-
+	TexMgr::GetInstance()->Update();
 	MouseCircle::GetInstance()->Update();
 	XMFLOAT4X4 mat;
 	DX11MtxIdentity(mat);
@@ -343,7 +345,7 @@ void Seiha::Draw()
 	
 	MouseCircle::GetInstance()->Draw();
 	//BoidsHp::GetInstance()->Draw();
-
+	TexMgr::GetInstance()->Draw();
 
 	//	// “G•`‰æ
 	//XMFLOAT4X4 viewmtx = CCamera::GetInstance()->GetCameraMatrix();
@@ -388,6 +390,7 @@ void  Seiha::Release() {
 
 	CTexMgr::GetInstance().Finalize();
 	ModelMgr::GetInstance().Finalize();
+	TexMgr::GetInstance()->Finalize();
 	//Timing_UI::GetInstance()->Finish();
 //	Notes_Arrange::GetInstance()->UnInit();
 }

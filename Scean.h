@@ -38,6 +38,7 @@ public:
 		NOTES_SHORT,
 		NOTES_LONG,
 		CIRCLE,
+		NUM,
 		MAX
 
 	};
@@ -80,7 +81,8 @@ public:
 		{CGID::NOTES_FRAME,"assets/notes/Flame_UnderCoat.png","shader/vs.hlsl","shader/pstexcol.hlsl"},
 		{CGID::NOTES_SHORT,"assets/notes/Short_Notes.png","shader/vs.hlsl","shader/pstexcol.hlsl"},
 		{CGID::NOTES_LONG,"assets/notes/long_notes.png","shader/vs.hlsl","shader/pstexcol.hlsl"},
-		{CGID::CIRCLE,"assets/UI/circle.png","shader/vs.hlsl","shader/pstexcol.hlsl"}
+		{CGID::CIRCLE,"assets/UI/circle.png","shader/vs.hlsl","shader/pstexcol.hlsl"},
+		{CGID::NUM,"assets/UI/suuzi.png","shader/vs.hlsl","shader/pstexcol.hlsl"}
 
 		//{CGID::TiTLE,"assets/UI/Notes.png","shader/vs.hlsl","shader/pstexcol.hlsl"}
 	};
@@ -92,8 +94,8 @@ public:
 		{BCGID::HPOUT,"assets/UI/hpkara.png","shader/vs.hlsl","shader/pstexcol.hlsl"},
 		{BCGID::HPIN,"assets/UI/hpnaka6.png","shader/vs.hlsl","shader/pstexcol.hlsl"},
 		{BCGID::HPUBOUT,"assets/UI/hpberub.png","shader/vs.hlsl","shader/pstexcol.hlsl"},
-		{BCGID::HPUBIN,"assets/UI/hpubin.png","shader/vsbillboard2.hlsl","shader/pstexcol.hlsl"}
-
+		{BCGID::HPUBIN,"assets/UI/hpubin.png","shader/vsbillboard2.hlsl","shader/pstexcol.hlsl"},
+		
 		//{CGID::TiTLE,"assets/UI/Notes.png","shader/vs.hlsl","shader/pstexcol.hlsl"}
 	};
 

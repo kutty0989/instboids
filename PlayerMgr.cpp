@@ -331,6 +331,7 @@ void PlayerMgr::PlayerUpdate()
 		{
 			if (instance_uniquebomb.at(i).ubstatus != UniqueEnemy_Bomb::UBSTATUS::DEAD)
 			{
+				ScoreNum += 100;
 				instance_uniquebomb.at(i).ubstatus = UniqueEnemy_Bomb::UBSTATUS::DEAD;
 			}
 		}

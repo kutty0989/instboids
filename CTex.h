@@ -80,6 +80,15 @@ public:
 		return m_srv;
 	};
 
+
+	float PMaxX;
+	float PMaxY;
+
+	void PartMax(float x, float y);
+
+	void Part(float x, float y);
+
+
 	// 矩形の進行方向を取得（元画像が上向きに作られていることを前提）
 	DirectX::XMFLOAT3 GetForward() {
 		DirectX::XMFLOAT3 forward;

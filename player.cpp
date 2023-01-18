@@ -334,6 +334,8 @@ void Player::Update(bool input, std::vector<ZombieBullet*> zbvec) {
 					this->m_sts = Player::STATUS::DEAD;
 					zbvec.at(i)->m_sts = ZOMBIEBSTS::DEAD;
 
+					PlayerMgr::GetInstance()->ScoreNum += 10;
+
 					BillBoardMgr::GetInstance()->ExplsionCreate(XMFLOAT3(this->GetMtx()._41, this->GetMtx()._42, this->GetMtx()._43));
 				}
 			}
@@ -623,15 +625,15 @@ void Player::boids_attack(std::vector<Player*>& player_vector, Player& zonbie, s
 		//	}
 		//}
 
-		for (auto& u : unique_enemy_vector)
-		{
-			float dd = u->location.distance(zonbie.location);
+		//for (auto& u : unique_enemy_vector)
+		//{
+		//	float dd = u->location.distance(zonbie.location);
 
-			if (dd < 25)
-			{
-			//	u.hp -= 1;
-			}
-		}
+		//	if (dd < 25)
+		//	{
+		//	//	u.hp -= 1;
+		//	}
+		//}
 	}
 }
 
@@ -1299,7 +1301,7 @@ Pvector Player::boid_zonbieAway(std::vector<Player*> player_vector)
 	steer = { 0.0f,0.0f };
 	int count = 0;
 	
-	float before_distanse = 50.0f;//ˆê”Ô‹ß‚¢‹——£•Û‘¶—p
+	float before_distanse = 100.0f;//ˆê”Ô‹ß‚¢‹——£•Û‘¶—p
 	
 	Pvector nearplayer;//ˆê”Ô‹ß‚¢‘¶İ‚ğ•Û‘¶‚·‚é•Ï”
 	

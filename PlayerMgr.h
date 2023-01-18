@@ -45,6 +45,7 @@ public:
 	const int window_height = (CHeight_Map::GetInstance()->iPixSize - 60) * CHeight_Map::ScaleMap;//マップの大きさ　縦
 	const int window_width = (CHeight_Map::GetInstance()->iPixSize - 60) * CHeight_Map::ScaleMap;//マップの大きさ　横
 
+	int ScoreNum = 0;
 
 
 	void Init();
