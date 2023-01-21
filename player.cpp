@@ -61,6 +61,7 @@ bool Player::hsepflg = false;
  
  
  bool Player::texspeedflg = false;
+ bool Player::shootflg = false;
 
 
  //人間の速さ
@@ -174,7 +175,7 @@ void Player::boid_Init(float x, float y)
 {
 	float xx = rand() % 100 - 50.0f;
 	float yy = rand() % 100 - 50.0f;
-
+	BSTATUS::LIVE;
 	acceleration = Pvector(1, 1);
 	velocity = Pvector(xx, yy);//加速度
 	location = Pvector(x, y);//ポジション
@@ -183,7 +184,7 @@ void Player::boid_Init(float x, float y)
 	maxSpeed = 1.0f; //+sp;
 //	maxSpeed *= 0.5f;
 	maxForce = 0.7f;
-
+	hp = 1;
 	boid_accel = 1.0f;
 	follow = Follow::HYUMAN;
 	SetScale(0.001f, 0.001f, 0.001f);
@@ -202,7 +203,7 @@ void Player::zonbie_Init(float x, float y, int nowzombiecnt)
 
 	acceleration = Pvector(0, 0);
 	bulletcreatecnt = rand() % 10 + 60;
-
+	velocity = { 0,0 };
 	location = Pvector(x / 10, y / 10);//ポジション
 	maxSpeed = 3.5;
 	maxForce = 2.5;
@@ -216,6 +217,7 @@ void Player::zonbie_Init(float x, float y, int nowzombiecnt)
 	SepW = 1.5;
 	AliW = 1.0;
 	CohW = 1.0;
+	boid_accel = 0.0f;
 
 	boidshp.Init();
 	if (ZOMBIE >= nowzombiecnt)
@@ -432,7 +434,7 @@ void Player::ZonbieUpdate(int animenum, int i)
 			knockbackflg = false;
 			knockbackcnt = 0;
 		}
-		
+
 
 		boid_borders();
 		DX11MtxIdentity(scale);
@@ -459,12 +461,12 @@ void Player::ZonbieUpdate(int animenum, int i)
 
 		if (reborn_flg)
 		{
-		/*	location.x = rebornpos.x;
-			location.y = rebornpos.y;
-			m_pos.x = location.x;
-			m_pos.z = location.y;
-			Ground::GetInstance()->GetPlayerHeight(*this);
-			reborn_flg = false;*/
+			/*	location.x = rebornpos.x;
+				location.y = rebornpos.y;
+				m_pos.x = location.x;
+				m_pos.z = location.y;
+				Ground::GetInstance()->GetPlayerHeight(*this);
+				reborn_flg = false;*/
 		}
 		else
 		{
@@ -499,14 +501,14 @@ void Player::ZonbieUpdate(int animenum, int i)
 			velocity.addVector(acceleration);
 
 			location.addVector(velocity);
-		
+
 
 			m_pos.x = location.x;
 			m_pos.z = location.y;
 
 		}
 
-//		Ground::GetInstance()->GetPlayerHeight(*this);
+		//		Ground::GetInstance()->GetPlayerHeight(*this);
 
 		trans._41 = m_pos.x;
 		trans._42 = m_pos.y + 4.0f;
@@ -524,7 +526,7 @@ void Player::ZonbieUpdate(int animenum, int i)
 		b_angle = ang;
 
 		DX11MtxMultiply(world, scale, rot);
-	
+
 
 
 		world._41 = trans._41;
@@ -533,13 +535,15 @@ void Player::ZonbieUpdate(int animenum, int i)
 
 
 		m_mtx = world;
-		
-		
-		bulletcnt++;
-		if (bulletcnt == 30)
+
+		if (shootflg == true)
 		{
-			PlayerMgr::GetInstance()->ZombieBulletRemake(this->GetMtx(), XMFLOAT3(this->GetMtx()._41, this->GetMtx()._42, this->GetMtx()._43));
-			bulletcnt = 0;
+			bulletcnt++;
+			if (bulletcnt == 30)
+			{
+				PlayerMgr::GetInstance()->ZombieBulletRemake(this->GetMtx(), XMFLOAT3(this->GetMtx()._41, this->GetMtx()._42, this->GetMtx()._43));
+				bulletcnt = 0;
+			}
 		}
 	}
 	else
@@ -796,7 +800,7 @@ void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player
 	}
 
 	//分散している時以外は行う
-	if ((!zombie_scatterflg)&&(!knockbackflg))
+	if ((!zombie_scatterflg) && (!knockbackflg))
 	{
 		if ((boid_accel < 0.5f) || (PlayerMgr::GetInstance()->gatherflg))
 		{
@@ -837,8 +841,10 @@ void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player
 		{
 			ali = boid_zonbieAlignment(mousevec);
 		}
-
-		dmg = zonbie_damage(uniquebomb);
+		if (dmgflg)
+		{
+			dmg = zonbie_damage(uniquebomb);
+		}
 	}
 	
 	
@@ -1685,6 +1691,7 @@ void Player::CheckBox()
 			ImGui::Checkbox("Zombie_Sca", &zscaflg);
 			ImGui::Checkbox("Zombie_Serch", &zserflg);
 			ImGui::Checkbox("Zombie_Sep", &zsepflg);
+			ImGui::Checkbox("Zombie_Shoot", &shootflg);
 		}
 	
 		if (ImGui::CollapsingHeader(u8"E_Bomb"))
@@ -1714,6 +1721,7 @@ void Player::CheckBox()
 			zcohflg = true;
 			zserflg = true;
 			zawaflg = true;
+			shootflg = true;
 
 			dmgflg = true;
 			
@@ -1725,11 +1733,34 @@ void Player::CheckBox()
 		
 
 
-
 		ImGui::End();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 	}
+}
+
+void Player::UnCheckBox()
+{
+	hsepflg = false;
+	haliflg = false;
+	texspeedflg = false;
+	slopeflg = false;
+	pocketflg = false;
+	
+	shootflg = false;
+	zdashflg = false;
+	zscaflg = false;
+	zsepflg = false;
+	zcohflg = false;
+	zserflg = false;
+	zawaflg = false;
+
+	dmgflg = false;
+
+	changeflg = false;
+
+	bbombflg = false;
+	bserflg = false;
 }
 
 void Player::SaveNum()

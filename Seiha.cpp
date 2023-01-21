@@ -20,6 +20,7 @@
 #include"enemy.h"
 #include"InstanceModelMgr.h"
 #include"TexMgr.h"
+#include"game.h"
 #define debuglog(a) std::cout<<a<<std::endl;
 
 CModel			g_model;			// 主人公モデル
@@ -94,8 +95,9 @@ XMFLOAT4 color = { 1.0f,0.1f,0.1f,0.0f };
 static bool init = false;
 
 void Seiha::Initialize() {
-
 	
+	if (init == false)
+	{
 		//空中戦で使用するモデルを全て読み込む
 		for (int i = 0; i < g_modellist.size(); i++)
 		{
@@ -105,7 +107,7 @@ void Seiha::Initialize() {
 				g_modellist[i].psfilename,
 				g_modellist[i].texfoldername
 			);
-	
+
 		}
 		for (int i = 0; i < g_modelinstancelist.size(); i++)
 		{
@@ -115,7 +117,7 @@ void Seiha::Initialize() {
 				g_modelinstancelist[i].vsfilenamename,
 				g_modelinstancelist[i].psfilename,
 				g_modelinstancelist[i].texfoldername
-		
+
 			);
 
 		}
@@ -135,117 +137,25 @@ void Seiha::Initialize() {
 				g_btexlist[i].psfilename
 			);
 		}
+		init = true;
+	}
 
 
-		//BoidsHp::GetInstance()->Init();
-		//g_air.InitiInstancing(5000, "assets/f1/f1.x.dat", "assets/vsinstance.fx", "assets/ps.fx");
-	
+		PlayerMgr::GetInstance()->Init();
 
+		g_skybox.Init();
+		g_skybox.SetModel(ModelMgr::GetInstance().GetModelPtr(g_modellist[static_cast<int>(MODELID::SKYDOME)].modelname));
 
-	/*	bool sts = false;
-		sts = g_model.Init("assets/Charcter.x", "shader/vs.hlsl", "shader/ps.hlsl","");
-		if (!sts) {
-			MessageBox(NULL, "load enemy model error", "error", MB_OK);
+		BillBoardMgr::GetInstance()->Init();
 
-		}*/
+		//g_stage.Init();
 
-		// 単位行列にする
-		//DX11MtxIdentity(g_mtxplayer);
+		g_ground.Init();
 
+		MouseCircle::GetInstance()->Init();
 
-		//{
-			////境界球作成
-			////モデルの前頂点を抜き出す
-			//const CModel* pmodel = ModelMgr::GetInstance().GetModelPtr(g_modellist[static_cast<int>(MODELID::PLAYER)].modelname);
-			//const ModelData& md = pmodel->GetModelData();
-			//const std::vector<Mesh>& meshes = md.GetMeshes();
+		TexMgr::GetInstance()->Init();
 
-			//std::vector<XMFLOAT3> verticis;
-
-
-			//for (auto& m : meshes) {
-			//	{
-			//		for (auto& v : m.m_vertices)
-			//		{
-			//			verticis.emplace_back(v.m_Pos);
-			//		}
-			//	}
-			//}
-
-			////境界球初期化
-			//g_boundingsphere.Init(
-			//	verticis,//長点数
-			//	XMFLOAT4(1, 1, 1, 0.0f//頂点カラー
-			//	));
-
-
-
-		//	//境界球初期化
-		//	g_bsenemy.Init(
-		//		verticis,//長点数
-		//		XMFLOAT4(1, 1, 1, 0.0f//頂点カラー
-		//		));
-		//	g_s_bsenemy.Init(
-		//		verticis,//長点数
-		//		XMFLOAT4(1, 1, 1, 0.0f//頂点カラー
-		//		));
-		//	//境界球初期化
-		//	g_bshomis.Init(
-		//		verticis,//長点数
-		//		XMFLOAT4(1, 1, 1, 0.0f//頂点カラー
-		//		));
-		//	//境界球初期化
-		//	g_bsbullet.Init(
-		//		verticis,//長点数
-		//		XMFLOAT4(1, 1, 1, 0.0f//頂点カラー
-		//		));
-		//}
-
-
-		//BoidsHp::GetInstance()->Init();
-	/*	fire.LoadTexTure("assets/UI/circle.png");
-		XMFLOAT4 firecol = { 1.0f,1.0f,1.0f,1.0f };
-
-		fire.Init(Player::GetInstance()->GetPos().x, 500.0f, Player::GetInstance()->GetPos().z + 100.0f, 100.0f, 100.0f, firecol);
-
-
-	XMFLOAT2 fireUV[] =
-		{
-			{0,0},
-			{0,1},
-			{1,0},
-			{1,1}
-		};
-
-		fire.SetUV(fireUV);
-		fire.SetPosiotion(Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z + 30.0f);*/
-
-	
-	//// プレイヤ初期化
-	//Player::GetInstance()->Init();
-	//Player::GetInstance()->SetModel(ModelMgr::GetInstance().GetModelPtr(g_modellist[static_cast<int>(MODELID::PLAYER)].modelname));
-	//Player::GetInstance()->SetColor(XMFLOAT4(0.1f, 1.0f, 1.0f, 1.0f));
-
-	PlayerMgr::GetInstance()->Init();
-
-	g_skybox.Init();
-	g_skybox.SetModel(ModelMgr::GetInstance().GetModelPtr(g_modellist[static_cast<int>(MODELID::SKYDOME)].modelname));
-	
-	BillBoardMgr::GetInstance()->Init();
-
-	//g_stage.Init();
-
-	g_ground.Init();
-	
-	MouseCircle::GetInstance()->Init();
-
-	TexMgr::GetInstance()->Init();
-
-	//BPM_DATA::GetInstance()->BGM();
-
-	//Timing_UI::GetInstance()->Init();
-	//Notes_Arrange::GetInstance()->Init();
-	//
 
 	
 
@@ -259,57 +169,19 @@ void Seiha::Reset()
 	
 }
 void  Seiha::Update(uint64_t dt) {
-
-
 	CDirectInput::GetInstance().GetMouseState();
-	//BPM_DATA::GetInstance()->BPM_Count();
-
-	// プレイヤ更新
-	//Player::GetInstance()->Update();
 	PlayerMgr::GetInstance()->Update();
 	
 	g_skybox.Update();
-
-//	g_boundingsphere.UpdatePosition(Player::GetInstance()->GetMtx());
 	Timing_UI::GetInstance()->Update();
 
 
 	static bool music = true;
 
-	
-	//Notes_Arrange::GetInstance()->Update();
-	//NotesCreateTurn();//ノーツが一度だけｂｐｍに合わせて作られるように
-
 	g_ground.Update();
-
-
 	//カメラの位置に光源をセット
 	XMFLOAT3 eye = CCamera::GetInstance()->GetEye();
 	DX11LightUpdate(XMFLOAT4(eye.x, eye.y, eye.z, 1.0f));
-
-	//
-	if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_0))
-	{
-
-		D3D11_RASTERIZER_DESC rasterDesc;
-		rasterDesc.AntialiasedLineEnable = false;
-		rasterDesc.CullMode = D3D11_CULL_NONE;
-		//  rasterDesc.CullMode = D3D11_CULL_BACK;
-		rasterDesc.DepthBias = 0;
-		rasterDesc.DepthBiasClamp = 0.0f;
-		rasterDesc.DepthClipEnable = true;
-			rasterDesc.FillMode = D3D11_FILL_WIREFRAME;		// ワイヤフレームにしたいとき
-		//rasterDesc.FillMode = D3D11_FILL_SOLID;
-		rasterDesc.FrontCounterClockwise = false;
-		rasterDesc.MultisampleEnable = false;
-		rasterDesc.ScissorEnable = false;
-		rasterDesc.SlopeScaledDepthBias = 0.0f;
-		// create the rasterrizer state from the description we just filled out 
-//		CDirectXGraphics::GetInstance()->GetDXDevice()->CreateRasterizerState(&rasterDesc, m_rasterState.Get());
-
-	}
-
-
 
 	TexMgr::GetInstance()->Update();
 	MouseCircle::GetInstance()->Update();
@@ -322,41 +194,25 @@ void  Seiha::Update(uint64_t dt) {
 void Seiha::Draw() 
 {
 
-	// プレイヤ描画
-	// プレイヤ描画(ローカル座標軸描画付き)
-//	Player::GetInstance()->DrawWithAxis();
+	//int sceannum = static_cast<int>(Game::GetInstance()->GAME_MODE);
+	//sceannum %= 2;
+	if (Game::GetInstance()->GAME_MODE == Game::GAME_SCEAN_ID::S_ID_STAGE1_UPDATE)
+	{
 
-	
-		//
-	g_skybox.Draw();
-	
-	g_ground.Draw();
+		g_skybox.Draw();
 
-	//BillBoardMgr::GetInstance()->Update();
+		g_ground.Draw();
 
-	BillBoardMgr::GetInstance()->Draw();
-//	BoidsHp::GetInstance()->Draw();
+		//BillBoardMgr::GetInstance()->Update();
 
-	PlayerMgr::GetInstance()->Draw();
-	
-	
-	//fire.DrawBillBoard(CCamera::GetInstance()->GetCameraMatrix());
-	
-	
-	MouseCircle::GetInstance()->Draw();
-	//BoidsHp::GetInstance()->Draw();
-	TexMgr::GetInstance()->Draw();
+		BillBoardMgr::GetInstance()->Draw();
 
-	//	// 敵描画
-	//XMFLOAT4X4 viewmtx = CCamera::GetInstance()->GetCameraMatrix();
-	//for (int i = 0; i < ENEMYMAX; i++) {
-	//	XMFLOAT3 pos = g_enemy[i].GetPos();
-	//	g_billboard.SetPosition(pos.x,pos.y, pos.z);
-	//	g_billboard.DrawBillBoard(viewmtx);
-	//}
-	
-	//Notes_Arrange::GetInstance()->NotesDraw();
+		PlayerMgr::GetInstance()->Draw();
 
+		MouseCircle::GetInstance()->Draw();
+
+		TexMgr::GetInstance()->Draw();
+	}
 }
 
 bool Seiha::IsAbleChangeScean()
@@ -373,24 +229,24 @@ void  Seiha::Release() {
 
 	// プレイヤ終了処理
 	//Player::GetInstance()->Finalize();
-	PlayerMgr::GetInstance()->Finsh();
+	//PlayerMgr::GetInstance()->Finsh();
 
 //	g_boundingsphere.Exit();
 
-	g_skybox.Finalize();
+	//g_skybox.Finalize();
 
 
-	/*g_bsenemy.Exit();
-	g_s_bsenemy.Exit();
-	g_bshomis.Exit();
-	g_bsbullet.Exit();*/
-	g_ground.Finalize();
-	MouseCircle::GetInstance()->Finish();
-	BillBoardMgr::GetInstance()->Finalize();
+	///*g_bsenemy.Exit();
+	//g_s_bsenemy.Exit();
+	//g_bshomis.Exit();
+	//g_bsbullet.Exit();*/
+	//g_ground.Finalize();
+	//MouseCircle::GetInstance()->Finish();
+	//BillBoardMgr::GetInstance()->Finalize();
 
-	CTexMgr::GetInstance().Finalize();
-	ModelMgr::GetInstance().Finalize();
-	TexMgr::GetInstance()->Finalize();
+	//CTexMgr::GetInstance().Finalize();
+	//ModelMgr::GetInstance().Finalize();
+	//TexMgr::GetInstance()->Finalize();
 	//Timing_UI::GetInstance()->Finish();
 //	Notes_Arrange::GetInstance()->UnInit();
 }

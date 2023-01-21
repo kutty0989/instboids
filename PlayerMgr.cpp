@@ -68,36 +68,14 @@ static XMFLOAT4X4 zbmat[ZOMBIEBULLET];
 static XMFLOAT4X4 ubmat[UNIQUEBOMBMAX];
 static XMFLOAT3 zpos[ZOMBIEMAX];
 
-
+static int remakeflg = false;
 
 void PlayerMgr::Init()
 {
 	Player::GetInstance()->SetNum();
 	//動かすプレイヤーを生成
 	PlayerCreate();
-	//EnemyCreate();
-	//for (int i = 0; i < boids_num; i++)
-	//{	
-	//	//ボイドを生成
-	//	BoidsCreate(0,0);
-	//}
-	//for (int i = 0; i < zonbbie_num; i++)
-	//{
-	//	//ボイドを生成
-	//	ZonbieCreate();
-	//}
-	/*for (int i = 0; i < unique_enemy_num; i++)
-	{
-		UEnemyCreate();
-	}*/
 
-	//for (int i = 0; i < unique_enemy_bomb_num; i++)
-	//{
-	//	UEnemyBombCreate();
-	//}
-	//
-	//g_air.InitiInstancing(100, "assets/3danime/Warzombie F Pedroso.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/Ch21_1001_Diffuse.png");
-	//cmodelinstance_unique_enemy.InitiInstancing(ENEMYMAX, "assets/3danime/sphere.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/sphere.png");
 	cmodelinstance_zombie.InitiInstancing(ZOMBIEMAX, "assets/3danime/cube.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/cube.png");
 	cmodelinstance_hyuman.InitiInstancing(HYUMANMAX, "assets/3danime/tritop.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/tritop.png");
 	cmodelinstance_zombiebullet.InitiInstancing(ZOMBIEBULLET, "assets/3danime/sphere.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/tritop.png");
@@ -138,12 +116,8 @@ void PlayerMgr::Init()
 		instance_uniquebomb.emplace_back(buf);
 	}
 	
-	//// 敵を初期化
-	//for (int i = 0; i < ENEMYMAX; i++) {
-	//	g_enemy[i].SetModel(&g_air);
-	//	g_enemy[i].Init();
-	//}
-
+	Player::GetInstance()->UnCheckBox();
+	ScoreNum = 0;
 	maxaccel = 2.0f;
 	accel = maxaccel;
 
@@ -168,12 +142,9 @@ void PlayerMgr::Update()
 
 void PlayerMgr::Draw()
 {
-	//ImPlayer->Draw();
-	//ImEnemy->Draw();
+	
 	
 	BulletMgr::GetInstance()->Draw();
-
-
 
 
 	for (int i = 0; i < ZOMBIEMAX; i++) {
@@ -212,31 +183,6 @@ void PlayerMgr::Draw()
 	cmodelinstance_zombiebullet.DrawInstance();
 	cmodelinstance_uniquebomb.DrawInstance();
 
-//	g_ene.TestInstance();
-//	g_air.DrawInstance();
-	//for (int i = 0; i <3; i++)
-	//{
-	//	for (int a = 0; a < bufunique_enemy_vector[i]->size(); a++)
-	//	{
-	//	//	if (a == 0)
-	//		{
-	//			//bufunique_enemy_vector[i]->at(a)->um_model->Update(bufunique_enemy_vector[i]->at(a)->manime.m_Frame, bufunique_enemy_vector[i]->at(a)->manime.m_preFrame, bufunique_enemy_vector[i]->at(a)->manime.m_factor, bufunique_enemy_vector[i]->at(a)->manime.animecnt,
-	//				//bufunique_enemy_vector[i]->at(a)->m_mtx);
-	//		}
-	//	//	bufunique_enemy_vector[i]->at(a)->Draw(instance_zombie);
-	//	}
-	//}
-	//for (auto& n : in_player_vector) {
-	//	n->Draw();
-	//}
-	////敵が
-	//for (auto& n : in_enemy_vector) {
-	//	n->Draw();
-	//}
-	////ゾンビの移動
-	//for (auto& n : instance_zombie) {
-	//	n->Draw();
-	//}
 
 }
 
@@ -244,11 +190,18 @@ void PlayerMgr::Finsh()
 {
 	BulletMgr::GetInstance()->Finalize();
 
+	for (int i = 0; i < ZOMBIEMAX; i++) {
+			instance_zombie.at(i).Uninit();
+	}
+
 	for (auto& n : player_vector) {
 		n->Finalize();
 		
 	}
+
 	player_vector.clear();
+	player_vector.resize(0);
+
 	player_vector_num = 0;
 	//for (auto& n : in_player_vector) {
 	//	n->Finalize();
@@ -271,8 +224,43 @@ void PlayerMgr::Finsh()
 	instance_zombie.clear();
 	instance_zombiebullet.clear();
 	instance_uniquebomb.clear();
+	
+	instance_zombie.resize(0);
+	instance_zombiebullet.resize(0);
+	instance_uniquebomb.resize(0);
 
 	
+	cmodelinstance_zombie.Uninit();
+	cmodelinstance_hyuman.Uninit();
+	cmodelinstance_zombiebullet.Uninit();
+	cmodelinstance_uniquebomb.Uninit();
+	cmodelinstance_zombiebullet.Uninit();
+
+
+	grid_bufvector.clear();
+	grid_bufzombievector.clear();
+	grid_bufzombiebulletvector.clear();
+	grid_bufuniquebombvector.clear();
+
+	grid_bufvector.resize(0);
+	grid_bufzombievector.resize(0);
+	grid_bufzombiebulletvector.resize(0);
+	grid_bufuniquebombvector.resize(0);
+
+	for (int m = 0; m < gridnum; m++)
+	{
+		for (int n = 0; n < gridnum; n++)
+		{
+			grid_vector[m][n].resize(0);
+			grid_zombievector[m][n].resize(0);
+			grid_zombiebulletvector[m][n].resize(0);
+			grid_uniquebombvector[m][n].resize(0);
+		}
+	}
+	//std::vector<shared_ptr<UniqueEnemy>> bufunique_enemy_vector[3][1] = {};//ゾンビ
+
+
+
 	ImPlayer->Finalize();
 	ImEnemy->Finalize();
 	

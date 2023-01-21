@@ -59,37 +59,37 @@ void S_Title::Initialize()
 void S_Title::Update(uint64_t dt)
 {
 	// 入力を受け付ける
-	CDirectInput::GetInstance().GetKeyBuffer();
-	static XMFLOAT3 angle[2] = {
-							{ -90.0f,0.0f,0.0f },
-							{ -90.0f, 0.0f, 0.0f }
-	};			// 角度情報
+//	CDirectInput::GetInstance().GetKeyBuffer();
+	//static XMFLOAT3 angle[2] = {
+	//						{ -90.0f,0.0f,0.0f },
+	//						{ -90.0f, 0.0f, 0.0f }
+	//};			// 角度情報
 
-	static XMFLOAT3 trans[2] = {
-		{ 0.0f,0.0f,0.0f, },
-		{ 0.0f, 0.0f, 0.0f }
-	};			// 平行移動量
+	//static XMFLOAT3 trans[2] = {
+	//	{ 0.0f,0.0f,0.0f, },
+	//	{ 0.0f, 0.0f, 0.0f }
+	//};			// 平行移動量
 
-	static float zpos = 0.0f;
+	//static float zpos = 0.0f;
 
-	static unsigned int animno = 0;
+	//static unsigned int animno = 0;
 
-	static int idx = 0;
+	//static int idx = 0;
 
 
-	if (CDirectInput::GetInstance().CheckKeyBuffer(DIK_RIGHT)) {
-		angle[idx].y++;
-	}
-	if (CDirectInput::GetInstance().CheckKeyBuffer(DIK_LEFT)) {
-		angle[idx].y--;
-	}
+	//if (CDirectInput::GetInstance().CheckKeyBuffer(DIK_RIGHT)) {
+	//	angle[idx].y++;
+	//}
+	//if (CDirectInput::GetInstance().CheckKeyBuffer(DIK_LEFT)) {
+	//	angle[idx].y--;
+	//}
 
-	if (CDirectInput::GetInstance().CheckKeyBuffer(DIK_F1)) {
-		zpos += 1.0f;
-	}
-	if (CDirectInput::GetInstance().CheckKeyBuffer(DIK_F2)) {
-		zpos -= 1.0f;
-	}
+	//if (CDirectInput::GetInstance().CheckKeyBuffer(DIK_F1)) {
+	//	zpos += 1.0f;
+	//}
+	//if (CDirectInput::GetInstance().CheckKeyBuffer(DIK_F2)) {
+	//	zpos -= 1.0f;
+	//}
 
 
 	//if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_SPACE)) {
@@ -135,14 +135,14 @@ void S_Title::Update(uint64_t dt)
 
 	//
 //	CCamera::GetInstance()->Update(S_Title::GetInstance()->g_mtxplayer);
-
+	
 }
 
 void S_Title::Draw()
 {
-	g_mtxplayer._11 = 1.0f;
-	g_mtxplayer._22 = 1.0f;
-	g_mtxplayer._33 = 1.0f;
+	//g_mtxplayer._11 = 1.0f;
+	//g_mtxplayer._22 = 1.0f;
+	//g_mtxplayer._33 = 1.0f;
 	// モデル描画
 
 	// モデル描画
@@ -166,11 +166,18 @@ void S_Title::Release()
 
 
 	// DirectX11 グラフィックス終了処理
-	CDirectXGraphics::GetInstance()->Exit();
+	//CDirectXGraphics::GetInstance()->Exit();
 }
 
 bool S_Title::IsAbleChangeScean()
 {
+
+	if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_SPACE))
+	{
+		return true;
+	}
+
+	
 	if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_SPACE))
 	{
 		return true;

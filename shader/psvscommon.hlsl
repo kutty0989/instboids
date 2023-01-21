@@ -147,6 +147,8 @@ struct InstancingMatrix
    
 };
 
+
+
 cbuffer SpriteInstancingBuffer : register(b12)
 {
     InstancingMatrix SpriteInstancingMatrix[1024];

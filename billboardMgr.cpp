@@ -67,6 +67,9 @@ void BillBoardMgr::Finalize()
 	for (auto& b : g_explsionlist) {
 		b->Finish();
 	}
+	g_granatelist.resize(0);
+	g_explsionlist.resize(0);
+
 }
 
 void BillBoardMgr::GranateCreate(XMFLOAT3 pos)

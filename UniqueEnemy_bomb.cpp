@@ -17,10 +17,21 @@ bool UniqueEnemy_Bomb::Init()
 	//XYZ‚ÌŽ²‚ðŽæ‚èo‚µ•ÛŠÇ
 	SetQutenion();
 
-	float posx = rand() % 400 - 200.0f;
-	float posz = rand() % 400 - 200.0f;
+	float posx = rand() % 800 - 400.0f;
+	float posz = rand() % 800 - 400.0f;
+	if ((posx > -100)&&(posx < 100))
+	{
+		float s = rand() % 2 - 1;
+		posx += 200*s;
+	}	
+	if ((posz > -100)&&(posz < 100))
+	{
+		float s = rand() % 2 - 1;
+		posx += 200*s;
+	}
 	m_mtx._41 = posx;
 	m_mtx._43 = posz;
+	
 	angle.x = 0.0f;
 	angle.z = 0.0f;
 	angle.y = 0.0f;

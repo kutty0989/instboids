@@ -15,29 +15,12 @@
 #include"S_Title.h"
 #include"S_Clear.h"
 #include"XIController.h"
+#include"Scean.h"
+#include"CBillboardMgr.h"
+#include"CTexMgr.h"
+#include"InstanceModelMgr.h"
 
-/// <summary>
-/// ゲームのシーン
-/// </summary>
-enum GAME_SCEAN_ID
-{
-	S_ID_TITLE_INI,
-	S_ID_TITLE_UPDATE,
-	S_ID_STAGE1_INI,
-	S_ID_STAGE1_UPDATE,
-	S_ID_GAMEOVER_INI,
-	S_ID_GAMEOVER_UPDATE,
-	S_ID_CLEAR_INI,
-	S_ID_CLEAR_UPDATE,
-
-
-	S_ID_MAX
-};
-
-GAME_SCEAN_ID GAME_MODE = S_ID_STAGE1_INI;//初期のゲームシーン
-GAME_SCEAN_ID B_GAME_MODE;//前回のゲームモード
 Scean* Game::mScean;
-
 
 bool StageClear_Flg = false;//updateで結果をboolで返してもらいリザルトへ
 
@@ -106,6 +89,49 @@ void Game::GameInit() {
 	srand(GetTickCount());//乱数を最初に一回だけ設定
 
 
+
+	//	//空中戦で使用するモデルを全て読み込む
+	//for (int i = 0; i < Scean::GetInstance()->g_modellist.size(); i++)
+	//{
+	//	ModelMgr::GetInstance().LoadModel(
+	//		Scean::GetInstance()->g_modellist[i].modelname,
+	//		Scean::GetInstance()->g_modellist[i].vsfilenamename,
+	//		Scean::GetInstance()->g_modellist[i].psfilename,
+	//		Scean::GetInstance()->g_modellist[i].texfoldername
+	//	);
+
+	//}
+	//for (int i = 0; i < Scean::GetInstance()->g_modelinstancelist.size(); i++)
+	//{
+	//	InstanceModelMgr::GetInstance().LoadInstanceModel(
+	//		Scean::GetInstance()->g_modelinstancelist[i].num,
+	//		Scean::GetInstance()->g_modelinstancelist[i].modelname,
+	//		Scean::GetInstance()->g_modelinstancelist[i].vsfilenamename,
+	//		Scean::GetInstance()->g_modelinstancelist[i].psfilename,
+	//		Scean::GetInstance()->g_modelinstancelist[i].texfoldername
+
+	//	);
+
+	//}
+	//for (int i = 0; i < Scean::GetInstance()->g_texlist.size(); i++)
+	//{
+	//	CTexMgr::GetInstance().LoadModel(
+	//		Scean::GetInstance()->g_texlist[i].cgname,
+	//		Scean::GetInstance()->g_texlist[i].vsfilename,
+	//		Scean::GetInstance()->g_texlist[i].psfilename
+	//	);
+	//}
+	//for (int i = 0; i < Scean::GetInstance()->g_btexlist.size(); i++)
+	//{
+	//	CBillBoardMgr::GetInstance().LoadModel(
+	//		Scean::GetInstance()->g_btexlist[i].cgname,
+	//		Scean::GetInstance()->g_btexlist[i].vsfilename,
+	//		Scean::GetInstance()->g_btexlist[i].psfilename
+	//	);
+	//}
+
+
+
 }
 
 void Game::GameInput(uint64_t dt) {
@@ -133,13 +159,13 @@ void Game::GameUpdate(uint64_t dt) {
 	}
 
 
-	switch (GAME_MODE)
+	switch (Game::GetInstance()->GAME_MODE)
 	{
 	case S_ID_TITLE_INI:
 	{
 		mScean = new S_Title();//タイトルシーン読み込み
 		mScean->Initialize();
-		GAME_MODE = S_ID_TITLE_UPDATE;
+		Game::GetInstance()->GAME_MODE = S_ID_TITLE_UPDATE;
 
 		break;
 	}
@@ -147,13 +173,11 @@ void Game::GameUpdate(uint64_t dt) {
 	case S_ID_TITLE_UPDATE:
 	{
 		mScean->Update(dt);
-
-
 		if (mScean->IsAbleChangeScean())
 		{
 			mScean->Release();
 
-			GAME_MODE = S_ID_STAGE1_INI;
+			Game::GetInstance()->GAME_MODE = S_ID_STAGE1_INI;
 		}
 
 		break;
@@ -163,7 +187,7 @@ void Game::GameUpdate(uint64_t dt) {
 	{
 		mScean = new Seiha();
 		mScean->Initialize();
-		GAME_MODE = S_ID_STAGE1_UPDATE;
+		Game::GetInstance()->GAME_MODE = S_ID_STAGE1_UPDATE;
 
 		break;
 	}
@@ -175,7 +199,7 @@ void Game::GameUpdate(uint64_t dt) {
 		{
 			mScean->Release();
 
-			GAME_MODE = S_ID_CLEAR_INI;
+			Game::GetInstance()->GAME_MODE = S_ID_TITLE_INI;
 		}
 		break;
 	}
@@ -183,7 +207,7 @@ void Game::GameUpdate(uint64_t dt) {
 	{
 		mScean = new S_Clear();
 		mScean->Initialize();
-		GAME_MODE = S_ID_CLEAR_UPDATE;
+		Game::GetInstance()->GAME_MODE = S_ID_CLEAR_UPDATE;
 
 		break;
 	}
@@ -195,7 +219,7 @@ void Game::GameUpdate(uint64_t dt) {
 		{
 			mScean->Release();
 
-			GAME_MODE = S_ID_TITLE_INI;
+			Game::GetInstance()->GAME_MODE = S_ID_TITLE_INI;
 		}
 		break;
 	}
@@ -226,7 +250,6 @@ void Game::GameRender(uint64_t dt) {
 	// ビュー変換行列を取得
 	mtx = CCamera::GetInstance()->GetCameraMatrix();
 	DX11SetTransform::GetInstance()->SetTransform(DX11SetTransform::TYPE::VIEW, mtx);
-
 
 
 	mScean->Draw();

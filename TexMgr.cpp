@@ -51,6 +51,9 @@ void TexMgr::Finalize()
 	for (auto& b : g_scorevector) {
 		b->Finish();
 	}
+
+	g_scorevector.clear();
+	g_scorevector.resize(0);
 }
 
 

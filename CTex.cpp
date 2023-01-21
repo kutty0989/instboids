@@ -180,8 +180,8 @@ void CTex::UnInit() {
 	ps = ShaderHashmap::GetInstance()->GetPixelShader(pstexfilename[0]);
 
 	// 頂点レイアウト取得
-	//ID3D11InputLayout* layout;
-	//layout = ShaderHashmap::GetInstance()->GetVertexLayout(vstexfilename[0]);
+	ID3D11InputLayout* layout;
+	layout = ShaderHashmap::GetInstance()->GetVertexLayout(vstexfilename[0]);
 
 	// 頂点シェーダー解放
 	if (vs) {
@@ -196,10 +196,10 @@ void CTex::UnInit() {
 	}
 
 	// 頂点レイアウト解放
-	/*if (layout) {
+	if (layout) {
 		layout->Release();
 		layout = nullptr;
-	}*/
+	}
 }
 
 // 拡大、縮小

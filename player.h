@@ -77,6 +77,7 @@ public:
 	}
 
 	void CheckBox();
+	void UnCheckBox();
 
 	/// <summary>
 	///ê∂ë∂ÇµÇƒÇ¢ÇÈÇ©Ç«Ç§Ç©
@@ -235,8 +236,6 @@ public:
 
 	enum class Follow
 	{
-		
-	
 		ZONBIE,
 		HYUMAN,
 		ENEMY
@@ -452,6 +451,8 @@ public:
 
 	static bool slopeflg;
 	static bool pocketflg;
+
+	static bool shootflg;
 
 	
 	//êlä‘ÇÃë¨Ç≥

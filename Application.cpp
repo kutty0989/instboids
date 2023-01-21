@@ -187,7 +187,12 @@ unsigned long Application :: MainLoop()
 		Game::GameInput(delta_time);		// 罐把擖椡	
 		Game::GameUpdate(delta_time);		// 罐把峏怴
 		
+
 		Game::GameRender(delta_time);		// 罐把昤夋
+		
+		
+
+	//	Game::GameRender(delta_time);		// 罐把昤夋
 
 		int64_t sleep_time = 16 - (::timeGetTime() - last_time);
 
