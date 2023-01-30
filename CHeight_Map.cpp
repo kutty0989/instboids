@@ -254,18 +254,30 @@ void CHeight_Map::Draw() {
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
 
-		ImGui::Begin("ground");
-		ImGui::SetNextWindowSize(ImVec2(300, 400));
-		//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
-		ImGui::DragFloat("height", &g_hight);
-		ImGui::DragFloat("tesslation", &g_tesselationamount);
+		ImGui::Begin("Ground");
+		ImGui::SetNextWindowSize(ImVec2(300, 300));
+	
+		ImGui::SliderFloat("Height", &g_hight, 0.0f, 1000.0f);
+		ImGui::SliderFloat("tesslation", &g_tesselationamount, 0.0f, 64.0f);
+
 		ImGui::InputDouble("Frequency", &dFrequency);
 		ImGui::DragInt("iOctaves", &iOctaves);
 		ImGui::DragFloat("scale", &ScaleMap);
-		ImGui::Checkbox("randomcreate", &noiseCreateflg);
+		
+		if (ImGui::Button("RandomCreate"))
+		{
+			noiseCreateflg = true;
+		}
+		if (ImGui::Button("MapSave"))
+		{
+			mapsave = true;
+		}
 
-		ImGui::Checkbox("mapsave", &mapsave);
-		ImGui::Checkbox("mapload", &mapload);
+		if (ImGui::Button("MapLoad"))
+		{
+			mapload = true;
+		}
+
 		ImGui::End();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
@@ -510,8 +522,8 @@ void CHeight_Map::NoiseCreate()
 		{
 	
 			srcData[(x + y * iPixSize) * 4] = static_cast<byte>(vecData[x][y] * 255);//Red
-			srcData[(x + y * iPixSize) * 4 + 1] = static_cast<byte>(vData[x][y] * 255);//Green
-			srcData[(x + y * iPixSize) * 4 + 2] = static_cast<byte>(vecData[x][y] * 255);//Blue
+		//	srcData[(x + y * iPixSize) * 4 + 1] = static_cast<byte>(vData[x][y] * 255);//Green
+		//	srcData[(x + y * iPixSize) * 4 + 2] = static_cast<byte>(vecData[x][y] * 255);//Blue
 		}
 	}
 	vData = vecData;
@@ -542,8 +554,8 @@ void CHeight_Map::LoadMap(std::vector<std::vector<double>> loadmap)
 		for (int y = 0; y < iPixSize; y++)
 		{
 			srcData[(x + y * iPixSize) * 4] = static_cast<byte>(loadmap[x][y] * 255);//Red
-			srcData[(x + y * iPixSize) * 4 + 1] = static_cast<byte>(loadmap[x][y] * 255);//Green
-			srcData[(x + y * iPixSize) * 4 + 2] = static_cast<byte>(loadmap[x][y] * 255);//Blue
+		//	srcData[(x + y * iPixSize) * 4 + 1] = static_cast<byte>(loadmap[x][y] * 255);//Green
+		//	srcData[(x + y * iPixSize) * 4 + 2] = static_cast<byte>(loadmap[x][y] * 255);//Blue
 		}
 	}
 
@@ -572,8 +584,8 @@ void CHeight_Map::ChangeMap()
 		for (int y = 0; y < iPixSize; y++)
 		{
 			srcData[(x + y * iPixSize) * 4] = static_cast<byte>(vData[x][y] * 255);//Red
-			srcData[(x + y * iPixSize) * 4 + 1] = static_cast<byte>(gData[x][y] * 255);//Green
-			srcData[(x + y * iPixSize) * 4 + 2] = static_cast<byte>(vData[x][y] * 255);//Blue
+		//	srcData[(x + y * iPixSize) * 4 + 1] = static_cast<byte>(gData[x][y] * 255);//Green
+		//	srcData[(x + y * iPixSize) * 4 + 2] = static_cast<byte>(vData[x][y] * 255);//Blue
 		}
 	}
 	vData = vData;

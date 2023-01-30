@@ -136,9 +136,9 @@ public:
 		return &instance;
 	}
 
-	//DirectX::XMFLOAT4X4 s_mtx;
-	//DirectX::XMFLOAT4X4 p_mtx;
-	//DirectX::XMFLOAT4X4 o_mtx;
+	DirectX::XMFLOAT4X4 s_mtx;
+	DirectX::XMFLOAT4X4 p_mtx;
+	DirectX::XMFLOAT4X4 o_mtx;
 
 	XMFLOAT3 m_pos = {};
 	XMFLOAT3 m_scale = {};

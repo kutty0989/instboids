@@ -1482,7 +1482,7 @@ Pvector Player::zonbie_damage(std::vector<UniqueEnemy_Bomb*>& uniquebomb)
 
 				boid_accel = 3.5f;
 				zexplosionflg = true;
-				knockbackcnt = 200;
+				knockbackcnt = 40;
 				
 			}
 
@@ -1518,7 +1518,7 @@ Pvector Player::zonbie_damage(std::vector<UniqueEnemy_Bomb*>& uniquebomb)
 
 				boid_accel = 3.5f;
 				zexplosionflg = true;
-				knockbackcnt = 200;
+				knockbackcnt = 40;
 			}
 
 		}

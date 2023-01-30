@@ -20,6 +20,7 @@ float4 main(VS_OUTPUT input) : SV_Target
    // tex1col.rgb = tex1col.r;
     tex1col.a = 1.0f;
     float4 col = tex1col;
+   
     if (gcol >= 1.0f)
     {
         col = tex2col;

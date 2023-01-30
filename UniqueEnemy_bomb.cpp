@@ -22,12 +22,12 @@ bool UniqueEnemy_Bomb::Init()
 	if ((posx > -100)&&(posx < 100))
 	{
 		float s = rand() % 2 - 1;
-		posx += 200*s;
+		posx += 100*s;
 	}	
 	if ((posz > -100)&&(posz < 100))
 	{
 		float s = rand() % 2 - 1;
-		posx += 200*s;
+		posx += 100*s;
 	}
 	m_mtx._41 = posx;
 	m_mtx._43 = posz;

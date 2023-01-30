@@ -29,11 +29,11 @@ void TexMgr::Update()
 	g_scorevector.at(3)->drawnum = aa * 0.1 - g_scorevector.at(0)->drawnum*1000 - g_scorevector.at(1)->drawnum*100 - g_scorevector.at(2)->drawnum*10;
 	g_scorevector.at(4)->drawnum = aa - g_scorevector.at(0)->drawnum*10000 - g_scorevector.at(1)->drawnum*1000 - g_scorevector.at(2)->drawnum*100 - g_scorevector.at(3)->drawnum*10;
 	//‘S’eXV
-	for (auto& b : g_scorevector) {
-		
-			b->Update(b->drawnum);
-		
-	}
+
+		for (int i = 0; i < g_scorevector.size(); i++)
+		{
+			g_scorevector.at(i)->Update(g_scorevector.at(i)->drawnum, i);
+		}
 	
 
 }

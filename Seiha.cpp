@@ -246,8 +246,9 @@ void  Seiha::Release() {
 
 	//CTexMgr::GetInstance().Finalize();
 	//ModelMgr::GetInstance().Finalize();
-	//TexMgr::GetInstance()->Finalize();
+	TexMgr::GetInstance()->Finalize();
 	//Timing_UI::GetInstance()->Finish();
+	// TexMgr::GetInstance()->Draw();
 //	Notes_Arrange::GetInstance()->UnInit();
 }
 

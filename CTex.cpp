@@ -108,17 +108,21 @@ void CTex::Draw() {
 
 	//DX11SetTransform::GetInstance()->SetTransform(DX11SetTransform::TYPE::VIEW, vmtx);
 	//DX11SetTransform::GetInstance()->SetTransform(DX11SetTransform::TYPE::PROJECTION, pmtx);
-	//DX11MtxScale(m_scale.x, m_scale.y, m_scale.z, s_mtx);
-	//DX11MtxTranslation(m_pos, p_mtx);
-    //DX11MtxRotationZ(m_angle, o_mtx);//回転行列
-    //DirectX::XMFLOAT4X4 mtx;
-	//DX11MtxMultiply(mtx, s_mtx, o_mtx);
-	//DX11MtxMultiply(mtx, m_worldmtx, o_mtx);//スケール　＊　回転　＊　移動
-    //DX11MtxMultiply(m_worldmtx, o_mtx, m_worldmtx);
+	DX11MtxIdentity(p_mtx);
+	DX11MtxIdentity(s_mtx);
+	DX11MtxIdentity(o_mtx);
+	DX11MtxScale(m_scale.x, m_scale.y, m_scale.z, s_mtx);
+	DX11MtxTranslation(m_pos, p_mtx);
+    DX11MtxRotationZ(m_angle, o_mtx);//回転行列
+    DirectX::XMFLOAT4X4 mtx;
+	DX11MtxIdentity(mtx);
+	DX11MtxMultiply(mtx, s_mtx, o_mtx);
+	DX11MtxMultiply(mtx, mtx, p_mtx);//スケール　＊　回転　＊　移動
+   // DX11MtxMultiply(m_worldmtx, o_mtx, m_worldmtx);
 
 
 	// 座標変換用の行列をセット
-	DX11SetTransform::GetInstance()->SetTransform(DX11SetTransform::TYPE::WORLD, m_worldmtx);
+	DX11SetTransform::GetInstance()->SetTransform(DX11SetTransform::TYPE::WORLD, mtx);
 
 
 	unsigned int stride = sizeof(CTex::Vertex);	// ストライドをセット（１頂点当たりのバイト数）
@@ -204,16 +208,16 @@ void CTex::UnInit() {
 
 // 拡大、縮小
 void CTex::SetScale(float sx, float sy, float sz) {
-	m_worldmtx._11 = sx;
-	m_worldmtx._22 = sy;
-	m_worldmtx._33 = sz;
+	m_scale.x = sx;
+	m_scale.y = sy;
+	m_scale.z = sz;
 }
 
 // 位置をセット
 void CTex::SetPosition(float x, float y, float z) {
-	m_worldmtx._41 = Application::CLIENT_WIDTH * 0.5f + Application::CLIENT_WIDTH * 0.5f * x;
-	m_worldmtx._42 = Application::CLIENT_HEIGHT * 0.5f + Application::CLIENT_HEIGHT * 0.5f * y;
-	m_worldmtx._43 = z;
+	m_pos.x = Application::CLIENT_WIDTH * 0.5f + Application::CLIENT_WIDTH * 0.5f * x;
+	m_pos.y = Application::CLIENT_HEIGHT * 0.5f + Application::CLIENT_HEIGHT * 0.5f * y;
+	m_pos.z = z;
 }
 
 // Z軸回転

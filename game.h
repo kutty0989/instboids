@@ -30,7 +30,7 @@ public:
 	}
 
 
-	GAME_SCEAN_ID GAME_MODE = S_ID_TITLE_INI;//初期のゲームシーン
+	GAME_SCEAN_ID GAME_MODE = S_ID_STAGE1_INI;//初期のゲームシーン
 	GAME_SCEAN_ID B_GAME_MODE;//前回のゲームモード
 
 	static void GameInit();

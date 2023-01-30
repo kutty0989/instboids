@@ -4,6 +4,11 @@
 #include"CDirectInput.h"
 
 bool CCamera::blowflg = false;
+template<typename T>
+T LeapID(T _go, T _to, float _ratio)
+{
+	return _go * (1.0f - _ratio) + _to * (T)_ratio;
+}
 
 void CCamera::FPSCamera(XMFLOAT3 pos, XMFLOAT3 axisz, XMFLOAT3 axisy)
 {
@@ -35,6 +40,9 @@ void CCamera::FPSCamera(XMFLOAT3 pos, XMFLOAT3 axisz, XMFLOAT3 axisy)
 
 }
 
+static float cameratime;
+float maxtime = 1000;
+static float nowtime = 0;
 
 void CCamera::TPSCamera(XMFLOAT3 pos, XMFLOAT3 axisz, XMFLOAT3 axisy)
 {
@@ -52,18 +60,30 @@ void CCamera::TPSCamera(XMFLOAT3 pos, XMFLOAT3 axisz, XMFLOAT3 axisy)
 	XMFLOAT3 eye;
 	eye.x = 0 + a;
 	eye.y = 1300.0f + b;
-	eye.z = -240.0f + c;
+	eye.z = -240.0f + c -100;
 
 
 	XMFLOAT3 lookat;
-	lookat.x = eye.x + x;
-	lookat.y = eye.y +y- 10;
-	lookat.z = eye.z +z+ 4;
+	lookat.x  = + x; //= eye.x
+	lookat.y = +y - 100;// eye.y;
+	lookat.z = +z + 40;// eye.z;
 
+	nowtime++;
+	if (nowtime == maxtime)
+	{
+		nowtime = 0;
+	}
 
+	cameratime = nowtime / maxtime;
+	a = sinf(cameratime);
+	c = cosf(cameratime);
+	a *= 500;
+	b *= 500;
+	//b = LeapID<float>(a - 10, a + 10, cameratime);
 	if (CDirectInput::GetInstance().CheckKeyBuffer(DIK_O))
 	{
-		blowflg = true;
+		
+
 		
 	}
 	if (blowflg)
@@ -133,31 +153,6 @@ void CCamera::TPSCamera(XMFLOAT3 pos, XMFLOAT3 axisz, XMFLOAT3 axisy)
 	up.x = 0;
 	up.y = 0;
 	up.z = 1;
-
-	{
-		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
-
-		ImGui::Begin("config 3");
-
-		ImGui::SetNextWindowSize(ImVec2(300, 400));
-		//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
-
-		float pos[3] = { a ,b,c };
-
-		//float pos[3] = { Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z};
-		ImGui::DragFloat3("CAMERA ANGLE", pos);
-
-	
-		//ImGui::DragInt("notes", &it);
-		a = pos[0];
-		b = pos[1];
-		c = pos[2];
-		ImGui::End();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-	}
-
 
 
 		//カメラクラスにセット
