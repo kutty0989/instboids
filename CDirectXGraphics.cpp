@@ -259,7 +259,7 @@ bool CDirectXGraphics::Init(HWND hWnd, unsigned int Width, unsigned int Height, 
 	rasterDesc.SlopeScaledDepthBias = 0.0f;
 
 	// create the rasterrizer state from the description we just filled out 
-//	hr = m_lpDevice->CreateRasterizerState(&rasterDesc, &m_rasterState);
+	//hr = m_lpDevice->CreateRasterizerState(&rasterDesc, &m_rasterState);
 	//if (FAILED(hr)) {
 	//	return false;
 	//}

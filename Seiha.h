@@ -14,8 +14,9 @@ public:
 	void Draw();
 	bool IsAbleChangeScean();
 
-
-
+	static int counttime;
+	static float pertime;
+	static bool changemapflg;
 
 };
 

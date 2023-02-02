@@ -3,7 +3,7 @@
 #include<iostream>
 #include"PlayerMgr.h"
 #include"player.h"
-
+#include"Seiha.h"
 //go 元の座標値
 //to　行先の座標値
 //ratio　現在の進行割合　0.0f～1.0f
@@ -35,6 +35,7 @@ bool Ground::Init()
 
 void Ground::Draw()
 {
+
 	//ディスプレイトメントマッピングをしたい画像の描画
 	g_heightmap->SetUV(CHeight_Map::GetInstance()->c_uv);
 	g_heightmap->SetScale(m_scale);
@@ -46,28 +47,31 @@ void Ground::Draw()
 	
 }
 
-float a;
+
+
+std::vector<std::vector<double>> lmap;
+
 void Ground::Update()
 {
-	
+
 	scaling = CHeight_Map::GetInstance()->ScaleMap;
 	m_scale.x = scaling;
 	m_scale.y = scaling;
 	if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_8))
 	{
-	//	/*std::vector<std::vector<double>> loadmap ={};
-	//	
-	//	g_heightmap->gData[25][250] = 0.8f;
-	//	loadmap[251][250] = 1.8f;
-	//	loadmap[252][250] = 1.8f;
-	//	loadmap[253][250] = 1.8f;
-	//	loadmap[254][250] = 1.8f;
-	//	loadmap[255][250] = 1.8f;*/
-		/*auto map = g_heightmap->GetMap();
-	
-		g_heightmap->LoadMap(map);*/
+		//	/*std::vector<std::vector<double>> loadmap ={};
+		//	
+		//	g_heightmap->gData[25][250] = 0.8f;
+		//	loadmap[251][250] = 1.8f;
+		//	loadmap[252][250] = 1.8f;
+		//	loadmap[253][250] = 1.8f;
+		//	loadmap[254][250] = 1.8f;
+		//	loadmap[255][250] = 1.8f;*/
+			/*auto map = g_heightmap->GetMap();
 
-	
+			g_heightmap->LoadMap(map);*/
+
+
 		for (int x = 0; x < 50; x++)
 		{
 			for (int y = 0; y < 50; y++)
@@ -78,7 +82,7 @@ void Ground::Update()
 
 			}
 		}
-	
+
 		g_heightmap->ChangeMap();
 		//g_heightmap->LoadMap(loadmap);
 	}
@@ -103,7 +107,7 @@ void Ground::Update()
 	{
 		Save::GetInstance()->save1 = Save::GetInstance()->Loadvin("assets/assets.dat");
 		auto map = Save::GetInstance()->save1.dotto;
-	
+
 		g_heightmap->LoadMap(map);
 		CHeight_Map::GetInstance()->mapload = false;
 	}
@@ -113,16 +117,26 @@ void Ground::Update()
 	//	g_heightmap->LoadMap(save1.dotto);
 	//}
 
-	if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_9))
-	{
-		auto map = g_heightmap->GetMap();
-		map[250].at(250) = 0.99f;
-		g_heightmap->LoadMap(map);
-		//g_heightmap->updateVertex(XMFLOAT3(1.0f, 0.5f, 1.0f));
-		//g_heightmap->updateVbuffer();
-		//g_heightmap->Draw();
-	}
+	//if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_9))
+	//{
+	//	auto map = g_heightmap->GetMap();
+	//	map[250].at(250) = 0.99f;
+	//	g_heightmap->LoadMap(map);
+	//	//g_heightmap->updateVertex(XMFLOAT3(1.0f, 0.5f, 1.0f));
+	//	//g_heightmap->updateVbuffer();
+	//	//g_heightmap->Draw();
+	//}
 
+	if (Seiha::pertime == 1.0f)
+	{
+		lmap = CHeight_Map::GetInstance()->CreateOnly();
+		
+
+	}
+	if (Seiha::pertime >= 0.0f)
+	{
+		g_heightmap->BlendMap(lmap);
+	}
 }
  
 

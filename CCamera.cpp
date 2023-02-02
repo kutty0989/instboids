@@ -41,7 +41,7 @@ void CCamera::FPSCamera(XMFLOAT3 pos, XMFLOAT3 axisz, XMFLOAT3 axisy)
 }
 
 static float cameratime;
-float maxtime = 1000;
+float maxtime = 100;
 static float nowtime = 0;
 
 void CCamera::TPSCamera(XMFLOAT3 pos, XMFLOAT3 axisz, XMFLOAT3 axisy)
@@ -60,32 +60,36 @@ void CCamera::TPSCamera(XMFLOAT3 pos, XMFLOAT3 axisz, XMFLOAT3 axisy)
 	XMFLOAT3 eye;
 	eye.x = 0 + a;
 	eye.y = 1300.0f + b;
-	eye.z = -240.0f + c -100;
+	eye.z = -240.0f + c;
 
 
 	XMFLOAT3 lookat;
-	lookat.x  = + x; //= eye.x
-	lookat.y = +y - 100;// eye.y;
-	lookat.z = +z + 40;// eye.z;
+	lookat.x = x + eye.x;
+	lookat.y =  y - 100 + eye.y;
+	lookat.z = z + 40 + eye.z;
 
-	nowtime++;
+	
 	if (nowtime == maxtime)
 	{
 		nowtime = 0;
 	}
 
 	cameratime = nowtime / maxtime;
-	a = sinf(cameratime);
-	c = cosf(cameratime);
-	a *= 500;
-	b *= 500;
+	//a = sinf(cameratime);
+	//c = cosf(cameratime);
+	//a *= 1500;
+	//c *= -1500;
 	//b = LeapID<float>(a - 10, a + 10, cameratime);
-	if (CDirectInput::GetInstance().CheckKeyBuffer(DIK_O))
+	/*if (CDirectInput::GetInstance().CheckKeyBuffer(DIK_O))
 	{
 		
-
-		
+		nowtime++;
+	
 	}
+	a = sinf(cameratime);
+	c = cosf(cameratime);
+	a *= 1500.0f;
+	c *= 1500.0f;*/
 	if (blowflg)
 	{
 		x = rand() % 10 * 0.01f;

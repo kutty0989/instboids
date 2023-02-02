@@ -1,5 +1,6 @@
 #include"CHeight_Map.h"
 #include"Application.h"
+#include"Seiha.h"
 #include"noise.h"
 #include"player.h"
 #define debuglog(a) std::cout<<a<<std::endl;
@@ -426,6 +427,17 @@ void CHeight_Map::UnInit() {
 	}
 }
 
+
+//go 元の座標値
+//to　行先の座標値
+//ratio　現在の進行割合　0.0f～1.0f
+template<typename T>
+T LeapID(T _go, T _to, float _ratio)
+{
+	return _go * (1.0f - _ratio) + _to * (T)_ratio;
+}
+
+
 // 拡大、縮小
 void CHeight_Map::SetScale(XMFLOAT3 scale) {
 	m_scale = scale;
@@ -535,6 +547,25 @@ void CHeight_Map::NoiseCreate()
 
 }
 
+std::vector<std::vector<double>> CHeight_Map::CreateOnly()
+{
+	//パーリンノイズ計算
+	Noise perlin;
+	std::vector<std::vector<double> > vecData(iPixSize, std::vector<double>(iPixSize));//vecData[iPixSize][iPixSize];
+	double dFrequencyX = iPixSize / dFrequency;
+	double dFrequencyY = dFrequencyX;
+	for (int x = 0; x < iPixSize; x++)
+	{
+		for (int y = 0; y < iPixSize; y++)
+		{
+			vecData[x][y] = perlin.Octave(x / dFrequencyX, y / dFrequencyY, 0.0, iOctaves);
+		}
+	}
+	vData = vecData;
+
+	return vecData;
+}
+
 void CHeight_Map::LoadMap(std::vector<std::vector<double>> loadmap)
 {
 
@@ -563,6 +594,40 @@ void CHeight_Map::LoadMap(std::vector<std::vector<double>> loadmap)
 	memcpy(msr.pData, &srcData.front(), srcData.size());
 	devcontext->Unmap(D3DTexture.Get(), 0);
 
+}
+
+void CHeight_Map::BlendMap(std::vector<std::vector<double>> loadmap)
+{
+	ID3D11DeviceContext* devcontext;
+	devcontext = GetDX11DeviceContext();
+
+
+	//テクスチャ書き替え
+	D3D11_MAPPED_SUBRESOURCE msr;
+	devcontext->Map(D3DTexture.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+
+
+	std::vector<byte> srcData(iPixSize * iPixSize * 4, 0);//srcData[iPixSize * iPixSize * 4] = {0};//ビットマップを黒で初期化
+	for (int x = 0; x < iPixSize; x++)
+	{
+		for (int y = 0; y < iPixSize; y++)
+		{
+			//2枚の地面の高さ情報を時間で線形補完
+			auto blendcolor = LeapID<double>(static_cast<byte>(vData[x][y]*255), static_cast<byte>(loadmap[x][y]*255),Seiha::pertime);
+			srcData[(x + y * iPixSize) * 4] = blendcolor;//Red
+		
+			gData[x][y] = blendcolor;
+		}
+	}
+
+
+	if (Seiha::pertime == 0.0f)
+	{
+		vData = gData;
+		
+	}
+	memcpy(msr.pData, &srcData.front(), srcData.size());
+	devcontext->Unmap(D3DTexture.Get(), 0);
 }
 
 void CHeight_Map::ChangeMap()
@@ -597,14 +662,7 @@ void CHeight_Map::ChangeMap()
 
 
 
-//go 元の座標値
-//to　行先の座標値
-//ratio　現在の進行割合　0.0f～1.0f
-template<typename T>
-T LeapID(T _go, T _to, float _ratio)
-{
-	return _go * (1.0f - _ratio) + _to * (T)_ratio;
-}
+
 
 static int multitex = 0;
 static bool soil = false;

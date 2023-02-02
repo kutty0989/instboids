@@ -21,11 +21,13 @@
 #include"InstanceModelMgr.h"
 #include"TexMgr.h"
 #include"game.h"
+#include <chrono>
+#include <iostream>
+#include <time.h>
+#include <ctime>
 #define debuglog(a) std::cout<<a<<std::endl;
 
 CModel			g_model;			// 主人公モデル
-
-
 
 
 //Player	g_player;		// プレイヤオブジェクト
@@ -41,6 +43,12 @@ static bool turnflg;//１ターンの切り替え true行動できる　false行動した
 static bool createflg;//true 作っていい　false 作ったらダメ
 static bool saveflg;//true まだつくられてない　false すでにつくられた
 static bool notes_LR;//ノーツの左右分けるための変数　ｆ左　ｔ右　
+
+using std::cout; using std::endl;
+using std::chrono::duration_cast;
+using std::chrono::milliseconds;
+using std::chrono::seconds;
+using std::chrono::system_clock;
 
 //
 //
@@ -93,7 +101,7 @@ float t;
 XMFLOAT4 color = { 1.0f,0.1f,0.1f,0.0f };
 
 static bool init = false;
-
+int maxcounttime = 10000;
 void Seiha::Initialize() {
 	
 	if (init == false)
@@ -158,6 +166,7 @@ void Seiha::Initialize() {
 
 
 	
+	
 
 }
 void Seiha::Reset()
@@ -168,12 +177,63 @@ void Seiha::Reset()
 	saveflg = false;//true まだつくられてない　false すでにつくられた
 	
 }
+
+static bool firsttime = false;
+static int inittime;
+int Seiha::counttime = 0;
+float Seiha::pertime = 0;
+bool Seiha::changemapflg = false;
+
 void  Seiha::Update(uint64_t dt) {
 	CDirectInput::GetInstance().GetMouseState();
 	PlayerMgr::GetInstance()->Update();
 	
 	g_skybox.Update();
 	Timing_UI::GetInstance()->Update();
+	
+	if (firsttime == false)
+	{
+		auto msec = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+		msec = int(msec);
+		inittime = msec + maxcounttime;
+		firsttime = true;
+	}
+
+	auto msec = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+
+	int nnow = msec;
+	counttime = nnow - inittime;
+	pertime = (float)-counttime / (float)maxcounttime;
+	
+	if (pertime == 0.0f)
+	{
+		changemapflg = true;
+	}
+	if(changemapflg == true)
+	{
+		auto msec = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+
+		float now = msec;
+		inittime = now + maxcounttime;
+		changemapflg = false;
+		
+	}
+	{
+		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
+
+		ImGui::Begin("time");
+		ImGui::SetNextWindowSize(ImVec2(300, 400));
+	
+		//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
+		ImGui::DragInt("time", &counttime);
+		ImGui::DragFloat("pertime", &pertime);
+
+		ImGui::End();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+	}
+
 
 
 	static bool music = true;
@@ -207,7 +267,7 @@ void Seiha::Draw()
 
 		BillBoardMgr::GetInstance()->Draw();
 
-		PlayerMgr::GetInstance()->Draw();
+	//	PlayerMgr::GetInstance()->Draw();
 
 		MouseCircle::GetInstance()->Draw();
 

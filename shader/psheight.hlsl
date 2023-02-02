@@ -17,7 +17,7 @@ float4 main(VS_OUTPUT input) : SV_Target
     float arpha = tex1col.r - (1-blendtwo*0.01f);
     float sarpha = (1 - tex1col.r) - (1-blendone*0.01f);
     float garpha = tex1col.r;
-   // tex1col.rgb = tex1col.r;
+  //  tex1col.rgb = tex1col.r;
     tex1col.a = 1.0f;
     float4 col = tex1col;
    

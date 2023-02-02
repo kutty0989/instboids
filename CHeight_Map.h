@@ -172,9 +172,15 @@ public:
 	/// </summary>
 	void NoiseCreate();
 
+	std::vector<std::vector<double>> CreateOnly();
+
 	std::vector<std::vector<double>> GetMap() { return vData; };
 
 	void LoadMap(std::vector<std::vector<double>> loadmap);
+	
+	void BlendMap(std::vector<std::vector<double>> loadmap);
+	
+	
 	
 	void ChangeMap();
 
