@@ -127,7 +127,7 @@ void Ground::Update()
 	//	//g_heightmap->Draw();
 	//}
 
-	if (Seiha::pertime == 1.0f)
+	/*if (Seiha::pertime == 1.0f)
 	{
 		lmap = CHeight_Map::GetInstance()->CreateOnly();
 		
@@ -136,18 +136,24 @@ void Ground::Update()
 	if (Seiha::pertime >= 0.0f)
 	{
 		g_heightmap->BlendMap(lmap);
-	}
+	}*/
 }
  
 
 void Ground::GetPlayerHeight(Player& player)
 {
-	//高さを求める
-	col = g_heightmap->GetHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling));//プレイヤーが画像のどこにいて、その足元のカラー情報
+	//プレイヤーのポジションを元に、画像の解像度で高さを出す
+	col = g_heightmap->GetHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling));
 
 	player.SetPos(XMFLOAT3(player.GetPos().x, col * CHeight_Map::GetInstance()->g_hight, player.GetPos().z));//プレイヤーのｙの高さを変えてる
 
 }
+
+
+
+
+
+
 Pvector Ground::DownBoid(Player& player)
 {
 

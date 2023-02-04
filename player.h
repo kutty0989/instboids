@@ -14,9 +14,9 @@ class UniqueEnemy_Bomb;
 class ZombieBullet;
 
 #define		ZOMBIEMAX		10
-#define		ZOMBIE		    10
+#define		ZOMBIE		    1
 #define		HYUMANMAX		500
-#define		UNIQUEBOMBMAX	10
+#define		UNIQUEBOMBMAX	1
 
 
 class Player :public GameObject {

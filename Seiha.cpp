@@ -191,48 +191,48 @@ void  Seiha::Update(uint64_t dt) {
 	g_skybox.Update();
 	Timing_UI::GetInstance()->Update();
 	
-	if (firsttime == false)
-	{
-		auto msec = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-		msec = int(msec);
-		inittime = msec + maxcounttime;
-		firsttime = true;
-	}
+	//if (firsttime == false)
+	//{
+	//	auto msec = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+	//	msec = int(msec);
+	//	inittime = msec + maxcounttime;
+	//	firsttime = true;
+	//}
 
-	auto msec = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+	//auto msec = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 
-	int nnow = msec;
-	counttime = nnow - inittime;
-	pertime = (float)-counttime / (float)maxcounttime;
-	
-	if (pertime == 0.0f)
-	{
-		changemapflg = true;
-	}
-	if(changemapflg == true)
-	{
-		auto msec = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+	//int nnow = msec;
+	//counttime = nnow - inittime;
+	//pertime = (float)-counttime / (float)maxcounttime;
+	//
+	//if (pertime == 0.0f)
+	//{
+	//	changemapflg = true;
+	//}
+	//if(changemapflg == true)
+	//{
+	//	auto msec = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 
-		float now = msec;
-		inittime = now + maxcounttime;
-		changemapflg = false;
-		
-	}
-	{
-		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
+	//	float now = msec;
+	//	inittime = now + maxcounttime;
+	//	changemapflg = false;
+	//	
+	//}
+	//{
+	//	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
+	//	ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
 
-		ImGui::Begin("time");
-		ImGui::SetNextWindowSize(ImVec2(300, 400));
-	
-		//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
-		ImGui::DragInt("time", &counttime);
-		ImGui::DragFloat("pertime", &pertime);
+	//	ImGui::Begin("time");
+	//	ImGui::SetNextWindowSize(ImVec2(300, 400));
+	//
+	//	//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
+	//	ImGui::DragInt("time", &counttime);
+	//	ImGui::DragFloat("pertime", &pertime);
 
-		ImGui::End();
-		ImGui::PopStyleColor();
-		ImGui::PopStyleColor();
-	}
+	//	ImGui::End();
+	//	ImGui::PopStyleColor();
+	//	ImGui::PopStyleColor();
+	//}
 
 
 
@@ -267,7 +267,7 @@ void Seiha::Draw()
 
 		BillBoardMgr::GetInstance()->Draw();
 
-	//	PlayerMgr::GetInstance()->Draw();
+		PlayerMgr::GetInstance()->Draw();
 
 		MouseCircle::GetInstance()->Draw();
 

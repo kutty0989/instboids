@@ -882,12 +882,13 @@ double CHeight_Map::GetHeightColor(XMFLOAT2 playerpos)
 	float xx = xf - p_posx;//桁落ちした値を見てくる
 	float yy = yf - p_posy;
 
-	float xxcol = LeapID<float>(col, xcol, xx);//桁落ちした分進ませる
+	//桁落ちした分線形補完で高さを求める
+	float xxcol = LeapID<float>(col, xcol, xx);
 	float yycol = LeapID<float>(col, ycol, yy);
 
 	col = (xxcol + yycol) / 2.0f;//ｘ成分とｙ成分を足して１点の（カラー）高さlar
 
-	//debuglog(col);
+	
 	return col;
 }
 
