@@ -456,7 +456,7 @@ void CModelInstance::DrawInstance() {
 	devcontext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	devcontext->PSSetShaderResources(0, 1, &m_srv);			// debug ts
 
-	//sdevcontext->Unmap(mPerInstanceBuffer.Get(), 0);
+	//インスタンス描画
 	devcontext->DrawIndexedInstanced(ind.size(), m_instancecount, 0, 0, 0);
 
 }

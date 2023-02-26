@@ -474,19 +474,16 @@ void CHeight_Map::SetAlpha(float a)
 // 頂点データ更新
 void CHeight_Map::updateVertex(DirectX::XMFLOAT3 color) {
 
-	
-
-		CHeight_Map::Vertex	v[4] = {
-			// 座標													// カラー	// UV	
-			XMFLOAT3(-m_width / 2.0f,	 m_height / 2.0f,0.0f),	XMFLOAT4(color.x,color.y,color.z,m_Alpha),		c_uv[0],
-			XMFLOAT3(m_width / 2.0f,	 m_height / 2.0f,0.0f),	XMFLOAT4(color.x,color.y,color.z,m_Alpha),		c_uv[1],
-			XMFLOAT3(-m_width / 2.0f,	 -m_height / 2.0f,0.0f),	XMFLOAT4(color.x,color.y,color.z,m_Alpha),		c_uv[2],
-			XMFLOAT3(m_width / 2.0f,	 -m_height / 2.0f,0.0f),	XMFLOAT4(color.x,color.y,color.z,m_Alpha),		c_uv[3],
-		};
-		for (int i = 0; i < 4; i++) {
-			m_vertex[i] = v[i];
-		}
-		//}
+	CHeight_Map::Vertex	v[4] = {
+		// 座標													// カラー	// UV	
+		XMFLOAT3(-m_width / 2.0f,	 m_height / 2.0f,0.0f),	XMFLOAT4(color.x,color.y,color.z,m_Alpha),		c_uv[0],
+		XMFLOAT3(m_width / 2.0f,	 m_height / 2.0f,0.0f),	XMFLOAT4(color.x,color.y,color.z,m_Alpha),		c_uv[1],
+		XMFLOAT3(-m_width / 2.0f,	 -m_height / 2.0f,0.0f),	XMFLOAT4(color.x,color.y,color.z,m_Alpha),		c_uv[2],
+		XMFLOAT3(m_width / 2.0f,	 -m_height / 2.0f,0.0f),	XMFLOAT4(color.x,color.y,color.z,m_Alpha),		c_uv[3],
+	};
+	for (int i = 0; i < 4; i++) {
+		m_vertex[i] = v[i];
+	}
 	
 }
 

@@ -11,41 +11,42 @@
 #include"BoidsHp.h"
 #include"InstanceModelMgr.h"
 #include"enemy.h"
-
+#define debuglog(a) std::cout<<a<<std::endl;
 
 BoundingSphere g_bsphere;//当たり判定の球オブジェクト
 BoundingSphere g_bsplayer;//自分用BS
-PlayerMgr::DIRECTION g_direction = PlayerMgr::DIRECTION::NEUTRAL;
-PlayerMgr::DIRECTION blink_direction = PlayerMgr::DIRECTION::NEUTRAL;
-#define debuglog(a) std::cout<<a<<std::endl;
+
+//マウス入力用変数
 static bool input = false;
 static bool input_flg = false;
 
-bool PlayerMgr::miss_flg_flg = false;			//ミスを一度だけにするフラグ
-bool PlayerMgr::miss_flg = false;//失敗したときのフラグ
-int PlayerMgr::StickXRig = 0;
-int PlayerMgr::StickYRig = 0;
 int PlayerMgr::player_vector_num = boids_num;//ボイドの初期値
 int PlayerMgr::in_player_vector_num = 0;//プレイヤーの周りにいるボイドの初期値
 int PlayerMgr::in_enemy_vector_num = 0;//エネミーの周りにいるボイドの初期値
 //int PlayerMgr::instance_zombie_num = 0;//エネミーの周りにいるボイドの初期値
 int PlayerMgr::unique_enemy_vector_num = 0;//エネミーの周りにいるボイドの初期値
 int PlayerMgr::unique_enemy_bomb_vector_num = 0;//エネミーの周りにいるボイドの初期値
-int PlayerMgr::RStickRigX = 0;
-int PlayerMgr::RStickRigY = 0;
 
-const int gridnum = 30;
+
+const int gridnum = 30;//グリッド分割のサイズ
+/// <summary>
+/// グリッド分割保存用変数
+////////////////////////////</summary>
 std::vector<Player> grid_vector[gridnum][gridnum] = {};
 std::vector<Player> grid_zombievector[gridnum][gridnum] = {};
 std::vector<ZombieBullet> grid_zombiebulletvector[gridnum][gridnum] = {};
 std::vector<UniqueEnemy_Bomb> grid_uniquebombvector[gridnum][gridnum] = {};
+//////////////////////////////
+//死んだキャラを格納する配列
 std::vector<Player> grid_bufvector;
 std::vector<Player> grid_bufzombievector;
 std::vector<ZombieBullet> grid_bufzombiebulletvector;
 std::vector<UniqueEnemy_Bomb> grid_bufuniquebombvector;
+///////////////////////
 
-//std::vector<shared_ptr<UniqueEnemy>> bufunique_enemy_vector[3][1] = {};//ゾンビ
-
+/// <summary>
+/// インスタンシングモデル
+/// </summary>
 CModelInstance cmodelinstance_unique_enemy;
 CModelInstance cmodelinstance_zombie;
 CModelInstance cmodelinstance_hyuman;
@@ -61,13 +62,15 @@ enemy g_test[5000];		// 敵
 CModel *g_model;
 using namespace std;
 
-
+/// <summary>
+/// ポジション格納用
+/// </summary>
 static XMFLOAT4X4 mat[HYUMANMAX];
 static XMFLOAT4X4 zmat[ZOMBIEMAX];
 static XMFLOAT4X4 zbmat[ZOMBIEBULLET];
 static XMFLOAT4X4 ubmat[UNIQUEBOMBMAX];
 static XMFLOAT3 zpos[ZOMBIEMAX];
-
+/////////////////////////////////////
 static int remakeflg = false;
 
 void PlayerMgr::Init()
@@ -76,19 +79,14 @@ void PlayerMgr::Init()
 	//動かすプレイヤーを生成
 	PlayerCreate();
 
+	/// <summary>
+	/// インスタンスモデル生成
+	/// </summary>
 	cmodelinstance_zombie.InitiInstancing(ZOMBIEMAX, "assets/3danime/cube.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/cube.png");
 	cmodelinstance_hyuman.InitiInstancing(HYUMANMAX, "assets/3danime/tritop.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/tritop.png");
 	cmodelinstance_zombiebullet.InitiInstancing(ZOMBIEBULLET, "assets/3danime/sphere.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/tritop.png");
 	cmodelinstance_uniquebomb.InitiInstancing(UNIQUEBOMBMAX, "assets/3danime/tritop.fbx", "shader/vsinstance.fx", "shader/ps.fx", "assets/3danime/sphere.png");
-	//cmodelinstance_hyuman.InitiInstancing(HYUMANMAX, "assets/3danime/Warzombie F Pedroso.fbx", "shader/vsinstance.fx", "shader/ps.hlsl", "assets/3danime/Ch21_1001_Diffuse.png ");
-	//// 敵を初期化
-	/*for (int i = 0; i < ENEMYMAX; i++) {
-		UniqueEnemy_Bomb buf;
-		buf.SetModel(&cmodelinstance_unique_enemy);
-		buf.Init();
-		instance_e_bomb.emplace_back(buf);
 
-	}*/
 	for (int i = 0; i < ZOMBIEMAX; i++) {
 		Player buf;
 		buf.SetInstanceModel(&cmodelinstance_zombie);
@@ -128,12 +126,6 @@ void PlayerMgr::Update()
 {	
 	Player::GetInstance()->CheckBox();
 
-	//プレイヤーのパッド角度を最初に取ってくる
-	StickXRig = XIController::GetStickRig(LXPOS);//スティックのXの角度　ー100～100
-	StickYRig = XIController::GetStickRig(LYPOS);//スティックのYの角度　ー100～100
-	//計算し角度に
-	pad_rig = GetKakudo(StickXRig, StickYRig);//Lスティックの角度
-	
 											  //配列の移動など
 	PlayerUpdate();
 
@@ -143,10 +135,13 @@ void PlayerMgr::Update()
 void PlayerMgr::Draw()
 {
 	
-	
+	//プレイヤーの弾描画
 	BulletMgr::GetInstance()->Draw();
 
 
+	/// <summary>
+	/// hpやレイなどの描画処理
+	/// </summary>
 	for (int i = 0; i < ZOMBIEMAX; i++) {
 
 		XMFLOAT3	pos;
@@ -175,9 +170,13 @@ void PlayerMgr::Draw()
 			instance_uniquebomb.at(i).UpdateHP();
 		}
 	}
+	/////////////////////////////////
 
 	unique_enemy_vector.clear();
 
+	/// <summary>
+	/// モデルの描画処理
+	/// </summary>
 	cmodelinstance_hyuman.DrawInstance();
 	cmodelinstance_zombie.DrawInstance();
 	cmodelinstance_zombiebullet.DrawInstance();
@@ -203,23 +202,7 @@ void PlayerMgr::Finsh()
 	player_vector.resize(0);
 
 	player_vector_num = 0;
-	//for (auto& n : in_player_vector) {
-	//	n->Finalize();
-	//}
-	//for (auto& n : in_enemy_vector) {
-	//	n->Finalize();
-	//}
-	/*for (auto& n : instance_zombie) {
-		n->Finalize();
-	}
-	for (int i = 0; i < unique_enemy_vector.size(); i++)
-	{
-		unique_enemy_vector[i]->Finalize();
-	}
-	for (auto& n : unique_enemy_bomb_vector)
-	{
-		n.Finalize();
-	}*/
+
 	
 	instance_zombie.clear();
 	instance_zombiebullet.clear();
@@ -268,8 +251,12 @@ void PlayerMgr::Finsh()
 
 void PlayerMgr::PlayerUpdate()
 {
+	//初期モデル
 	ImPlayer->FollowUpdate();
 
+	/// <summary>
+	/// キャラの変数バイナリー保存
+	/// </summary>
 	if (Player::GetInstance()->save)
 	{
 		Player::GetInstance()->SaveNum();
@@ -282,6 +269,9 @@ void PlayerMgr::PlayerUpdate()
 	}
 	Player::GetInstance()->Gui();
 
+	/// <summary>
+	/// ステータスを確認し、状態を変更する
+	////////////////////////////////////////////// </summary>
 	for (int i = 0; i < instance_zombie.size();i++)
 	{
 		if (instance_zombie.at(i).GetHp() == 0)
@@ -324,6 +314,10 @@ void PlayerMgr::PlayerUpdate()
 			}
 		}
 	}
+	/// //////////////////////////////////////////////////
+	
+
+	//グリッドの中身消去
 	for (int m = 0; m < gridnum; m++)
 	{
 		for (int n = 0; n < gridnum; n++)
@@ -334,6 +328,7 @@ void PlayerMgr::PlayerUpdate()
 			grid_uniquebombvector[m][n].clear();
 		}
 	}
+	//配列の中身消去
 	grid_bufzombievector.clear();
 	grid_bufvector.clear();
 	grid_bufzombiebulletvector.clear();
@@ -341,6 +336,7 @@ void PlayerMgr::PlayerUpdate()
 
 	for (int i = 0; i < HYUMANMAX; i++)
 	{
+		//生きているAIだけグリッドに分ける
 		if (instance_hyuman.at(i).bstatus == Player::BSTATUS::LIVE)
 		{
 			int column = CHeight_Map::GetInstance()->iPixSize / int((instance_hyuman.at(i).location.x + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
@@ -353,24 +349,34 @@ void PlayerMgr::PlayerUpdate()
 			grid_bufvector.emplace_back(std::move((instance_hyuman.at(i))));
 		}
 	}
+
 	instance_hyuman.clear();
 	for (int i = 0; i < ZOMBIEMAX;i++)
 	{
+		//生きているAIだけ,二次元配列に格納
 		if (instance_zombie.at(i).bstatus == Player::BSTATUS::LIVE)
 		{
-			int zcolumn = CHeight_Map::GetInstance()->iPixSize / int((instance_zombie.at(i).location.x + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
-			int zrow = CHeight_Map::GetInstance()->iPixSize / int((instance_zombie.at(i).location.y + CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
+			//AIの場所を地面の解像度に変更
+			int zcolumn = CHeight_Map::GetInstance()->iPixSize / int((instance_zombie.at(i).location.x 
+				+ CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
+			int zrow = CHeight_Map::GetInstance()->iPixSize / int((instance_zombie.at(i).location.y 
+				+ CHeight_Map::GetInstance()->iPixSize * 0.5f * Ground::GetInstance()->scaling));
+			//格納
 			grid_zombievector[zcolumn][zrow].emplace_back(instance_zombie.at(i));
 			
 		}
 		else
 		{
+			//死んでいるAI格納
 			grid_bufzombievector.emplace_back(instance_zombie.at(i));
 			
 		}
 	}
 	instance_zombie.clear();
 
+	/// <summary>
+	/// 弾の状態確認
+	/// </summary>
 	for (int i = 0; i < ZOMBIEBULLET; i++)
 	{
 		if(instance_zombiebullet.at(i).m_sts == ZOMBIEBSTS::LIVE)
@@ -391,6 +397,9 @@ void PlayerMgr::PlayerUpdate()
 
 	instance_zombiebullet.clear();
 
+	/// <summary>
+	/// ユニークエネミーグリッド分割
+	/// </summary>
 	for (int i = 0; i < UNIQUEBOMBMAX; i++)
 	{
 		if (instance_uniquebomb.at(i).ubstatus == UniqueEnemy_Bomb::UBSTATUS::LIVE)
@@ -411,10 +420,8 @@ void PlayerMgr::PlayerUpdate()
 
 	instance_uniquebomb.clear();
 
-	
-	//static XMFLOAT4X4 zmat[ZOMBIEMAX];
-	static unsigned int animno = 0;
-	//int zonbiecnt = 0;
+
+	//グリッド分割したものを隣だけ見てくる
 	for (int m = 0; m < gridnum; m++)
 	{
 		for (int n = 0; n < gridnum; n++)
@@ -435,40 +442,6 @@ void PlayerMgr::PlayerUpdate()
 						buf_vec.push_back(buf);
 					}
 
-					//if (m != 0)
-					//{
-					//	for (int w = 0; w < grid_zonbievector[m - 1][n].size(); w++)
-					//	{
-					//		Player* buf = &grid_zonbievector[m - 1][n].at(w);
-					//		buf_vec.push_back(buf);
-					//	}
-					//}
-					//if (n != 0)
-					//{
-					//	for (int w = 0; w < grid_zonbievector[m][n - 1].size(); w++)
-					//	{
-					//		Player* buf = &grid_zonbievector[m][n - 1].at(w);
-					//		buf_vec.push_back(buf);
-					//	}
-					//}
-					//if (m != gridnum)
-					//{
-					//	for (int w = 0; w < grid_zonbievector[m + 1][n].size(); w++)
-					//	{
-					//		Player* buf = &grid_zonbievector[m + 1][n].at(w);
-					//		buf_vec.push_back(buf);
-					//	}
-					//}
-					//if (n != gridnum)
-					//{
-					//	for (int w = 0; w < grid_zonbievector[m][n + 1].size(); w++)
-					//	{
-					//		Player* buf = &grid_zonbievector[m][n + 1].at(w);
-					//		buf_vec.push_back(buf);
-					//	}
-					//}
-
-
 					for (int w = 0; w < grid_vector[m][n].size(); w++)
 					{
 						Player* buf = &grid_vector[m][n].at(w);
@@ -481,43 +454,11 @@ void PlayerMgr::PlayerUpdate()
 						buf_ubvec.push_back(buf);
 					}
 
-	/*				if (m != 0)
-					{
-						for (int w = 0; w < grid_vector[m - 1][n].size(); w++)
-						{
-							Player* buf = &grid_vector[m - 1][n].at(w);
-							buf_pvec.push_back(buf);
-						}
-					}
-					if (n != 0)
-					{
-						for (int w = 0; w < grid_vector[m][n - 1].size(); w++)
-						{
-							Player* buf = &grid_vector[m][n - 1].at(w);
-							buf_pvec.push_back(buf);
-						}
-					}
-					if (m != gridnum)
-					{
-						for (int w = 0; w < grid_vector[m + 1][n].size(); w++)
-						{
-							Player* buf = &grid_vector[m + 1][n].at(w);
-							buf_pvec.push_back(buf);
-						}
-					}
-					if (n != gridnum)
-					{
-						for (int w = 0; w < grid_vector[m][n + 1].size(); w++)
-						{
-							Player* buf = &grid_vector[m][n + 1].at(w);
-							buf_pvec.push_back(buf);
-						}
-					}*/
 
 				}
 				// 敵更新
 				grid_zombievector[m][n].at(i).zonbie_run(buf_vec, buf_pvec, mousevelocity,buf_ubvec);
-				grid_zombievector[m][n].at(i).ZonbieUpdate(animno, 1);
+				grid_zombievector[m][n].at(i).PlayerAIUpdate(0, 1);
 		
 				grid_zombievector[m][n].at(i).boids_attack(buf_pvec, grid_zombievector[m][n].at(i), buf_ubvec);
 			}
@@ -525,8 +466,6 @@ void PlayerMgr::PlayerUpdate()
 		}
 	}
 
-//	cmodelinstance_zombie.Update(zmat);
-	//zonbiecnt = 0;
 	velocityflg = false;
 	scatterflg = false;
 
@@ -537,7 +476,8 @@ void PlayerMgr::PlayerUpdate()
 	}
 
 	static XMFLOAT4X4 phmat[HYUMANMAX];
-//int hyumancnt = 0;
+
+	//プレイヤーのグリッド分割を隣だけ確認
 	for (int m = 0; m < gridnum; m++)
 	{
 		for (int n = 0; n < gridnum; n++)
@@ -573,19 +513,10 @@ void PlayerMgr::PlayerUpdate()
 	
 				}
 				
-
-				//XMFLOAT4X4	world;
-
-				//DX11MtxFromQt(world, g_enemy[i].GetRotation());
-
+				//各キャラのupdate
 				grid_vector[m][n].at(i).boid_run(buf_pvec, buf_vec);
 				grid_vector[m][n].at(i).Update(false,buf_zbvec);
 
-
-				//world = grid_vector[m][n].at(i).GetMtx();
-				//phmat[hyumancnt] = world;
-
-				//hyumancnt += 1;
 			}
 		}
 	}
@@ -614,7 +545,7 @@ void PlayerMgr::PlayerUpdate()
 					}
 
 				}
-
+				//ユニークエネミー更新
 				grid_uniquebombvector[m][n].at(i).UEnemy_run(buf_pvec);
 				grid_uniquebombvector[m][n].at(i).Update(buf_pvec,buf_zbvec);
 			}
@@ -627,7 +558,7 @@ void PlayerMgr::PlayerUpdate()
 	buf_ubvec.clear();
 
 
-	//弾行進
+	//弾のグリッド確認
 	for (int m = 0; m < gridnum; m++)
 	{
 		for (int n = 0; n < gridnum; n++)
@@ -646,7 +577,7 @@ void PlayerMgr::PlayerUpdate()
 					}
 
 				}
-
+				//球更新
 				grid_zombiebulletvector[m][n].at(i).Update(buf_pvec);
 			}
 
@@ -654,15 +585,16 @@ void PlayerMgr::PlayerUpdate()
 	}
 
 	buf_zbvec.clear();
-
+	////
 	//死んだaiを遠くへ飛ばす
+	//////////////////////////////////////////
 	for (int i = 0; i < grid_bufvector.size(); i++)
 	{
 		grid_bufvector.at(i).Update(false,buf_zbvec);
 	}
 	for (int i = 0; i < grid_bufzombievector.size(); i++)
 	{
-		grid_bufzombievector.at(i).ZonbieUpdate(0, 0);
+		grid_bufzombievector.at(i).PlayerAIUpdate(0, 0);
 	}
 	buf_pvec.clear();
 	for (int i = 0; i < grid_bufzombiebulletvector.size(); i++)
@@ -674,9 +606,9 @@ void PlayerMgr::PlayerUpdate()
 		grid_bufuniquebombvector.at(i).Update(buf_pvec,buf_zbvec);
 	}
 
-	//cmodelinstance_hyuman.Update(phmat);
-
-
+	/////////////////////////////////////////
+	//グリッドの中身を移し替える
+	////////////////////////////////////
 	for (int m = 0; m < gridnum; m++)
 	{
 		for (int n = 0; n < gridnum; n++)
@@ -737,82 +669,53 @@ void PlayerMgr::PlayerUpdate()
 		instance_uniquebomb.emplace_back(std::move(grid_bufuniquebombvector.at(i)));
 	}
 
+	/////////////////////////////////////////////////////////////////////ここまで
 	
 
+	//敵をインスタンス用に配列に格納
 	for (int i = 0; i < HYUMANMAX; i++) {
 	
 		XMFLOAT4X4	world;
 		world = instance_hyuman[i].GetMtx();;
-		//DX11MtxFromQt(world, g_enemy[i].GetRotation());
-	
-		mat[i] = world;
-		
+		mat[i] = world;		
 	}
 	cmodelinstance_hyuman.Update(mat);
 
 	
-
+	//プレイヤーをインスタンス用に配列に格納
 	for (int i = 0; i < ZOMBIEMAX; i++) {
 
 		XMFLOAT4X4	world;
 		world = instance_zombie[i].GetMtx();;
-		//DX11MtxFromQt(world, g_enemy[i].GetRotation());
-
 		zmat[i] = world;
 	}
 	cmodelinstance_zombie.Update(zmat);
 
-//	BoidsHp::GetInstance()->Update(zmat);
-
-
-
-
+	//球をインスタンス用に配列に格納
 	for (int i = 0; i < ZOMBIEBULLET; i++)
 	{
 		XMFLOAT4X4	world;
 		world = instance_zombiebullet[i].GetMtx();
-		//DX11MtxFromQt(world, g_enemy[i].GetRotation());
-
 		zbmat[i] = world;
 	}
 	cmodelinstance_zombiebullet.Update(zbmat);
 
-	//for (int i = 0; i < unique_enemy_bomb_vector_num; i++)
-	//{
-	//	if (unique_enemy_bomb_vector.at(i).GetHp() <= 0)
-	//	{
-	//		unique_enemy_bomb_vector.at(i).UEDelete(i, unique_enemy_bomb_vector);
-	//		unique_enemy_bomb_vector_num--;
-	//	}
 
-	//}
-	//static XMFLOAT4X4 mat[ENEMYMAX];
-	//// 敵更新
-	//for (int i = 0; i < ENEMYMAX; i++) {
-	//	g_enemy[i].UEnemy_run(instance_zombie);
-	//	g_enemy[i].Update();
-	//	XMFLOAT4X4	world;
-	//	world = g_enemy[i].GetMtx();;
-	//	//DX11MtxFromQt(world, g_enemy[i].GetRotation());
-	//
-	//	mat[i] = world;
-	//}
-
-		static XMFLOAT4X4 uemat[UNIQUEBOMBMAX];
-	// 敵更新u
+	static XMFLOAT4X4 uemat[UNIQUEBOMBMAX];
+	//ユニークな敵をインスタンス用に配列に格納
 	for (int i = 0; i < UNIQUEBOMBMAX; i++) {
 		
 		XMFLOAT4X4	world;
 		world = instance_uniquebomb.at(i).GetMtx();;
-		//DX11MtxFromQt(world, g_enemy[i].GetRotation());
-	
 		mat[i] = world;
 	}
 	cmodelinstance_uniquebomb.Update(mat);
 
 
 
-
+	/// <summary>
+	/// マウス操作
+	/// </summary>
 	if (CDirectInput::GetInstance().GetMouseLButtonTrigger())
 	{
 		scattercnt += 30;
@@ -820,6 +723,7 @@ void PlayerMgr::PlayerUpdate()
 		r_mousepos = { 0,0 };
 		mousevelocity = { 0,0 };
 
+		//マウスの位置調整
 		mousestate = Mouse_state::Push_One;
 		p_mousepos.x = CDirectInput::GetInstance().GetMousePosX();
 		p_mousepos.y = CDirectInput::GetInstance().GetMousePosY();
@@ -827,6 +731,7 @@ void PlayerMgr::PlayerUpdate()
 		p_mousepos.y = Application::CLIENT_HEIGHT / 2 - p_mousepos.y;
 
 
+		//分散処理
 		XMFLOAT3 pppos = {};
 		if (scattercnt > 90)
 		{
@@ -839,7 +744,7 @@ void PlayerMgr::PlayerUpdate()
 		}
 		for (int i = 0; i < ZOMBIEMAX;i++)
 		{
-
+			//ダッシュのベクトルを取っている
 			pppos = instance_zombie[i].Screenpos(instance_zombie[i].GetPos());
 			pppos.x -= Application::CLIENT_WIDTH / 2;
 			pppos.y = Application::CLIENT_HEIGHT / 2 - pppos.y;
@@ -855,7 +760,8 @@ void PlayerMgr::PlayerUpdate()
 
 			if (scatterflg  == true)
 			{
-				if (dist < 250)
+				//近い敵だけ分散
+				if (dist < 150)
 				{
 					instance_zombie[i].zombie_scatterflg = true;
 				}
@@ -867,7 +773,7 @@ void PlayerMgr::PlayerUpdate()
 	if (scattercnt < 0)scattercnt = 0;
 
 
-
+	//集合処理
 	if (CDirectInput::GetInstance().GetMouseLButtonCheck())
 	{
 		mousecnt++;
@@ -876,6 +782,8 @@ void PlayerMgr::PlayerUpdate()
 			gatherflg = true;
 		}
 	}
+
+	//離したときの場所を取得
 	if (CDirectInput::GetInstance().GetMouseLButtonRelease())
 	{
 		r_mousepos.x = CDirectInput::GetInstance().GetMousePosX();
@@ -912,44 +820,18 @@ void PlayerMgr::PlayerUpdate()
 			if (instance_hyuman.at(i).bstatus != Player::BSTATUS::DEAD)
 			{
 				instance_hyuman.at(i).bstatus = Player::BSTATUS::DEAD;
-			/*	for (int a = 0; a < ZOMBIEMAX;a++)
-				{
-					if (instance_zombie.at(a).bstatus == Player::BSTATUS::DEAD)
-					{
-						instance_zombie.at(a).zombie_reborn(instance_hyuman.at(i).GetMtx()._41, instance_hyuman.at(i).GetMtx()._42, instance_hyuman.at(i).GetMtx()._43);
 
-						break;
-					}
-				}*/
 			}
 		}
 	}
-	// インスタンスバッファを更新
-//	g_air.Update(mat);
-
-	//static XMFLOAT4X4 testmat[5000];
-	//// 敵更新
-	//for (int i = 0; i < 5000; i++) {
-	//	g_test[i].Update();
-	//	
-	//	XMFLOAT4X4	world;
-	//	world = g_test[i].GetMtx();;
-	////	DX11MtxFromQt(world, g_test[i].GetRotation());
-
-	//	testmat[i] = world;
-	//}
-//	g_ene.TestUpdate(testmat);
-	//InstanceModelMgr::GetInstance().InstanceUpdate("assets/f1.x.dat",mat);
+	
 	{
-		//ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
+	
 		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
 
 		ImGui::Begin("config 4");
 
 		ImGui::SetNextWindowSize(ImVec2(300, 400));
-		//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
-
-		//ImGui::DragInt("zonbie_num",&instance_zombie_num);
 		ImGui::DragInt("player_num",&player_vector_num);
 		ImGui::End();
 		ImGui::PopStyleColor();
@@ -958,16 +840,18 @@ void PlayerMgr::PlayerUpdate()
 
 
 }
+/// <summary>
+/// 弾の再生成
+/// </summary>
+/// <param name="mtx"></param>
+/// <param name="pos"></param>
 void PlayerMgr::ZombieBulletRemake(XMFLOAT4X4 mtx, XMFLOAT3 pos)
 {
 
 	for (int i = 0; i < grid_bufzombiebulletvector.size(); i++)
 	{
 		if (grid_bufzombiebulletvector.at(i).isLive() == false) {
-			//初期位置セット
-			//(it)->SetInitialPos(it->GetMtx()._41, it->GetMtx()._42, it->GetMtx()._43);
-			//発射方向をセット
-		//	grid_bufzombiebulletvector.at(i).SetDirection(mtx);
+		
 			grid_bufzombiebulletvector.at(i).Remake(pos,XMFLOAT3(mtx._31,mtx._32,mtx._33));
 			break;
 		}
@@ -976,25 +860,9 @@ void PlayerMgr::ZombieBulletRemake(XMFLOAT4X4 mtx, XMFLOAT3 pos)
 
 
 }
-//
-//void PlayerMgr::BoidsCreate(float x, float z)
-//{
-//	shared_ptr<Player> pl;
-//	pl = std::make_shared<Player>();
-//	pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::PLAYER)].modelname));
-//	pl->Init();
-//	if ((x == 0)&&(z == 0))
-//	{
-//		pl->boid_Init(pl->GetPos().x, pl->GetPos().z);
-//	}
-//	else
-//	{
-//		pl->boid_Init(x, z);
-//	}
-////	pl->SetScale(10.0f, 10.0f, 10.0f);
-//	player_vector.emplace_back(std::move(pl));
-//}
-//
+/// <summary>
+/// プレイヤー生成
+/// </summary>
 void PlayerMgr::PlayerCreate()
 {
 	std::unique_ptr<Player> p;
@@ -1005,67 +873,13 @@ void PlayerMgr::PlayerCreate()
 //	p->inside = true;
 	ImPlayer = std::move(p);
 }
-//
-//void PlayerMgr::EnemyCreate()
-//{
-//	std::unique_ptr<Player> p;
-//	p = std::make_unique<Player>();
-//	p->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::BOX)].modelname));
-//	p->CharengerInit();
-//	p->boid_player_Init(p->GetPos().x, p->GetPos().z);
-//	
-//	ImEnemy = std::move(p);
-//}
-//
-//void PlayerMgr::BuildCreate(XMFLOAT3 pos)
-//{
-//	std::unique_ptr<Build> p;
-//	p = std::make_unique<Build>();
-//	p->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::BOX)].modelname));
-//	p->Init(pos);
-//	build_vector.emplace_back(std::move(p));
-//
-//}
-//
-//void PlayerMgr::ZonbieCreate()
-//{
-//	shared_ptr<Player> pl;
-//	pl = std::make_shared<Player>();
-//	pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::ONE)].modelname));
-//	pl->Init();
-//	pl->zonbie_Init(pl->GetPos().x, pl->GetPos().z);
-//	pl->SetScale(0.1f, 0.1f, 0.1f);
-//	instance_zombie_num++;
-//	instance_zombie.emplace_back(std::move(pl));
-//
-//}
-
-//void PlayerMgr::UEnemyCreate()
-//{
-//	shared_ptr<UniqueEnemy> pl;
-//	pl = std::make_shared<UniqueEnemy>();
-//	pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::BOX)].modelname));
-//	pl->Init();
-//	unique_enemy_vector_num++;
-//	unique_enemy_vector.emplace_back(std::move(pl));
-//}
 
 void PlayerMgr::UEnemyBombCreate()
 {
-	//shared_ptr<UniqueEnemy_Bomb> pl;
-	//pl = std::make_shared<UniqueEnemy_Bomb>();
-	//pl->SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::PLAYER)].modelname));
-	////pl->SetInstanceModel(InstanceModelMgr::GetInstance().GetInstanceModelPtr(Scean::GetInstance()->g_modelinstancelist[static_cast<int>(Scean::MODELIID::PLAYER)].modelname));
-	//
-	//pl->Init();
-	//
-	//unique_enemy_bomb_vector_num++;
-	//unique_enemy_bomb_vector.emplace_back(std::move(pl));
+
 }
 
-
-
-
+//パッドでのトリガー操作
 bool PlayerMgr::Pat_Short_Move()
 {
 

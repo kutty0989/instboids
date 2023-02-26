@@ -179,13 +179,8 @@ public:
 
 	//////////////////////
 	
-	///////////////////
-	//スティック
-	/////////////////////
-	static int RStickRigX;//LスティックのXの傾き　-100～100
-	static int RStickRigY;//LスティックのYの傾き　-100～100
-	static int StickXRig;//パッドの角度ｘ
-	static int StickYRig;//パッドの角度ｙ
+
+
 	float pad_rig = 0.0f;//Lスティックの角度
 	/////////////////////
 
@@ -237,10 +232,7 @@ public:
 		return player_pad_flg;
 	}
 
-	XMFLOAT2 Getpad_rig()
-	{
-		return XMFLOAT2(StickXRig, StickYRig);
-	}
+
 
 	XMFLOAT3 Screenpos(XMFLOAT3 World_Pos);
 private:

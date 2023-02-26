@@ -79,7 +79,7 @@ void Score::Update(int num,int kurai)
 	
 	m_texture->SetPosition(bpos.x, bpos.y, bpos.z);
 	m_texture->SetScale(bscale.x, bscale.y, bscale.z);
-	m_texture->SetRotation(angle);
+//	m_texture->SetRotation(angle);
 	b_num = num;
 
 	switch (num)

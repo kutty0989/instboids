@@ -17,103 +17,112 @@
 #include"UniqueEnemy_Bomb.h"
 #include<random>
 
-class Scean;
+#define w_height window_height 
+#define w_width window_width
+#define PI 3.141592635
+#define debuglog(a) std::cout<<a<<std::endl;
 
+class Scean;
 XAudio audio;						//音楽ならす
 
 
 static float m_rig;//プレイヤーの現在の角度保存用
-static float ay;
-static float bay;
 
-//float Player::accel = 0.0f;
-#define debuglog(a) std::cout<<a<<std::endl;
+/// <summary>
+/// AIのパラメーターのstatic変数
+/// </summary>
+/////////////////////////////////////////////////////////
 
+//地形のスケール	
 float scaling = Ground::GetInstance()->scaling;
+	
+/// <summary>
+/// 小さく赤いAIの適応するかどうかのルール
+/// </summary>
 
-
-
-
-#define w_height window_height 
-#define w_width window_width
-#define PI 3.141592635
-
-
+//分離
 bool Player::hsepflg = false;
- bool Player::haliflg = false;
+//整列
+bool Player::haliflg = false;
+//スロープ
+bool Player::slopeflg = false;
+//ポケット
+bool Player::pocketflg = false;
+//最高速度
+float Player::hyumanmaxspeed;//1.5
 
- bool Player::slopeflg = false;
- bool Player::pocketflg = false;
+float Player::hyumanrandspeed;//5
+//整列の範囲
+float Player::alidist;//40
+//分離の範囲
+float Player::sepdist;//10
+//逃避範囲
+float Player::sepzonbiedist;//30
+//分離速度
+float Player::sepspeed;//2.0
+//逃げる時間
+float Player::septime;//30
+
+/// <summary>
+/// 操作プレイヤーの変数
+/// </summary>
+bool Player::zdashflg = false;
+bool Player::zscaflg = false;
+bool Player::zsepflg = false;
+bool Player::zcohflg = false;
+bool Player::zserflg = false;
+bool Player::zawaflg = false;
+
+bool Player::dmgflg = false;
+bool Player::changeflg = false;
+
+bool Player::bbombflg = false;
+bool Player::bserflg = false;
+bool Player::texspeedflg = false;
+bool Player::shootflg = false;
 
 
- bool Player::zdashflg = false;
- bool Player::zscaflg = false;
- bool Player::zsepflg = false;
- bool Player::zcohflg = false;
- bool Player::zserflg = false;
- bool Player::zawaflg = false;
+float Player::zonbiehp;//２
+float Player::zonbiemaxspeed;//8.5
+float Player::zonbiedownspeed;//0.05f
+//////////////////////////////////////////////
 
- bool Player::dmgflg = false;
- bool Player::changeflg = false;
+//ユニークな敵の変数
+float Player::bombdist;//100
+//zonbiesearch
+int Player::Searchcnt;//70
+float Player::Seachspeed;//0.3f
+float Player::Seachtime;//50
 
- bool Player::bbombflg = false;
- bool Player::bserflg = false;
- 
- 
- bool Player::texspeedflg = false;
- bool Player::shootflg = false;
+float Player::chasedist;//50
+float Player::chasespeed;//1.5
+float Player::chasetime;//30
+float Player::Dashspeed;//3.5f
+float Player::Dashtime;//40
+
+//zonbiesep
+float Player::Sepdist;//10
+float Player::Sepspeed;//1.
+					   
+//集合速度
+float Player::cohspeed;//１．０
+
+//zombieaway
+float Player::zombiawayspeed;//1.5
+float Player::zombieawaytime;//１０
+
+//ゾンビとのダメージ距離
+float Player::zombirange;//15
+float Player::damage;//１．０
+
+bool Player::save = false;
+bool Player::load = false;
+
+float length = 200;
+///////////////////////////////////////////////////////////
 
 
- //人間の速さ
-  float Player:: hyumanmaxspeed;//1.5
-  float Player:: hyumanrandspeed;//5
 
- //hyumanali
-  float Player:: alidist;//40
-
-
- //hyumnsep
-  float Player:: sepdist;//10
-  float Player:: sepzonbiedist;//30
-  float Player:: sepspeed;//2.0
-  float Player:: septime;//30
-
-
-  float Player:: zonbiehp;//２
-  float Player:: zonbiemaxspeed;//8.5
-  float Player:: zonbiedownspeed;//0.05f
-
- //zonbiedamage
-  float Player:: bombdist;//100
- //zonbiesearch
-  int Player::Searchcnt;//70
-  float Player:: Seachspeed;//0.3f
-  float Player:: Seachtime;//50
-
-  float Player:: chasedist;//50
-  float Player:: chasespeed;//1.5
-  float Player:: chasetime;//30
-
-  float Player:: Dashspeed;//3.5f
-  float Player:: Dashtime;//40
-
- //zonbiesep
-  float Player:: Sepdist;//10
-  float Player:: Sepspeed;//1.0
-
- //集合速度
-  float Player:: cohspeed;//１．０
-
-  //zombieaway
-  float Player::zombiawayspeed;//1.5
-  float Player::zombieawaytime;//１０
-
- //ゾンビとのダメージ距離
-  float Player:: zombirange;//15
-  float Player:: damage;//１．０
-
-   bool Player::save = false;
-   bool Player::load = false;
 
 //go 元の座標値
 //to　行先の座標値
@@ -123,9 +132,6 @@ T LeapID(T _go, T _to, float _ratio)
 {
 	return _go * (1.0f - _ratio) + _to * (T)_ratio;
 }
-
-
-
 
 bool Player::Init() {
 
@@ -139,6 +145,7 @@ bool Player::Init() {
 	float posz = rand() % 400 - 200;//初期値
 	SetPos(XMFLOAT3(posx, 0.0f, posz));//初期値
 	
+	//角度の初期
 	angle.x = 0.0f;
 	angle.z = 0.0f;
 	angle.y = 0.0f;
@@ -155,34 +162,40 @@ bool Player::CharengerInit()
 	//XYZの軸を取り出し保管
 	SetQutenion();
 
+	//場所の初期値
 	float posx = rand() % 400;
 	float posz = rand() % 400;
 	posx -= 200;
 	posz -= 200;
-	SetPos(XMFLOAT3(0, 0.0f, 0));
+	//場所を０に
+	SetPos(XMFLOAT3(0, 0, 0));
+	//角度を調整
 	angle.x = -90.0f;
 	angle.z = 0.0f;
 	angle.y = -90.0f;
 	SetAngle();
+
 	champion = true;
 
 	return true;
 }
 
-
-
+/// <summary>
+/// 小さく赤いAIの初期化
+/// </summary>
+/// <param name="x"></param>
+/// <param name="y"></param>
 void Player::boid_Init(float x, float y)
 {
+	//初期値
 	float xx = rand() % 100 - 50.0f;
 	float yy = rand() % 100 - 50.0f;
+	//生存している状態に
 	BSTATUS::LIVE;
 	acceleration = Pvector(1, 1);
 	velocity = Pvector(xx, yy);//加速度
 	location = Pvector(x, y);//ポジション
-	//float sp = rand() % 5;
-	//sp *= 0.1f;
 	maxSpeed = 1.0f; //+sp;
-//	maxSpeed *= 0.5f;
 	maxForce = 0.7f;
 	hp = 1;
 	boid_accel = 1.0f;
@@ -198,6 +211,12 @@ void Player::boid_Init(float x, float y)
 
 }
 
+/// <summary>
+/// 操作するAIの初期値
+/// </summary>
+/// <param name="x">初期場所</param>
+/// <param name="y"></param>
+/// <param name="nowzombiecnt"></param>
 void Player::zonbie_Init(float x, float y, int nowzombiecnt)
 {
 
@@ -219,6 +238,7 @@ void Player::zonbie_Init(float x, float y, int nowzombiecnt)
 	CohW = 1.0;
 	boid_accel = 0.0f;
 
+	//hpUIの初期化
 	boidshp.Init();
 	if (ZOMBIE >= nowzombiecnt)
 	{
@@ -232,33 +252,14 @@ void Player::zonbie_Init(float x, float y, int nowzombiecnt)
 	}
 }
 
-
-
 void Player::boid_player_Init(float x, float y)
 {
 
-
-	//acceleration = Pvector(0, 0);
-	//velocity = Pvector(PlayerMgr::GetInstance()->StickXRig, PlayerMgr::GetInstance()->StickYRig);//加速度
-	////velocity = Pvector(0, 0);//加速度
-	//location = Pvector(x, y);//ポジション
-	//maxSpeed = hyumanmaxspeed;
-	//maxForce = 0.5;
-	//follow = Follow::PLAYER;
-
-	//champion = true;
-	//desSep = 5;
-	//desAli = 40;
-	//desCoh = 50;
-	//SepW = 1.0;
-	//AliW = 1.0;
-	//CohW = 0.2;
 
 }
 
 void Player::follow_Init()
 {
-	//SetModel(ModelMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_modellist[static_cast<int>(Scean::MODELID::ONE)].modelname));
 	SetScale(0.1f, 0.1f, 0.1f);
 
 	maxSpeed = 3.5;
@@ -273,10 +274,16 @@ void Player::follow_Init()
 	SepW = 1.0;
 	AliW = 1.0;
 	CohW = 1.0;
-	//boidshp.Init();
+
 }
 
 
+/// <summary>
+/// AI再生成の関数
+/// </summary>
+/// <param name="x"></param>
+/// <param name="y"></param>
+/// <param name="z"></param>
 void Player::zombie_reborn(float x, float y,float z)
 {
 	bstatus = Player::BSTATUS::LIVE;
@@ -286,8 +293,12 @@ void Player::zombie_reborn(float x, float y,float z)
 	reborn_flg = true;
 }
 
+/// <summary>
+/// ｈｐの更新
+/// </summary>
 void Player::UpdateHp() {
 
+	//生きてるＡｉだけ
 	if (follow == Follow::ZONBIE)
 	{
 		boidshp.UpdateHp(hp);
@@ -295,32 +306,33 @@ void Player::UpdateHp() {
 		boidshp.Draw();
 	}
 }
+
+/// <summary>
+/// ｘｙｚ軸にラインを引く
+/// </summary>
 void Player::HyumanDrawAxis() {
 	drawaxis(m_mtx, 5.0f, XMFLOAT3(m_mtx._41, m_mtx._42, m_mtx._43));
 }
 
-
+/// <summary>
+/// /モデルを描画とラインをxyzに引く
+/// </summary>
 void Player::DrawWithAxis() {
-
 	// モデル描画
 	drawaxis(m_mtx, 200, m_pos);
-//	Draw();
-
 }
 
 struct FLOAT3
 {
 	float x, y, z;
-
 };
 
 
-float length = 200;
+
 
 void Player::Update(bool input, std::vector<ZombieBullet*> zbvec) {
 
-
-
+	//ＡＩを倒したときの流れ
 	if (bstatus == BSTATUS::LIVE)
 	{
 		for (int i = 0; i < zbvec.size(); i++)
@@ -330,14 +342,15 @@ void Player::Update(bool input, std::vector<ZombieBullet*> zbvec) {
 				float disx = this->GetMtx()._41 - zbvec.at(i)->GetMtx()._41;
 				float disy = this->GetMtx()._43 - zbvec.at(i)->GetMtx()._43;
 				float dist = disx * disx + disy * disy;
+			//弾と当たったら
 				if (length > dist)
 				{
 					this->hp = 0;
 					this->m_sts = Player::STATUS::DEAD;
 					zbvec.at(i)->m_sts = ZOMBIEBSTS::DEAD;
-
+					//スコアを足す
 					PlayerMgr::GetInstance()->ScoreNum += 10;
-
+					//爆発演出
 					BillBoardMgr::GetInstance()->ExplsionCreate(XMFLOAT3(this->GetMtx()._41, this->GetMtx()._42, this->GetMtx()._43));
 				}
 			}
@@ -346,9 +359,10 @@ void Player::Update(bool input, std::vector<ZombieBullet*> zbvec) {
 
 	if (bstatus == BSTATUS::LIVE)
 	{
+		//マップから出ないように
 		boid_borders();
 
-
+		///減速処理
 		if (awaycnt > 0)
 		{
 			awaycnt -= 1;
@@ -359,17 +373,20 @@ void Player::Update(bool input, std::vector<ZombieBullet*> zbvec) {
 				boid_accel -= 0.03f;
 			}
 		}
+		//一定以下の遅さにしないように
 		if (boid_accel < 1.0f)
 		{
 			boid_accel = 1.0f;
 		}
 		if (boid_accel > 4.0f)boid_accel = 4.0f;
+		///////////
 
 		//各行列を初期化
 		DX11MtxIdentity(scale);
 		DX11MtxIdentity(trans);
 		DX11MtxIdentity(rot);
 		DX11MtxIdentity(world);
+
 
 		scale._11 = 2.0f;
 		scale._22 = 2.0f;
@@ -385,16 +402,13 @@ void Player::Update(bool input, std::vector<ZombieBullet*> zbvec) {
 		velocity.mulScalar(boid_accel);
 		location.addVector(velocity);
 
-
+		//向き調整
 		angle.y = -GetAtan(velocity.x, velocity.y);
 		//角度調整
 		angle.y -= 90.0f;
-	
 		SetAngle();
 	
-	/*	angle.y -= b_angle;
-		b_angle = ang;*/
-
+		//mtx計算
 		DX11MtxMultiply(world, scale, rot);
 
 		m_pos.x = location.x;
@@ -408,21 +422,28 @@ void Player::Update(bool input, std::vector<ZombieBullet*> zbvec) {
 		world._42 = trans._42;
 		world._43 = trans._43;
 
+		//行列適応
 		m_mtx = world;
 
 	}
 	else
 	{
+		//死んでいる処理
 		m_mtx._41 = 10000;
 	}
 }
 
 
-
-void Player::ZonbieUpdate(int animenum, int i)
+/// <summary>
+/// 操作するAIの更新
+/// </summary>
+/// <param name="animenum"></param>
+/// <param name="i"></param>
+void Player::PlayerAIUpdate(int animenum, int i)
 {
 	if (bstatus == BSTATUS::LIVE)
 	{
+		//ノックバック処理
 		if (knockbackcnt > 0)
 		{
 			knockbackflg = true;
@@ -435,8 +456,9 @@ void Player::ZonbieUpdate(int animenum, int i)
 			knockbackcnt = 0;
 		}
 
-
+		//地形から出ないように
 		boid_borders();
+		//行列初期化
 		DX11MtxIdentity(scale);
 		DX11MtxIdentity(trans);
 		DX11MtxIdentity(rot);
@@ -450,7 +472,7 @@ void Player::ZonbieUpdate(int animenum, int i)
 		axisZ.w = 0.0f;
 
 		angle.y = 0.0f;
-
+		//角度調整
 		angle.y = -GetKakudo(angley.x, angley.y);
 		angle.y -= 90.0f;
 		if (angle.y > 360)
@@ -458,27 +480,23 @@ void Player::ZonbieUpdate(int animenum, int i)
 			angle.y -= 360.0f;
 		}
 
-
+		//再生成関数
 		if (reborn_flg)
 		{
-			/*	location.x = rebornpos.x;
-				location.y = rebornpos.y;
-				m_pos.x = location.x;
-				m_pos.z = location.y;
-				Ground::GetInstance()->GetPlayerHeight(*this);
-				reborn_flg = false;*/
+			
 		}
 		else
 		{
+			//高さを求める関数
 			Ground::GetInstance()->GetPlayerHeight(*this);
+			
+			//速度を落とさず移動する
 			if (awaycnt > 0)
 			{
 				awaycnt -= 1;
 			}
 			if (awaycnt == 0) {
-
 				boid_accel -= 0.05f;
-
 			}
 			if (boid_accel < 0)
 			{
@@ -492,7 +510,10 @@ void Player::ZonbieUpdate(int animenum, int i)
 			{
 				boid_accel = 2.5f;
 			}
+			/////////////
 
+
+			//加速度ノーマライズ
 			acceleration.normalize();
 
 			acceleration.mulScalar(boid_accel);
@@ -508,8 +529,8 @@ void Player::ZonbieUpdate(int animenum, int i)
 
 		}
 
-		//		Ground::GetInstance()->GetPlayerHeight(*this);
 
+		//場所調整
 		trans._41 = m_pos.x;
 		trans._42 = m_pos.y + 4.0f;
 		trans._43 = m_pos.z;
@@ -519,7 +540,7 @@ void Player::ZonbieUpdate(int animenum, int i)
 		scale._33 = 5.2f;
 
 
-
+		//角度調整
 		float ang = angle.y;
 		SetAngle();
 		angle.y -= b_angle;
@@ -527,20 +548,19 @@ void Player::ZonbieUpdate(int animenum, int i)
 
 		DX11MtxMultiply(world, scale, rot);
 
-
-
 		world._41 = trans._41;
 		world._42 = trans._42;
 		world._43 = trans._43;
 
-
 		m_mtx = world;
 
+		//バレットを打つ処理
 		if (shootflg == true)
 		{
 			bulletcnt++;
 			if (bulletcnt == 30)
 			{
+				//バレット生成
 				PlayerMgr::GetInstance()->ZombieBulletRemake(this->GetMtx(), XMFLOAT3(this->GetMtx()._41, this->GetMtx()._42, this->GetMtx()._43));
 				bulletcnt = 0;
 			}
@@ -548,11 +568,15 @@ void Player::ZonbieUpdate(int animenum, int i)
 	}
 	else
 	{
+	//死んだときの処理
 	m_mtx._41 = 10000;
 	}
 
 }
-//使ってない
+
+/// <summary>
+/// メインキャラの更新　
+/// </summary>
 void Player::FollowUpdate()
 {
 
@@ -587,16 +611,22 @@ void Player::FollowUpdate()
 
 
 void Player::Finalize() {
-//	m_model->Uninit();
+	m_model->Uninit();
 }
 
 
-
+//加速度を追加
 void Player::applyForce(const Pvector& force)
 {
 	acceleration.addVector(force);
 }
 
+/// <summary>
+/// 小さいAIの配列から移動と消去
+/// </summary>
+/// <param name="arraynum"></param>
+/// <param name="player_vector1"></param>
+/// <param name="player_vector2"></param>
 void Player::Move_And_Delete(float arraynum, std::vector<Player*> player_vector1, std::vector<Player*> player_vector2)
 {
 	//1の配列へ２の配列の要素番号を移動
@@ -612,32 +642,12 @@ void Player::Delete(float arraynum, std::vector<Player*> Player_Vector1)
 	Player_Vector1.erase(Player_Vector1.begin() + arraynum);
 }
 
-
+//攻撃関数
 void Player::boids_attack(std::vector<Player*>& player_vector, Player& zonbie, std::vector<UniqueEnemy_Bomb*>& unique_enemy_vector)
 {
 	if (changeflg)
 	{
-		//for (auto& i : player_vector)
-		//{
-		//	float dd = i->location.distance(zonbie.location);					
-
-		//	//hp減産処理
-		//	if (dd < zombirange)
-		//	{
-		//		i->hp = 0;
-
-		//	}
-		//}
-
-		//for (auto& u : unique_enemy_vector)
-		//{
-		//	float dd = u->location.distance(zonbie.location);
-
-		//	if (dd < 25)
-		//	{
-		//	//	u.hp -= 1;
-		//	}
-		//}
+		
 	}
 }
 
@@ -661,6 +671,11 @@ Pvector Player::boid_seek(const Pvector& v)
 	return acceleration;
 }
 
+/// <summary>
+/// 視界の範囲を前方90度だけにする
+/// </summary>
+/// <param name="player_vector"></param>
+/// <returns></returns>
 Pvector Player::boid_view(std::vector<Player*> player_vector)
 {
 	// How far can it see?
@@ -697,6 +712,13 @@ void Player::boid_run(std::vector<Player*> player_vector, std::vector<Player*> z
 
 }
 
+/// <summary>
+/// 操作するAIの全更新
+/// </summary>
+/// <param name="player_vector"></param>
+/// <param name="human_vector"></param>
+/// <param name="mousevec"></param>
+/// <param name="uniquebomb"></param>
 void Player::zonbie_run(std::vector<Player*> player_vector, std::vector<Player*> human_vector, Pvector mousevec, std::vector<UniqueEnemy_Bomb*>& uniquebomb)
 {
 	zonbie_flock(player_vector,human_vector, mousevec,uniquebomb);
@@ -726,70 +748,50 @@ void Player::boid_flock(std::vector<Player*> player_vector, std::vector<Player*>
 	if (follow == Follow::HYUMAN)
 	{
 		alifalse_cnt -= 1;
-	
+
 		if (alifalse_cnt < -10000)alifalse_cnt = -40;
 		if (hsepflg)
 		{
-			
-			{
-				sep = boid_Separation(player_vector, zonbie_vector);
-			}
-			
-			
-
+			sep = boid_Separation(player_vector, zonbie_vector);
 		}
-
-		//avo = boid_Avoid(zonbie_vector);
 
 		if (haliflg)
 		{
 			if (alifalse_cnt < 0)
 			{
 				ali = boid_Alignment(player_vector);
-		
-			
 			}
 		}
 		if (pocketflg)
 		{
 			down = boid_Down();
 		}
-		//if (hcohflg)
-		//{
-		////	coh = boid_Cohesion(player_vector);
-		//}
-		//
-		
 	}
 
 	//これらの力を任意に重み付けする
-	//cen.mulScalar(CohW);
 	sep.mulScalar(1.5f);
 	ali.mulScalar(1.0f); // さまざまな特性の重みを変更する必要がある場合があります
 	avo.mulScalar(1.0f); // さまざまな特性の重みを変更する必要がある場合があります
 	down.mulScalar(1.0f);
-	
-	//  力ベクトルを加速度に加える
 
+	//  力ベクトルを加速度に加える
 	applyForce(sep);
 	applyForce(avo);
 	applyForce(ali);
 	applyForce(down);
-	//applyForce(coh);
-	//applyForce(cen);
 
 }
 
 void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player*> human_vector, Pvector mousevec, std::vector<UniqueEnemy_Bomb*>& uniquebomb)
 {
+	//ルールのベクトルの初期化
 	sep = { 0,0 };
 	ali = { 0,0 };
 	coh = { 0,0 };
 	awa = { 0,0 };
 	dmg = { 0,0 };
 
-	
-
+	//分散処理
 	if (PlayerMgr::GetInstance()->scatterflg)
 	{
 		if (zscaflg)
@@ -799,7 +801,7 @@ void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player
 		}
 	}
 
-	//分散している時以外は行う
+	//分散している時とノックバック以外は行う
 	if ((!zombie_scatterflg) && (!knockbackflg))
 	{
 		if ((boid_accel < 0.5f) || (PlayerMgr::GetInstance()->gatherflg))
@@ -809,15 +811,16 @@ void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player
 				sep = boid_inSeparation(player_vector);
 			}
 		}
-
+		//集合処理
 		if (PlayerMgr::GetInstance()->gatherflg)
 		{
 			if (zcohflg)
 			{
 				awaycnt = 0;
-				coh = boid_inCohesion(player_vector);
+				coh = boid_Gather(player_vector);
 			}
 		}
+		//探索処理
 		if ((!PlayerMgr::GetInstance()->gatherflg) && (!PlayerMgr::GetInstance()->scatterflg))
 		{
 			if (zserflg)
@@ -828,6 +831,7 @@ void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player
 				}
 			}
 		}
+		//アウェイ処理
 		if (!PlayerMgr::GetInstance()->gatherflg) {
 			if (zawaflg)
 			{
@@ -837,6 +841,7 @@ void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player
 				}
 			}
 		}
+		//ダッシュ処理
 		if (zdashflg)
 		{
 			ali = boid_zonbieAlignment(mousevec);
@@ -851,7 +856,6 @@ void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player
 	//これらの力を任意に重み付けする
 	//cen.mulScalar(CohW);
 	sep.mulScalar(SepW);
-
 	coh.mulScalar(CohW);
 	awa.mulScalar(1.0f);
 	dmg.mulScalar(3.0f);
@@ -884,8 +888,6 @@ void Player::boid_update()
 		velocity.normalize();
 		//  制限速度
 		velocity.mulScalar(hyumanmaxspeed);
-		//velocity.limit(hyumanmaxspeed);
-	
 
 		// 各サイクルで加速度を 0 にリセットする
 		acceleration.mulScalar(0);
@@ -900,20 +902,6 @@ void Player::boid_update()
 			{
 				this->boid_accel = cohspeed;
 			}
-			//else if (PlayerMgr::GetInstance()->scatterflg)
-			//{
-			//	//acceleration.mulScalar(0);
-
-			////	this->boid_accel = PlayerMgr::GetInstance()->accel;
-			//}
-
-			//スローダウンを急激にしないために
-			//acceleration.mulScalar(0.35f);
-
-			//velocity.mulScalar(boid_accel);
-
-
-
 			velocity.mulScalar(0);
 			if (boid_accel <= 0.2f)
 			{
@@ -924,7 +912,9 @@ void Player::boid_update()
 }
 
 
-
+/// <summary>
+/// マップの外に出ないようにする処理
+/// </summary>
 void Player::boid_borders()
 {
 
@@ -972,17 +962,7 @@ Pvector Player::boid_Separation(std::vector<Player*> player_vector, std::vector<
 	{
 
 		float d = location.distance(it->location);
-		//// 現在のボイドが捕食者であり、私たちが見ているボイドも捕食者である場合
-		//// 捕食者は近づいて、その後わずかに分離
-		//if ((d > 0) && (d < desiredseparation) && predator == true
-		//	&& it->predator == true) {
-		//	desired = { 0,0 };
-		//	desired = desired.subTwoVector(location, it->location);
-		//	desired.normalize();
-		//	desired.divScalar(d);
-		//	steer.addVector(desired);
-		//	count++;
-		//}
+	
 		// 現在のボイドが捕食者ではなく、私たちが見ているボイドが
 		// 捕食者、次に大きな分離 Pvector を作成します
 		if ((d > 0) && (d < sepzonbiedist) && it->predator == true) {
@@ -1013,17 +993,22 @@ Pvector Player::boid_Separation(std::vector<Player*> player_vector, std::vector<
 	return steer;
 }
 
+/// <summary>
+/// 避ける関数
+/// </summary>
+/// <param name="player_vector"></param>
+/// <returns></returns>
 Pvector Player::boid_Avoid(std::vector<Player*> player_vector)
 {
 	Pvector stt = { 0,0 };
 	for (auto& it : player_vector)
 	{
-		XMFLOAT3 diff = XMFLOAT3(it->GetPos().x-this->GetPos().x , 0.0f, it->GetPos().z-this->GetPos().z);//障害物との距離
+		XMFLOAT3 diff = XMFLOAT3(it->GetPos().x - this->GetPos().x, 0.0f, it->GetPos().z - this->GetPos().z);//障害物との距離
 
 		//差を出す
 		float distance;
-		DX11Vec3Dot(distance,diff, diff);
-	
+		DX11Vec3Dot(distance, diff, diff);
+
 		sqrt(distance);
 		float aboidrange = 450.0f;
 		float escaperange = 50.0f;
@@ -1037,17 +1022,18 @@ Pvector Player::boid_Avoid(std::vector<Player*> player_vector)
 		{
 			return desired = { 0, 0 };
 		}
-
+		//ターゲットとのベクトルを正規化
 		XMFLOAT3 target2ObstacleDirection;
 		DX11Vec3Normalize(target2ObstacleDirection, diff);
 
-		XMFLOAT3 forward= XMFLOAT3(this->angley.x,1.0f,this->angley.y);
-		
+		XMFLOAT3 forward = XMFLOAT3(this->angley.x, 1.0f, this->angley.y);
+
 		DX11Vec3Normalize(forward, forward);
 
+		//内角を求める
 		float directionDot;
 		DX11Vec3Dot(directionDot, target2ObstacleDirection, forward);
-		
+
 		//
 		if (directionDot < 0) // 前方向に障害物がないか
 		{
@@ -1056,14 +1042,14 @@ Pvector Player::boid_Avoid(std::vector<Player*> player_vector)
 
 		XMFLOAT3 forward2DiffCross;
 		XMFLOAT3 forward2DiffCrossv;
-	//	DX11Vec3Normalize(diff, diff);
-		DX11Vec3Cross(forward2DiffCross, diff,forward);
-		DX11Vec3Cross(forward2DiffCrossv, forward,diff);
+		
+		DX11Vec3Cross(forward2DiffCross, diff, forward);
+		DX11Vec3Cross(forward2DiffCrossv, forward, diff);
 
 		float forward2ObstacleDistance;
 		DX11Vec3Length(forward2DiffCross, forward2ObstacleDistance);
 
-		if (forward2ObstacleDistance> escaperange) // 障害物から逃げる範囲と速度ベクトルの直線が重なっていないか
+		if (forward2ObstacleDistance > escaperange) // 障害物から逃げる範囲と速度ベクトルの直線が重なっていないか
 		{
 			return desired = { 0, 0 };
 		}
@@ -1071,6 +1057,7 @@ Pvector Player::boid_Avoid(std::vector<Player*> player_vector)
 		const float crossElementSum = forward2DiffCross.x + forward2DiffCross.y + forward2DiffCross.z;
 		//const XMFLOAT3 axis;
 
+		//距離が近すぎないか判断
 		if (crossElementSum != 0)
 		{
 			DX11Vec3Normalize(forward2DiffCross, forward2DiffCross);
@@ -1084,23 +1071,22 @@ Pvector Player::boid_Avoid(std::vector<Player*> player_vector)
 		desired = { forward2DiffCross.x,forward2DiffCross.z };
 
 		XMFLOAT4X4 vec;
-		float aa = GetKakudo(forward2DiffCross.x,forward2DiffCross.z);
-		DX11MtxRotationAxis(forward2DiffCross,aa,vec);
-		
-	//	stt = stt.subTwoVector(velocity, desired); //sum = desired(average)
+		float aa = GetKakudo(forward2DiffCross.x, forward2DiffCross.z);
+		DX11MtxRotationAxis(forward2DiffCross, aa, vec);
 
 	}
-	//	const float3x3 avoidTorque = CalcAvoidObstacleTorque(boidData.position, velocity);
-//	const float3 avoidVelocity = mul(velocity, avoidTorque);
 	return desired;
 	
 }
 
+/// <summary>
+/// 分離関数
+/// </summary>
+/// <param name="player_vector"></param>
+/// <returns></returns>
 Pvector Player::boid_inSeparation(std::vector<Player*> player_vector)
 {
 	// ボイド間分離視野距離
-//	this->desSep;//視野　プレイヤーからの距離
-
 	if (this->follow == Follow::ZONBIE)
 	{
 	///	acceleration = { 0,0 };
@@ -1110,7 +1096,7 @@ Pvector Player::boid_inSeparation(std::vector<Player*> player_vector)
 		if (PlayerMgr::GetInstance()->gatherflg)
 		{
 			Sepdist -= 0.1f;
-			//Sepdist = max(Sepdist, 10.0f);
+			
 
 			if (Sepdist < 10.0f)
 			{
@@ -1120,7 +1106,7 @@ Pvector Player::boid_inSeparation(std::vector<Player*> player_vector)
 		else if (!PlayerMgr::GetInstance()->gatherflg)
 		{
 			Sepdist += 0.2f;
-		///	Sepdist = min(Sepdist, 25.0f);
+	
 			if (Sepdist > 25.0f)
 			{
 				Sepdist = 25.0f;
@@ -1140,8 +1126,7 @@ Pvector Player::boid_inSeparation(std::vector<Player*> player_vector)
 			float d = location.distance(it->location);
 			if ((d > 0) && (d < Sepdist)) {
 
-				//desiredseparation /= count;
-					// これが仲間のボイドであり、近すぎる場合は、離れてください
+				// これが仲間のボイドであり、近すぎる場合は、離れてください
 				if ((d > 0) && (d < Sepdist)) {
 					desired = { 0,0 };
 					desired = desired.subTwoVector(location, it->location);
@@ -1153,10 +1138,7 @@ Pvector Player::boid_inSeparation(std::vector<Player*> player_vector)
 				}
 			}
 		}
-
-
 	}
-
 
 	// 位置の平均差を加速度に加算
 	if (count > 0)
@@ -1202,7 +1184,6 @@ Pvector Player::boid_Alignment(std::vector<Player*> player_vector)
 					}
 				}
 			}
-
 		}
 	}
 	// 整列するのに十分近いボイドがある場合...
@@ -1238,13 +1219,6 @@ Pvector Player::boid_Down()
 	angle.y = GetAtan(velocity.x, velocity.y);
 
 
-	/*	if (angle.y > 360)angle.y -= 360.0f;
-		else if (angle.y < 0)angle.y += 360.f;
-		velocity.x = -cosf(((angle.y) * 3.14159265358979323846 / 180.0f));
-		velocity.y = -sinf(((angle.y) * 3.14159265358979323846 / 180.0f));*/
-
-
-
 		//左回転用の角度
 	left_angle = angle.y + 45.f;
 	if (left_angle > 360)left_angle -= 360.0f;
@@ -1270,10 +1244,16 @@ Pvector Player::boid_Down()
 
 }
 
-
+/// <summary>
+/// AIのダッシュ関数
+/// </summary>
+///マウスで囲ったキャラをスワイプで操作する
+/// <param name="mousepos"></param>
+/// <returns></returns>
 Pvector Player::boid_zonbieAlignment(Pvector mousepos)
 {
 
+	//マウスの中にいるか
 	if (insideflg)
 	{
 		if (PlayerMgr::GetInstance()->velocityflg)
@@ -1323,10 +1303,10 @@ Pvector Player::boid_zonbieAway(std::vector<Player*> player_vector)
 				nearplayer = it->location;
 			}
 		}
+		//一定範囲内か
 		if ((before_distanse > 0) && (before_distanse < chasedist))
 		{
 	
-
 			desired = { 0,0 };
 			desired = desired.subTwoVector(location, nearplayer);
 			desired.normalize();
@@ -1346,16 +1326,23 @@ Pvector Player::boid_zonbieAway(std::vector<Player*> player_vector)
 	return desired;
 }
 
+/// <summary>
+/// 近くのAIを探す動きをする
+/// </summary>
+/// <returns></returns>
 Pvector Player::boid_zonbieSearch()
 {
+	//ランダム初期化
 	std::random_device seed_gen;
 	std::mt19937 engine(seed_gen());
 	std::uniform_int_distribution<int32_t> rand4(0,10000);
 	std::uniform_int_distribution<int32_t> rand5(-150,150);
 	
+	
 	int cnt = rand4(seed_gen)% Searchcnt;
 	if (cnt == 0)
 	{
+		//ランダムに出された数値を向きに使う
 		vel = { 0,0 };
 		desired = { 0,0 };
 
@@ -1450,6 +1437,11 @@ Pvector Player::Zombie_Scatter()
 	return desired;
 }
 
+/// <summary>
+/// 爆弾によるダメージを受けるかどうか
+/// </summary>
+/// <param name="uniquebomb"></param>
+/// <returns></returns>
 Pvector Player::zonbie_damage(std::vector<UniqueEnemy_Bomb*>& uniquebomb)
 {
 	for (auto& b : BulletMgr::GetInstance()->g_bullets) {
@@ -1461,6 +1453,7 @@ Pvector Player::zonbie_damage(std::vector<UniqueEnemy_Bomb*>& uniquebomb)
 			ali_vel.y = b->GetMtx()._43;
 
 			float d = location.distance(ali_vel);
+			//爆弾のレンジ
 			if (d < bombdist)
 			{
 				//aa
@@ -1488,6 +1481,7 @@ Pvector Player::zonbie_damage(std::vector<UniqueEnemy_Bomb*>& uniquebomb)
 
 		}
 	}
+	//全てのユニークな敵の存在を確認
 	for (auto& b : uniquebomb){
 		if (b->ubstatus== UniqueEnemy_Bomb::UBSTATUS::LIVE)
 		{
@@ -1499,9 +1493,7 @@ Pvector Player::zonbie_damage(std::vector<UniqueEnemy_Bomb*>& uniquebomb)
 			float d = location.distance(ali_vel);
 			if (d < bombdist)
 			{
-				//aa
-				//ali_vel = { 0,0 };
-				//velocity = { 0,0 };
+			
 				acceleration = { 0,0 };
 
 				vel = { 0,0 };
@@ -1527,21 +1519,22 @@ Pvector Player::zonbie_damage(std::vector<UniqueEnemy_Bomb*>& uniquebomb)
 	return desired;
 }
 
-
-
-//集合
-Pvector Player::boid_inCohesion(std::vector<Player*> player_vector)
+/// <summary>
+/// AIの集合操作
+/// </summary>
+/// <param name="player_vector"></param>
+/// <returns></returns>
+Pvector Player::boid_Gather(std::vector<Player*> player_vector)
 {
 
 	desired = { 0,0 };
 	ali_vel = { 0,0 };
 	acceleration = { 0,0 };
 
-
-
 	if (this->follow == Follow::ZONBIE)
 	{
 
+		
 		this->boid_accel = 0;
 		vel = { 0,0 };
 		//	ali_vel = { 0,0 };
@@ -1549,11 +1542,14 @@ Pvector Player::boid_inCohesion(std::vector<Player*> player_vector)
 		acceleration = { 0,0 };
 		XMFLOAT3 pos = {};
 		Pvector now_mousepos = { 0,0 };
+
+		//マウスで長押しした場所を取得
 		now_mousepos.x = CDirectInput::GetInstance().GetMousePosX();
 		now_mousepos.y = CDirectInput::GetInstance().GetMousePosY();
 		now_mousepos.x -= Application::CLIENT_WIDTH / 2 * 1.0f;
 		now_mousepos.y = Application::CLIENT_HEIGHT / 2 * 1.0f - now_mousepos.y;
 
+		//スクリーン座標に変換
 		pos = Screenpos(this->GetPos());
 		pos.x -= Application::CLIENT_WIDTH / 2;
 		pos.y = Application::CLIENT_HEIGHT / 2 - pos.y;
@@ -1561,9 +1557,7 @@ Pvector Player::boid_inCohesion(std::vector<Player*> player_vector)
 		vel.x = pos.x;
 		vel.y = pos.y;
 
-
-
-		desired = desired.subTwoVector(now_mousepos, vel); //sum = desired(average)
+		desired = desired.subTwoVector(now_mousepos, vel); 
 		desired.normalize();
 
 		if (anglecnt == 0) {
@@ -1576,7 +1570,6 @@ Pvector Player::boid_inCohesion(std::vector<Player*> player_vector)
 			anglecnt = 0;
 		}
 
-		//this->boid_accel = 1.2f;
 
 	}
 
@@ -1584,7 +1577,11 @@ Pvector Player::boid_inCohesion(std::vector<Player*> player_vector)
 
 }
 
-
+/// <summary>
+/// スクリーン座標上に変換
+/// </summary>
+/// <param name="World_Pos"></param>
+/// <returns></returns>
 XMFLOAT3 Player::Screenpos(XMFLOAT3 World_Pos) {
 
 	XMFLOAT4X4 g_view = CCamera::GetInstance()->GetViewMatrix();//ビュー変換取得
@@ -1664,7 +1661,9 @@ XMFLOAT3 Player::GetAngle()
 }
 
 
-
+/// <summary>
+/// guiの変数を表示する
+/// </summary>
 void Player::CheckBox()
 {
 	{
@@ -1739,6 +1738,7 @@ void Player::CheckBox()
 	}
 }
 
+//ルールを初期化する
 void Player::UnCheckBox()
 {
 	hsepflg = false;
@@ -1763,6 +1763,9 @@ void Player::UnCheckBox()
 	bserflg = false;
 }
 
+/// <summary>
+/// ルールのセーブ機能
+/// </summary>
 void Player::SaveNum()
 {
 
@@ -1800,7 +1803,7 @@ void Player::SaveNum()
 }
 
 
-
+//aiの値のロード
 void Player::LoadNum()
 {
 	Save::GetInstance()->save2 = Save::GetInstance()->Loadvin2("assets/boids.dat");
@@ -1843,63 +1846,72 @@ void Player::Gui()
 
 	if (ImGui::CollapsingHeader(u8"Hyuman_Stance"))
 	{
-		ImGui::DragFloat("maxspeed", &hyumanmaxspeed);
-		ImGui::DragFloat("rand_speed", &hyumanrandspeed);
+		ImGui::SliderFloat("maxspeed", &hyumanmaxspeed, 0.0f, 3.0f);
+		ImGui::SliderFloat("rand_speed", &hyumanrandspeed, 0.0f, 5.0f);
+
 		if (ImGui::CollapsingHeader(u8"Alignment"))
 		{
-			ImGui::DragFloat("ali_dist", &alidist);
+			ImGui::SliderFloat("ali_dist", &alidist, 0.0f, 100.0f);
+	
 		}
 		if (ImGui::CollapsingHeader(u8"Separation"))
 		{
-			ImGui::DragFloat("sep_dist", &sepdist);
-			ImGui::DragFloat("sep_zonbiedist", &sepzonbiedist);
-			ImGui::DragFloat("sep_speed ", &sepspeed);
-			ImGui::DragFloat("sep_time", &septime);
-
+			ImGui::SliderFloat("sep_dist", &sepdist, 0.0f, 50.0f);
+			ImGui::SliderFloat("sep_zonbiedist", &sepzonbiedist, 0.0f, 100.0f);
+			ImGui::SliderFloat("sep_speed ", &sepspeed, 0.0f,4.0f);
+			ImGui::SliderFloat("sep_time", &septime, 0.0f, 100.0f);
+		
 		}
 	}
 	if (ImGui::CollapsingHeader(u8"Zombie_Stance"))
 	{
 		ImGui::DragFloat("hp", &zonbiehp);
-		ImGui::DragFloat("max_speed", &zonbiemaxspeed);
-		ImGui::DragFloat("down_speed", &zonbiedownspeed);
-		ImGui::DragFloat("attack_range", &zombirange);
-		ImGui::DragFloat("damage", &damage);
+		ImGui::SliderFloat("max_speed", &zonbiemaxspeed, 0.0f, 20.0f);
+		ImGui::SliderFloat("down_speed", &zonbiedownspeed, 0.0f, 0.5f);
+		ImGui::SliderFloat("attack_range", &zombirange, 0.0f, 40.0f);
+		ImGui::SliderFloat("damage", &damage, 0.0f, 5.0f);
 	
 		if (ImGui::CollapsingHeader(u8"bomb_range"))
 		{
-			ImGui::DragFloat("bomb_range", &bombdist);
+			ImGui::SliderFloat("bomb_range", &bombdist, 0.0f, 200.0f);
 		}
 		if (ImGui::CollapsingHeader(u8"Search"))
 		{
-			ImGui::DragInt("CD_randtime", &Searchcnt);
-			ImGui::DragFloat("Ser_speed", &Seachspeed);
-			ImGui::DragFloat("Ser_time", &Seachtime);
+			ImGui::SliderInt("CD_randtime", &Searchcnt, 0, 200);
+			ImGui::SliderFloat("Ser_speed", &Seachspeed, 0.0f, 2.0f);
+			ImGui::SliderFloat("Ser_time", &Seachtime, 0.0f, 200.0f);
+		
 		}
 		if (ImGui::CollapsingHeader(u8"Chase"))
 		{
-			ImGui::DragFloat("chase_dist", &chasedist);
-			ImGui::DragFloat("chase_speed", &chasespeed);
-			ImGui::DragFloat("chase_time", &chasetime);
+			ImGui::SliderFloat("chase_dist", &chasedist, 0.0f, 200.0f);
+			ImGui::SliderFloat("chase_speed", &chasespeed, 0.0f, 3.0f);
+			ImGui::SliderFloat("chase_time", &chasetime, 0.0f, 100.0f);
+
 		}
 		if (ImGui::CollapsingHeader(u8"Dash"))
 		{
-			ImGui::DragFloat("Dash_speed", &Dashspeed);
-			ImGui::DragFloat("Dash_time", &Dashtime);
+			ImGui::SliderFloat("Dash_speed", &Dashspeed, 0.0f, 10.0f);
+			ImGui::SliderFloat("Dash_time", &Dashtime, 0.0f, 100.0f);
+
 		}
 		if (ImGui::CollapsingHeader(u8"Separation"))
 		{
-			ImGui::DragFloat("Sep_dist", &Sepdist);
-			ImGui::DragFloat("Sep_speed", &Sepspeed);
+			ImGui::SliderFloat("Sep_dist", &Sepdist, 0.0f, 50.0f);
+			ImGui::SliderFloat("Sep_speed", &Sepspeed, 0.0f, 5.0f);
+
 		}
 		if (ImGui::CollapsingHeader(u8"togather"))
 		{
-			ImGui::DragFloat("tog_speed", &cohspeed);
+			ImGui::SliderFloat("Sep_speed", &Sepspeed, 0.0f, 5.0f);
+			ImGui::SliderFloat("tog_speed", &cohspeed, 0.0f, 5.0f);
+
 		}
 		if (ImGui::CollapsingHeader(u8"away"))
 		{
-			ImGui::DragFloat("away_time", &zombieawaytime);
-			ImGui::DragFloat("away_speed", &zombiawayspeed);
+			ImGui::SliderFloat("away_time", &zombieawaytime, 0.0f, 30.0f);
+			ImGui::SliderFloat("away_speed", &zombiawayspeed, 0.0f, 5.0f);
+
 		}
 	}
 	ImGui::Checkbox("Paramater_Save", &save);

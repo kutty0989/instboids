@@ -14,9 +14,9 @@ class UniqueEnemy_Bomb;
 class ZombieBullet;
 
 #define		ZOMBIEMAX		10
-#define		ZOMBIE		    1
+#define		ZOMBIE		    10
 #define		HYUMANMAX		500
-#define		UNIQUEBOMBMAX	1
+#define		UNIQUEBOMBMAX	10
 
 
 class Player :public GameObject {
@@ -39,7 +39,7 @@ private:
 
 
 
-	XMFLOAT3 screenpos;
+	XMFLOAT3 screenpos;//スクリーン上のマウスの場所
 	Pvector vel;
 	Pvector ali_vel;//フリック操作のベクトル
 
@@ -47,37 +47,150 @@ private:
 
 
 public:
-	XMFLOAT2 angley;//角度保存用
-	XMFLOAT4X4 rot = {};
-	XMFLOAT4X4 scale = {};
-	XMFLOAT4X4 trans = {};
-	XMFLOAT4X4 world = {};
-	float b_angle = 0.0f;
-	int bulletcnt = 0;
-
-	XMFLOAT2 left_vec;//自分から＋90度の角度
-	XMFLOAT2 right_vec;//自分から-90度の角度
-	XMFLOAT2 opposite_vec;//自分から＋180度の角度
-	float left_angle;
-	float right_angle;
-	float opposite_angle;
-
-	Pvector uedesired;//計算用の変数
-	Pvector uesteer;//計算用の変数
-
-	Pvector ueser = { 0,0 };
-	Pvector uesep = { 0,0 };
-	Pvector ueatt = { 0,0 };
 
 
-	static Player* GetInstance()
-	{
-		static Player instance;
-		return &instance;
-	}
+	void applyForce(const Pvector& force);//3法則を加速度に加える
+	// Three Laws that boids follow
 
-	void CheckBox();
-	void UnCheckBox();
+	/// <summary>
+	///配列１から配列２に移動し、削除する
+	/// </summary>
+	/// <param name="arraynum">要素番号</param>
+	/// <param name="Player_Vector1"></param>
+	/// <param name="Player_Vector2"></param>
+	void Move_And_Delete(float arraynum, std::vector<Player*> Player_Vector1, std::vector<Player*> Player_Vector2);
+
+	void Delete(float arraynum, std::vector<Player*> Player_Vector1);
+
+	/// <summary>
+	/// 分離　近づきすぎたら離れるように
+	/// </summary>
+	/// <param name="Player_Vector">boidsの配列</param>
+	/// <returns>方向ベクトル</returns>
+	Pvector boid_Separation(std::vector<Player*> player_vector, std::vector<Player*> zonbie_vector);
+
+
+	Pvector boid_Avoid(std::vector<Player*> player_vector);
+	/// <summary>
+	/// 分離　プレイヤーの範囲にいるboidsが近づきすぎないように
+	/// </summary>
+	/// <param name="Player_Vector"></param>
+	/// <param name="implayer"></param>
+	/// <returns></returns>
+	Pvector boid_inSeparation(std::vector<Player*> player_vector);
+	/// <summary>
+	/// 整列 周りと速度と方向を合わせる
+	/// </summary>
+	/// <param name="Player_Vector"></param>
+	/// <returns></returns>
+	Pvector boid_Alignment(std::vector<Player*> player_vector);
+
+
+	/// <summary>
+	/// 下る　周りを見て低いほうへ移動
+	/// </summary>
+	/// <param name="player_vector"></param>
+	/// <returns></returns>
+	Pvector boid_Down();
+
+	/// <summary>
+		/// プレイヤーの範囲にいるboidsがプレイヤーの速度と方向を合わせる
+		/// </summary>
+		/// <param name="Player_Vector"></param>
+		/// <param name="implayer"></param>
+		/// <returns></returns>
+	Pvector boid_zonbieAlignment(Pvector mousepos);
+
+	/// <summary>
+	/// 追跡　人間を追いかけ、追いつけずあきらめる
+	/// </summary>
+	/// <param name="player_vector"></param>
+	/// <returns></returns>
+	Pvector boid_zonbieAway(std::vector<Player*> human_vector);
+
+	/// <summary>
+	/// 探索　うろうろする
+	/// </summary>
+	/// <returns></returns>
+	Pvector boid_zonbieSearch();
+
+	/// <summary>
+	/// 結合　周りにいるbboidsの中心へ向かおうとする
+	/// </summary>
+	/// <param name="Player_Vector"></param>
+	/// <returns></returns>
+	Pvector boid_Cohesion(std::vector<Player*> player_vector);
+
+	/// <summary>
+	/// 分散　ゾンビがマウスの場所から離れていく
+	/// </summary>
+	/// <returns></returns>
+	Pvector Zombie_Scatter();
+	/// <summary>
+	/// 結合　プレイヤーの範囲にいるboidsがプレイヤーに向かう
+	/// </summary>
+	/// <param name="Player_Vector"></param>
+	/// <param name="implayer"></param>
+	/// <returns></returns>
+	Pvector boid_Gather(std::vector<Player*> player_vector);
+	//Functions involving SFML and visualisation linking
+
+	/// <summary>
+	/// 最高速度に制限し目的地へ向かう
+	/// </summary>
+	/// <param name="v"></param>
+	/// <returns></returns>
+	Pvector boid_seek(const Pvector& v);
+	/// <summary>
+	/// 視野角を前方90度に
+	/// </summary>
+	/// <param name="Player_Vector"></param>
+	/// <param name="implayer"></param>
+	/// <returns></returns>
+	Pvector boid_view(std::vector<Player*> player_vector);
+	/// <summary>
+	/// mgrクラスで呼び出す関数　updateを纏めた物
+	/// </summary>
+	/// <param name="Player_Vector"></param>
+	/// <param name="implayer"></param>
+	void boid_run(std::vector<Player*> player_vector, std::vector<Player*> zonbie_vector);
+
+	/// <summary>
+	/// mgrクラスで呼び出す関数　updateを纏めた物
+	/// </summary>
+	/// <param name="player_vector"></param>
+	/// <param name="human_vector"></param>
+	/// <param name="mousevec"></param>
+	void zonbie_run(std::vector<Player*> player_vector, std::vector<Player*> human_vector, Pvector mousevec, std::vector<UniqueEnemy_Bomb*>& uniquebomb);
+	/// <summary>
+	/// 速度を元にboidsの位置を更新
+	/// </summary>
+	void boid_update();
+	/// <summary>
+	/// ３法則を纏め重みづけをする
+	/// </summary>
+	/// <param name="Player_Vector"></param>
+	/// <param name="implayer"></param>
+	void boid_flock(std::vector<Player*> player_vector, std::vector<Player*> zonbie_vector);
+
+	/// <summary>
+	/// ゾンビに各ルールを適用し重みづけ
+	/// </summary>
+	void zonbie_flock(std::vector<Player*> zonbie_vector, std::vector<Player*> human_vector, Pvector mousevec, std::vector<UniqueEnemy_Bomb*>& uniquebomb);
+	/// <summary>
+	/// 画面外に出たときに反対の画面から出るように
+	/// </summary>
+	void boid_borders();
+
+	void zombie_reborn(float x, float y, float z);
+
+	/// <summary>
+	/// 角度を求める
+	/// </summary>
+	/// <param name="v"></param>
+	/// <returns></returns>
+	float boid_angle(const Pvector& v);
+
 
 	/// <summary>
 	///生存しているかどうか
@@ -125,7 +238,7 @@ public:
 
 	void Update(bool input,std::vector<ZombieBullet*> zbvec);
 
-	void ZonbieUpdate(int animnum, int i);
+	void PlayerAIUpdate(int animnum, int i);
 
 	void FollowUpdate();
 
@@ -205,34 +318,7 @@ public:
 
 	
 public:
-	int groundcnt = 0;
-	float beforeangley;
-	XMFLOAT3 angle{ 0,0,0 };
-	int hp = 3;
-	int zonbieanime = 0;//現在のアニメーション番号
-	int anglecnt = 0;//一定カウントごとに角度を変える
-	int awaycnt = 0;//速度を落とさず動く時間
-	int sepcnt = 0;
-	float boid_accel;//速度倍率
-	bool champion;//動かすキャラ
-	bool predator;//敵かどうかのフラグ
-	Pvector location;//ポジション
-	Pvector velocity;//向きと距離　速度
-	Pvector acceleration;//加速度
-	float maxSpeed;//最高速度
-	float maxForce;//曲がる力の強さ　多きればまっすぐ
-	bool insideflg = false;//マウスで囲った中にいるかv
-	bool awayflg = false;//追いかけてどこかへいくフラグ
-	bool zexplosionflg = false;
-	int initZombie;
-	bool reborn_flg = false;
-	bool alifalse_flg = false;
-	float alifalse_cnt = -10;
-	XMFLOAT3 rebornpos;
-	int bulletcreatecnt = 0;
-	int knockbackcnt = 0;
-	bool knockbackflg = false;
-	bool zombie_scatterflg = false;
+	
 
 	enum class Follow
 	{
@@ -256,152 +342,73 @@ public:
 	void follow_Init();
 	//Boid(float x, float y, bool predCheck);
 
-	void applyForce(const Pvector& force);//3法則を加速度に加える
-	// Three Laws that boids follow
-
-	/// <summary>
-	///配列１から配列２に移動し、削除する
-	/// </summary>
-	/// <param name="arraynum">要素番号</param>
-	/// <param name="Player_Vector1"></param>
-	/// <param name="Player_Vector2"></param>
-	void Move_And_Delete(float arraynum, std::vector<Player*> Player_Vector1, std::vector<Player*> Player_Vector2);
-
-	void Delete(float arraynum, std::vector<Player*> Player_Vector1);
-
-	/// <summary>
-	/// 分離　近づきすぎたら離れるように
-	/// </summary>
-	/// <param name="Player_Vector">boidsの配列</param>
-	/// <returns>方向ベクトル</returns>
-	Pvector boid_Separation(std::vector<Player*> player_vector, std::vector<Player*> zonbie_vector);
-	
-	
-	Pvector boid_Avoid(std::vector<Player*> player_vector);
-	/// <summary>
-	/// 分離　プレイヤーの範囲にいるboidsが近づきすぎないように
-	/// </summary>
-	/// <param name="Player_Vector"></param>
-	/// <param name="implayer"></param>
-	/// <returns></returns>
-	Pvector boid_inSeparation(std::vector<Player*> player_vector);
-	/// <summary>
-	/// 整列 周りと速度と方向を合わせる
-	/// </summary>
-	/// <param name="Player_Vector"></param>
-	/// <returns></returns>
-	Pvector boid_Alignment(std::vector<Player*> player_vector);
-
-
-	/// <summary>
-	/// 下る　周りを見て低いほうへ移動
-	/// </summary>
-	/// <param name="player_vector"></param>
-	/// <returns></returns>
-	Pvector boid_Down();
-
-	/// <summary>
-		/// プレイヤーの範囲にいるboidsがプレイヤーの速度と方向を合わせる
-		/// </summary>
-		/// <param name="Player_Vector"></param>
-		/// <param name="implayer"></param>
-		/// <returns></returns>
-	Pvector boid_zonbieAlignment(Pvector mousepos);
-
-	/// <summary>
-	/// 追跡　人間を追いかけ、追いつけずあきらめる
-	/// </summary>
-	/// <param name="player_vector"></param>
-	/// <returns></returns>
-	Pvector boid_zonbieAway(std::vector<Player*> human_vector);
-
-	/// <summary>
-	/// 探索　うろうろする
-	/// </summary>
-	/// <returns></returns>
-	Pvector boid_zonbieSearch();
-
-	/// <summary>
-	/// 結合　周りにいるbboidsの中心へ向かおうとする
-	/// </summary>
-	/// <param name="Player_Vector"></param>
-	/// <returns></returns>
-	Pvector boid_Cohesion(std::vector<Player*> player_vector);
-
-	/// <summary>
-	/// 分散　ゾンビがマウスの場所から離れていく
-	/// </summary>
-	/// <returns></returns>
-	Pvector Zombie_Scatter();
-	/// <summary>
-	/// 結合　プレイヤーの範囲にいるboidsがプレイヤーに向かう
-	/// </summary>
-	/// <param name="Player_Vector"></param>
-	/// <param name="implayer"></param>
-	/// <returns></returns>
-	Pvector boid_inCohesion(std::vector<Player*> player_vector);
-	//Functions involving SFML and visualisation linking
-
-	/// <summary>
-	/// 最高速度に制限し目的地へ向かう
-	/// </summary>
-	/// <param name="v"></param>
-	/// <returns></returns>
-	Pvector boid_seek(const Pvector& v);
-	/// <summary>
-	/// 視野角を前方90度に
-	/// </summary>
-	/// <param name="Player_Vector"></param>
-	/// <param name="implayer"></param>
-	/// <returns></returns>
-	Pvector boid_view(std::vector<Player*> player_vector);
-	/// <summary>
-	/// mgrクラスで呼び出す関数　updateを纏めた物
-	/// </summary>
-	/// <param name="Player_Vector"></param>
-	/// <param name="implayer"></param>
-	void boid_run(std::vector<Player*> player_vector, std::vector<Player*> zonbie_vector);
-
-	/// <summary>
-	/// mgrクラスで呼び出す関数　updateを纏めた物
-	/// </summary>
-	/// <param name="player_vector"></param>
-	/// <param name="human_vector"></param>
-	/// <param name="mousevec"></param>
-	void zonbie_run(std::vector<Player*> player_vector, std::vector<Player*> human_vector, Pvector mousevec, std::vector<UniqueEnemy_Bomb*>& uniquebomb);
-	/// <summary>
-	/// 速度を元にboidsの位置を更新
-	/// </summary>
-	void boid_update();
-	/// <summary>
-	/// ３法則を纏め重みづけをする
-	/// </summary>
-	/// <param name="Player_Vector"></param>
-	/// <param name="implayer"></param>
-	void boid_flock(std::vector<Player*> player_vector, std::vector<Player*> zonbie_vector);
-
-	/// <summary>
-	/// ゾンビに各ルールを適用し重みづけ
-	/// </summary>
-	void zonbie_flock(std::vector<Player*> zonbie_vector, std::vector<Player*> human_vector, Pvector mousevec, std::vector<UniqueEnemy_Bomb*>& uniquebomb);
-	/// <summary>
-	/// 画面外に出たときに反対の画面から出るように
-	/// </summary>
-	void boid_borders();
-
-	void zombie_reborn(float x, float y,float z);
-
-	/// <summary>
-	/// 角度を求める
-	/// </summary>
-	/// <param name="v"></param>
-	/// <returns></returns>
-	float boid_angle(const Pvector& v);
-
 	void boids_attack(std::vector<Player*>& player_vector, Player& zonbie, std::vector<UniqueEnemy_Bomb*>& unique_enemy_vector);
 
 	Pvector zonbie_damage(std::vector<UniqueEnemy_Bomb*>& uniquebomb);
 
+
+	XMFLOAT2 angley;//角度保存用
+	XMFLOAT4X4 rot = {};
+	XMFLOAT4X4 scale = {};
+	XMFLOAT4X4 trans = {};
+	XMFLOAT4X4 world = {};
+	float b_angle = 0.0f;
+	int bulletcnt = 0;
+
+	XMFLOAT2 left_vec;//自分から＋90度の角度
+	XMFLOAT2 right_vec;//自分から-90度の角度
+	XMFLOAT2 opposite_vec;//自分から＋180度の角度
+	float left_angle;
+	float right_angle;
+	float opposite_angle;
+
+	Pvector uedesired;//計算用の変数
+	Pvector uesteer;//計算用の変数
+
+	Pvector ueser = { 0,0 };
+	Pvector uesep = { 0,0 };
+	Pvector ueatt = { 0,0 };
+
+
+	static Player* GetInstance()
+	{
+		static Player instance;
+		return &instance;
+	}
+
+	void CheckBox();
+	void UnCheckBox();
+
+
+
+	int groundcnt = 0;//地面情報を取得する為の変数
+	float beforeangley;//前回のangley
+	XMFLOAT3 angle{ 0,0,0 };//角度
+	int hp = 3;//AIのhp
+	int zonbieanime = 0;//現在のアニメーション番号
+	int anglecnt = 0;//一定カウントごとに角度を変える
+	int awaycnt = 0;//速度を落とさず動く時間
+	int sepcnt = 0;//分離する期間の変数
+	float boid_accel;//速度倍率
+	bool champion;//動かすキャラ
+	bool predator;//敵かどうかのフラグ
+	Pvector location;//ポジション
+	Pvector velocity;//向きと距離　速度
+	Pvector acceleration;//加速度
+	float maxSpeed;//最高速度
+	float maxForce;//曲がる力の強さ　多きればまっすぐ
+	bool insideflg = false;//マウスで囲った中にいるかv
+	bool awayflg = false;//追いかけてどこかへいくフラグ
+	bool zexplosionflg = false;//操作AIの爆発ダメージうけるかどうか
+	int initZombie;//操作AIの初期化
+	bool reborn_flg = false;//再生成フラグ
+	bool alifalse_flg = false;//整列フラグ
+	float alifalse_cnt = -10;//
+	XMFLOAT3 rebornpos;//再生成する場所
+	int bulletcreatecnt = 0;//弾の発射変数
+	int knockbackcnt = 0;//ノックバックの時間
+	bool knockbackflg = false;//ノックバックするかどうか
+	bool zombie_scatterflg = false;//分散ルールのフラグ
 
 
 	//グローバル変数の代わりに、ゲーム内の値と重みにアクセスするために使用され	float desSep;
@@ -430,16 +437,57 @@ public:
 
 public:
 
-	static bool hsepflg;
-	static bool haliflg;
+	////////////////////////////////////
+	//操作AIの適応フラグ
+	///////////////////////////////////
+	static bool zdashflg;//操作AI＿ダッシュルールフラグ
+	static bool zscaflg;//操作AI＿分散ルールフラグ
+	static bool zsepflg;//操作AI＿分離ルールフラグ
+	static bool zcohflg;//操作AI＿集合ルールフラグ
+	static bool zserflg;//操作AI＿探索ルールフラグ
+	static bool zawaflg;//操作AI＿アウェイのルールフラグ
 
 
-	static bool zdashflg;
-	static bool zscaflg;
-	static bool zsepflg;
-	static bool zcohflg;
-	static bool zserflg;
-	static bool zawaflg;
+
+	//zonbiedamage
+	static float bombdist;//100　
+	//zonbiesearch
+	static int Searchcnt;//70
+	static float Seachspeed;//0.3f
+	static float Seachtime;//50
+
+	static float chasedist;//50
+	static float chasespeed;//1.5
+	static float chasetime;//30
+
+	static float Dashspeed;//3.5f
+	static float Dashtime;//40
+
+	//zonbiesep
+	static float Sepdist;//10
+	static float Sepspeed;//1.0
+
+	//集合速度
+	static float cohspeed;//１．０
+
+	//ゾンビとのダメージ距離
+	static float zombirange;//15
+	static float damage;//１．０
+
+
+	//away
+	static float zombiawayspeed;//1.5
+	static float zombieawaytime;//１０
+
+	//////////////////////////////////////////////////////////
+
+
+	//////////////////////////////////////////////////////////
+	//赤いAIのルールフラグ
+	//////////////////////////////////////////////////////////
+
+	static bool hsepflg;//赤いAI＿分離フラグ
+	static bool haliflg;//赤いAI＿整列フラグ
 
 	static bool dmgflg;
 	static bool changeflg;
@@ -474,35 +522,7 @@ public:
 	static float zonbiemaxspeed;//8.5
 	static float zonbiedownspeed;//0.05f
 	
-	//zonbiedamage
-	static float bombdist;//100
-	//zonbiesearch
-	static int Searchcnt;//70
-	static float Seachspeed;//0.3f
-	static float Seachtime;//50
-
-	static float chasedist;//50
-	static float chasespeed;//1.5
-	static float chasetime;//30
-
-	static float Dashspeed;//3.5f
-	static float Dashtime;//40
-
-	//zonbiesep
-	static float Sepdist;//10
-	static float Sepspeed;//1.0
-
-	//集合速度
-	static float cohspeed;//１．０
-
-	//ゾンビとのダメージ距離
-	static float zombirange;//15
-	static float damage;//１．０
-
-
-	//away
-	static float zombiawayspeed;//1.5
-	static float zombieawaytime;//１０
+	
 
 	static bool save;
 	static bool load;

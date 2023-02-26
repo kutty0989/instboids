@@ -93,9 +93,10 @@ public:
 			saveData.dotto[i].resize(psize);
 			for (int a = 0; a < psize; a++)
 			{
-				fin.read((char*)&saveData.dotto[i].at(a), sizeof(saveData.dotto[i].at(a)));
-				//debuglog(saveData.dotto[i].at(a));
-
+				//’nŒ`‚Ì‰ð‘œ“x‚ð“Ç‚Ýž‚Ý
+				fin.read((char*)&saveData.dotto[i].at(a),
+					sizeof(saveData.dotto[i].at(a)));
+				
 			}
 		}
 
