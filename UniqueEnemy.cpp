@@ -40,7 +40,7 @@ bool UniqueEnemy::Init()
 	return true;
 }
 
-void UniqueEnemy::Draw(std::vector<shared_ptr<Player>>& zonbie_vector)
+void UniqueEnemy::Draw(std::vector<shared_ptr<BoidsAI>>& zonbie_vector)
 {
 	
 	if (um_model->m_assimpfile.animationreset == true)
@@ -77,7 +77,7 @@ void UniqueEnemy::Update()
 {
 	
 	boid_borders();
-	Ground::GetInstance()->GetPlayerHeight(*this);
+	Ground::GetInstance()->GetBoidsAIHeight(*this);
 
 	//Z軸を取り出す
 	axisZ.x = m_mtx._31;
@@ -174,10 +174,10 @@ void UniqueEnemy::Update()
 
 		ImGui::SetNextWindowSize(ImVec2(300, 400));
 		float pos[2] = { location.x,location.y };
-		//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
+		//	int it = BoidsAI::GetInstance()->iseconds % BoidsAI::GetInstance()->judge_seconds;
 
 	
-		//float pos[3] = { Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z};
+		//float pos[3] = { BoidsAI::GetInstance()->GetPos().x, BoidsAI::GetInstance()->GetPos().y, BoidsAI::GetInstance()->GetPos().z};
 		ImGui::DragInt("animecnt", &manime.animecnt);
 		ImGui::DragInt("animecnt", &manime.m_Frame);
 		ImGui::DragFloat2("pos", pos);
@@ -200,7 +200,7 @@ void UniqueEnemy::Update()
 
 }
 
-void UniqueEnemy::UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector)
+void UniqueEnemy::UEnemy_run(std::vector<shared_ptr<BoidsAI>>& zonbie_vector)
 {
 	UEnemy_flock(zonbie_vector);
 	UEnemy_update();
@@ -209,7 +209,7 @@ void UniqueEnemy::UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector)
 
 
 
-void UniqueEnemy::UEnemy_flock(std::vector<shared_ptr<Player>>& zonbie_vector)
+void UniqueEnemy::UEnemy_flock(std::vector<shared_ptr<BoidsAI>>& zonbie_vector)
 {
 	ueser = { 0,0 };
 	uesep = { 0,0 };
@@ -275,7 +275,7 @@ Pvector UniqueEnemy::UEnemy_Search()
 	return uedesired;
 }
 
-Pvector UniqueEnemy::UEnemy_Separation(std::vector<shared_ptr<Player>>& zonbie_vector)
+Pvector UniqueEnemy::UEnemy_Separation(std::vector<shared_ptr<BoidsAI>>& zonbie_vector)
 {
 	// ボイド間分離視野距離
 	float desiredseparation = 10;//視野　プレイヤーからの距離
@@ -313,14 +313,14 @@ Pvector UniqueEnemy::UEnemy_Separation(std::vector<shared_ptr<Player>>& zonbie_v
 	return uesteer;
 }
 
-Pvector UniqueEnemy::UEnemy_Attack(std::vector<shared_ptr<Player>>& zonbie_vector)
+Pvector UniqueEnemy::UEnemy_Attack(std::vector<shared_ptr<BoidsAI>>& zonbie_vector)
 {
 	// ボイド間分離視野距離
 	float desiredseparation = 80;//視野　プレイヤーからの距離
 	uesteer = { 0,0 };
 	float before_distanse = 80.0f;//一番近い距離保存用
 
-	Pvector nearplayer;//一番近い存在を保存する変数
+	Pvector nearBoidsAI;//一番近い存在を保存する変数
 	if (unique_enemy_anime != UNIQUE_ENEMY_ANIME::ATTACK)
 	{
 	for (auto& it : zonbie_vector)
@@ -328,14 +328,14 @@ Pvector UniqueEnemy::UEnemy_Attack(std::vector<shared_ptr<Player>>& zonbie_vecto
 		float d = location.distance(it->location);
 		if (d < before_distanse) {
 			before_distanse = d;
-			nearplayer = it->location;
+			nearBoidsAI = it->location;
 		}
 	}
 	
 	if ((before_distanse > 0) && (before_distanse <15))
 	{
 		uedesired = { 0,0 };
-		uedesired = uedesired.subTwoVector(location, nearplayer);
+		uedesired = uedesired.subTwoVector(location, nearBoidsAI);
 		uedesired.normalize();
 		uedesired.mulScalar(-1);
 		acceleration = uedesired;
@@ -349,7 +349,7 @@ Pvector UniqueEnemy::UEnemy_Attack(std::vector<shared_ptr<Player>>& zonbie_vecto
 		if ((before_distanse > 15) && (before_distanse < desiredseparation))
 		{
 			uedesired = { 0,0 };
-			uedesired = uedesired.subTwoVector(location, nearplayer);
+			uedesired = uedesired.subTwoVector(location, nearBoidsAI);
 			uedesired.normalize();
 			uedesired.mulScalar(-1);
 			uedesired.divScalar(before_distanse);

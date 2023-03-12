@@ -1,3 +1,8 @@
+//=============================================================================
+//
+//　3Dモデル描画処理 [CModel.cpp]
+//
+//=============================================================================
 #define NOMINMAX
 #include	<windows.h>
 #include	"CModel.h"
@@ -7,10 +12,19 @@
 #include	"ModelData.h"
 #include"UniqueEnemy.h"
 
+/// <summary>
+/// ３Dモデル初期化処理
+/// </summary>
+/// <param name="filename">モデルファイル名</param>
+/// <param name="vsfile">vsファイル名</param>
+/// <param name="psfile">psファイル名</param>
+/// <param name="texfolder">テクスチャフォルダーの場所</param>
+/// <returns></returns>
 bool CModel::Init(const char* filename, const char* vsfile, const char* psfile,std::string texfolder) {
 
 	bool sts;
 
+	//ファイル名保存
 	std::string fname(filename);
 
 	sts = m_assimpfile.Load(texfolder,fname);
@@ -66,6 +80,9 @@ bool CModel::Init(const char* filename, const char* vsfile, const char* psfile,s
 	return true;
 }
 
+/// <summary>
+/// シェーダー解放
+/// </summary>
 void CModel::Uninit() {
 
 	// アニメーションデータ解放
@@ -112,7 +129,10 @@ void CModel::Update2(int animecnt, const DirectX::XMFLOAT4X4& mtxworld)
 
 }
 
-
+/// <summary>
+/// モデル描画
+/// </summary>
+/// <param name="mtxworld">モデルの行列</param>
 void CModel::Draw(XMFLOAT4X4& mtxworld) {
 
 	ID3D11DeviceContext*	devcontext;			// デバイスコンテキスト
@@ -130,23 +150,3 @@ void CModel::Draw(XMFLOAT4X4& mtxworld) {
 	// 描画
 	m_assimpfile.Draw(devcontext,mtxworld);
 }
-
-
-//void CModel::Draw2(XMFLOAT4X4& mtxworld) {
-//
-//	ID3D11DeviceContext* vertexBuffers[2] = {vertexBuffers,instance}			// デバイスコンテキスト
-//	devcontext = GetDX11DeviceContext();
-//	// 頂点フォーマットをセット
-//	devcontext->IASetInputLayout(m_pVertexLayout);
-//	// 頂点シェーダーをセット
-//	devcontext->VSSetShader(m_pVertexShader, nullptr, 0);
-//	devcontext->GSSetShader(nullptr, nullptr, 0);
-//	devcontext->HSSetShader(nullptr, nullptr, 0);
-//	devcontext->DSSetShader(nullptr, nullptr, 0);
-//	// ピクセルシェーダーをセット
-//	devcontext->PSSetShader(m_pPixelShader, nullptr, 0);
-//
-//	// 描画
-//	m_assimpfile.Draw(devcontext, mtxworld);
-//}
-

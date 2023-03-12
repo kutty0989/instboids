@@ -1,5 +1,5 @@
 #pragma once
-#include"player.h"
+#include"BoidsAI.h"
 #include<list>
 #include<vector>
 #include<iostream>
@@ -18,28 +18,28 @@ const int boids_num = 200;//全体のboidsの初期数
 const int zonbbie_num = 100;//ゾンビの初期数
 const int unique_enemy_num = 0;//近接の初期数
 const int unique_enemy_bomb_num = 10;//遠距離の初期数
-using namespace IKD;
 
 
-class PlayerMgr
+
+class BoidsAIMgr
 {
 public:
 
-	std::vector<shared_ptr<Player>> player_vector;//範囲外のbodis
-	std::vector<shared_ptr<Player>> in_player_vector;//範囲内のboids
-	std::vector<shared_ptr<Player>> zonbie_vector;//ゾンビ
+	std::vector<shared_ptr<BoidsAI>> BoidsAI_vector;//範囲外のbodis
+	std::vector<shared_ptr<BoidsAI>> in_BoidsAI_vector;//範囲内のboids
+	std::vector<shared_ptr<BoidsAI>> zonbie_vector;//ゾンビ
 	std::vector<shared_ptr<UniqueEnemy>> unique_enemy_vector;//ゾンビ
 	std::vector<UniqueEnemy_Bomb> unique_enemy_bomb_vector;//ゾンビ
-	std::vector<shared_ptr<Player>> in_enemy_vector;//敵の範囲内のboids
-	std::vector <Player*> instance_vector;//敵の範囲内のboids
-	std::vector<shared_ptr<Build>> build_vector;//建物
+	std::vector<shared_ptr<BoidsAI>> in_enemy_vector;//敵の範囲内のboids
+	std::vector <BoidsAI*> instance_vector;//敵の範囲内のboids
+	//std::vector<shared_ptr<Build>> build_vector;//建物
 	
-	std::vector<Player*> buf_vec; 
-	std::vector<Player*> buf_pvec;
+	std::vector<BoidsAI*> buf_vec; 
+	std::vector<BoidsAI*> buf_pvec;
 	std::vector<UniqueEnemy_Bomb*> buf_ubvec;
 	std::vector<ZombieBullet*> buf_zbvec;
-	std::shared_ptr<Player> ImPlayer;
-	std::shared_ptr<Player> ImEnemy;
+	std::shared_ptr<BoidsAI> ImBoidsAI;
+	std::shared_ptr<BoidsAI> ImEnemy;
 
 
 	const int window_height = (CHeight_Map::GetInstance()->iPixSize - 60) * CHeight_Map::ScaleMap;//マップの大きさ　縦
@@ -58,7 +58,7 @@ public:
 
 	void BoidsCreate(float x,float z);
 
-	void PlayerCreate();
+	void BoidsAICreate();
 
 	void EnemyCreate();
 	
@@ -70,19 +70,19 @@ public:
 
 	void UEnemyBombCreate();
 
-	void PlayerUpdate();
+	void BoidsAIUpdate();
 
 	bool CheckImnput();
 
-	void oneplayerUpdate();
+	void oneBoidsAIUpdate();
 
 	void Releace();
 
 	void ZombieBulletRemake(XMFLOAT4X4 mtx,XMFLOAT3 pos);
 
-	static PlayerMgr* GetInstance()
+	static BoidsAIMgr* GetInstance()
 	{
-		static PlayerMgr instance;
+		static BoidsAIMgr instance;
 		return &instance;
 	}
 
@@ -185,8 +185,8 @@ public:
 	/////////////////////
 
 	
-	static int player_vector_num;//プレイヤーの外側配列の要素数
-	static int in_player_vector_num;//プレイヤーの内側配列の要素数
+	static int BoidsAI_vector_num;//プレイヤーの外側配列の要素数
+	static int in_BoidsAI_vector_num;//プレイヤーの内側配列の要素数
 	static int in_enemy_vector_num;//エネミーーの内側配列の要素数
 	static int zonbie_vector_num;//ゾンビーの配列の要素数
 	static int unique_enemy_vector_num;//ゾンビーの配列の要素数
@@ -224,12 +224,12 @@ public:
 	/// <summary>
 	/// パッドを傾けているかどうか
 	/// </summary>
-	bool player_pad_flg = false;
+	bool BoidsAI_pad_flg = false;
 
 
 	bool Getpad_rig_flg()
 	{
-		return player_pad_flg;
+		return BoidsAI_pad_flg;
 	}
 
 

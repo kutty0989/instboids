@@ -1,7 +1,7 @@
 #pragma once
-#include"player.h"
+#include"BoidsAI.h"
 
-class UniqueEnemy :public Player
+class UniqueEnemy :public BoidsAI
 {
 	
 
@@ -23,21 +23,21 @@ public:
 	
 	bool Init();
 
-	void Draw(std::vector<shared_ptr<Player>>& zonbie_vector);
+	void Draw(std::vector<shared_ptr<BoidsAI>>& zonbie_vector);
 
 	void Update();
 
-	void UEnemy_run(std::vector<shared_ptr<Player>>& zonbie_vector);
+	void UEnemy_run(std::vector<shared_ptr<BoidsAI>>& zonbie_vector);
 
-	void UEnemy_flock(std::vector<shared_ptr<Player>>& zonbie_vector);
+	void UEnemy_flock(std::vector<shared_ptr<BoidsAI>>& zonbie_vector);
 
 	void UEnemy_update();
 
 	Pvector UEnemy_Search();
 
-	Pvector UEnemy_Separation(std::vector<shared_ptr<Player>>& zonbie_vector);
+	Pvector UEnemy_Separation(std::vector<shared_ptr<BoidsAI>>& zonbie_vector);
 	
-	Pvector UEnemy_Attack(std::vector<shared_ptr<Player>>& zonbie_vector);
+	Pvector UEnemy_Attack(std::vector<shared_ptr<BoidsAI>>& zonbie_vector);
 
 	int UEnemy_GetAnime();
 

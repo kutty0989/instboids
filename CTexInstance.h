@@ -1,4 +1,9 @@
 #pragma once
+//=============================================================================
+//
+// ２Dインスタンス管理クラス [CTexInstance.h]
+//
+//=============================================================================
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
@@ -60,6 +65,7 @@ public:
 		return sts;
 	}
 
+	//インスタンス数
 	CTexInstance(int num);
 	
 	bool Update(

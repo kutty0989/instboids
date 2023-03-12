@@ -4,7 +4,7 @@
 //#include    "DX11Settransform.h"
 //#include"IMgui/imgui.h"
 //#include<iostream>
-//#include"PlayerMgr.h"
+//#include"BoidsAIMgr.h"
 ////キャラの移動方向
 ////S_Enemy::DIRECTION g_direction = S_Enemy::DIRECTION::NEUTRAL;
 //
@@ -60,7 +60,7 @@
 ////	//乱数生成
 ////	std::uniform_int_distribution<int32_t> rand4(0, static_cast<int>(S_Enemy::ACTION::MAX_ACTION) - 1);
 ////
-////	if (PlayerMgr::GetInstance()->Player_List.at(0)->judge_flg == false)//プレイヤーの移動判定が終わったフラグ
+////	if (BoidsAIMgr::GetInstance()->BoidsAI_List.at(0)->judge_flg == false)//プレイヤーの移動判定が終わったフラグ
 ////	{
 ////		
 ////		if (m_action == S_Enemy::ACTION::ACT_NEUTRAL)
@@ -143,7 +143,7 @@
 ////
 ////		}
 ////	}
-////	//if (PlayerMgr::GetInstance()->Player_List.at(0)->judge_flg)
+////	//if (BoidsAIMgr::GetInstance()->BoidsAI_List.at(0)->judge_flg)
 ////	//{
 ////	//	if (enemy_turn_flg == true)
 ////	//	{

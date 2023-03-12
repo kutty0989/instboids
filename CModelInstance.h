@@ -1,5 +1,11 @@
 #pragma once
-#pragma once
+
+//=============================================================================
+//
+// インスタンスモデル描画処理 [CModelInstance.h]
+//
+//=============================================================================
+
 #include	<d3d11.h>
 #include	"DatFile.h"
 #include"DatFileLoader.h"
@@ -7,17 +13,18 @@
 
 class CModelInstance {
 private:
+	//ファイル形式
 	enum FILETYPE {
 		eDATFILE,
 		eASSIMPFILE
 	};
 
-
+	//カメラ行列
 	struct CONSTANT_BUFFER
 	{
 		DirectX::XMMATRIX gWVP;
 	};
-
+	//モデルの行列
 	struct PerInstanceData
 	{
 		DirectX::XMMATRIX matrix;
@@ -49,13 +56,10 @@ private:
 	ID3D11Resource* m_tex;
 public:
 	bool InitiInstancing(int instancecnt, const char* filename, const char* vsfile, const char* psfile, std::string texfoldername);
-	bool TestInstancing(int instancecnt, const char* filename, const char* vsfile, const char* psfile, std::string texfoldername);
-	bool Init(const char* filename, const char* vsfile, const char* psfile);
 	void Uninit();
 	void Update(XMFLOAT4X4 mat[]);							// インスタンスバッファ更新
-	void TestUpdate(XMFLOAT4X4 mat[]);							// インスタンスバッファ更新
-	void Draw();
-	void DrawInstance();
+	void Draw();//通常描画
+	void DrawInstance();//インスタンス描画
 	void TestInstance();
 	DatFileLoader* GetDatFileData() {
 		return m_datfile.GetDatFileLoader();

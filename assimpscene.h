@@ -1,4 +1,8 @@
 #pragma once
+//========================================================
+//assimpscene.h
+//			アシンプの読み込みのためのクラス
+//========================================================
 #include <string>
 #include <assimp/cimport.h>
 #include <unordered_map>

@@ -1,3 +1,7 @@
+//========================================================
+//CBBoxGeneraterクラス
+//		ワンスキンモデル用のBBOXの生成を行うためのクラス
+//========================================================
 #include <stdio.h>
 #include <DirectXMath.h>
 #include "obb.h"
@@ -248,9 +252,7 @@ OBB CBBoxGenerater::CaclBBox(XMFLOAT3* vertex, unsigned int* index, int numVerti
 	DX11Vec3Normalize(rvec, rvec);
 	DX11Vec3Normalize(svec, svec);
 	DX11Vec3Normalize(tvec, tvec);
-	//	D3DXVec3Normalize(&rvec,&rvec);
-	//	D3DXVec3Normalize(&svec,&svec);
-	//	D3DXVec3Normalize(&tvec,&tvec);
+	
 
 		//各ベクトルとすべての頂点の内積から最小値と最大値を求める
 	for (int i = 0; i < numVertices; i++) {

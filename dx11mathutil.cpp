@@ -1,3 +1,7 @@
+//========================================================
+//dx11mathutil.cpp
+//			dxmath‚ÌŠÖ”‚ğg‚¢‚â‚·‚­‚µ‚½ƒNƒ‰ƒX
+//========================================================
 #include	<assimp\Importer.hpp>
 #include	"DX11mathutil.h"
 #include	"memory.h"

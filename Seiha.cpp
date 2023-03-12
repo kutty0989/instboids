@@ -1,16 +1,20 @@
-#include	<string>
-#include	"player.h"
-#include	"CCamera.h"
-#include    "skybox.h"
-#include    "BoundingSphere.h"
-#include    "updatespherecamera.h"
+#include<string>
+#include <chrono>
+#include <iostream>
+#include <time.h>
+#include <ctime>
+#include"BoidsAI.h"
+#include"CCamera.h"
+#include"skybox.h"
+#include"BoundingSphere.h"
+#include"updatespherecamera.h"
 #include"CBillBoard.h"
 #include"Stage.h"
-#include "CLight.h"
+#include"CLight.h"
 #include"Seiha.h"
 #include"Timing_UI.h"
 #include"Notes_Arrange.h"
-#include"PlayerMgr.h"
+#include"BoidsAIMgr.h"
 #include"MouseCircle.h"
 #include"S_Title.h"
 #include"BoidsHp.h"
@@ -21,20 +25,11 @@
 #include"InstanceModelMgr.h"
 #include"TexMgr.h"
 #include"game.h"
-#include <chrono>
-#include <iostream>
-#include <time.h>
-#include <ctime>
+
 #define debuglog(a) std::cout<<a<<std::endl;
 
 CModel			g_model;			// 主人公モデル
-
-
-//Player	g_player;		// プレイヤオブジェクト
 SkyBox  g_skybox;       // 背景オブジェクト
-//BoundingSphere g_boundingsphere;//当たり判定の球オブジェクト
-
-
 CBillBoard fire;
 CLight g_clight;
 
@@ -44,43 +39,19 @@ static bool createflg;//true 作っていい　false 作ったらダメ
 static bool saveflg;//true まだつくられてない　false すでにつくられた
 static bool notes_LR;//ノーツの左右分けるための変数　ｆ左　ｔ右　
 
+//-----------------------------------------------------------------
+//    変数宣言
+//-----------------------------------------------------------------
 using std::cout; using std::endl;
 using std::chrono::duration_cast;
-using std::chrono::milliseconds;
-using std::chrono::seconds;
+using std::chrono::milliseconds;//ミリ秒用
+using std::chrono::seconds;//時間用変数
 using std::chrono::system_clock;
 
-//
-//
-//void NotesCreateTurn()
-//{
-//
-//	if (BPM_DATA::GetInstance()->Over_Notes_timing())
-//	{
-//		turnflg = false;
-//		saveflg = true;
-//	}
-//	if ((BPM_DATA::GetInstance()->Get_zs()) && (saveflg == true))
-//	{
-//		turnflg = true;
-//		saveflg = false;
-//	}
-//	if ((BPM_DATA::GetInstance()->Zero_Create_Timing()) &&(BPM_DATA::GetInstance()->Get_zs()) && (turnflg == true))
-//	{
-//		createflg = true;
-//		turnflg = false;
-//	}
-//	if (turnflg == true)
-//	{
-//	
-//	}
-//	if (createflg == true)
-//	{
-//		Notes_Arrange::GetInstance()->NotesCreateTiming();
-//		createflg = false;
-//	}
-//}
 
+XMFLOAT4 color = { 1.0f,0.1f,0.1f,0.0f };
+static bool init = false;
+int maxcounttime = 10000;
 
 
 //go 元の座標値
@@ -93,20 +64,15 @@ T LeapID(T _go, T _to, float _ratio)
 	return _go * (1.0f - _ratio) + _to * (T)_ratio;
 }
 
-float t;
-
-//t = static_cast<float>()
-
-
-XMFLOAT4 color = { 1.0f,0.1f,0.1f,0.0f };
-
-static bool init = false;
-int maxcounttime = 10000;
+/// <summary>
+/// 初期化処理
+/// </summary>
 void Seiha::Initialize() {
-	
+
+	//ゲームで一度だけ
 	if (init == false)
 	{
-		//空中戦で使用するモデルを全て読み込む
+		//使用するモデルを全て読み込む
 		for (int i = 0; i < g_modellist.size(); i++)
 		{
 			ModelMgr::GetInstance().LoadModel(
@@ -117,6 +83,7 @@ void Seiha::Initialize() {
 			);
 
 		}
+		//使用するインスタンス用モデルを全て読み込む
 		for (int i = 0; i < g_modelinstancelist.size(); i++)
 		{
 			InstanceModelMgr::GetInstance().LoadInstanceModel(
@@ -129,6 +96,7 @@ void Seiha::Initialize() {
 			);
 
 		}
+		//使用するテクスチャ―を全て読み込む
 		for (int i = 0; i < g_texlist.size(); i++)
 		{
 			CTexMgr::GetInstance().LoadModel(
@@ -137,6 +105,7 @@ void Seiha::Initialize() {
 				g_texlist[i].psfilename
 			);
 		}
+		//使用するビルボードを全て読み込む
 		for (int i = 0; i < g_btexlist.size(); i++)
 		{
 			CBillBoardMgr::GetInstance().LoadModel(
@@ -149,135 +118,105 @@ void Seiha::Initialize() {
 	}
 
 
-		PlayerMgr::GetInstance()->Init();
+	BoidsAIMgr::GetInstance()->Init();//AIの全初期化
 
-		g_skybox.Init();
-		g_skybox.SetModel(ModelMgr::GetInstance().GetModelPtr(g_modellist[static_cast<int>(MODELID::SKYDOME)].modelname));
+	//スカイボックスの初期化
+	g_skybox.Init();
+	g_skybox.SetModel(ModelMgr::GetInstance().GetModelPtr(g_modellist[static_cast<int>(MODELID::SKYDOME)].modelname));
 
-		BillBoardMgr::GetInstance()->Init();
+	///ビルボードの全初期化
+	BillBoardMgr::GetInstance()->Init();
 
-		//g_stage.Init();
+	//地形生成
+	g_ground.Init();
 
-		g_ground.Init();
-
-		MouseCircle::GetInstance()->Init();
-
-		TexMgr::GetInstance()->Init();
-
-
-	
-	
+	//マウスUIの初期化
+	MouseCircle::GetInstance()->Init();
+	//テクスチャ―の全初期化
+	TexMgr::GetInstance()->Init();
 
 }
+
+/// <summary>
+/// 状態を戻す
+/// </summary>
 void Seiha::Reset()
 {
-
 	turnflg = false;//１ターンの切り替え true行動できる　false行動した
 	createflg = false;//true 作っていい　false 作ったらダメ
 	saveflg = false;//true まだつくられてない　false すでにつくられた
-	
 }
 
-static bool firsttime = false;
-static int inittime;
-int Seiha::counttime = 0;
-float Seiha::pertime = 0;
-bool Seiha::changemapflg = false;
-
+/// <summary>
+/// 更新関数
+/// </summary>
+/// <param name="dt">デルタタイム</param>
 void  Seiha::Update(uint64_t dt) {
+	//ダイレクトインプット初期化
 	CDirectInput::GetInstance().GetMouseState();
-	PlayerMgr::GetInstance()->Update();
-	
+
+	//AIの更新関数
+	BoidsAIMgr::GetInstance()->Update();
+
+	//スカイボックス更新
 	g_skybox.Update();
+	//ノーツの更新
 	Timing_UI::GetInstance()->Update();
-	
-	//if (firsttime == false)
-	//{
-	//	auto msec = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-	//	msec = int(msec);
-	//	inittime = msec + maxcounttime;
-	//	firsttime = true;
-	//}
 
-	//auto msec = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+	static bool music = true;//音楽再生フラグ
 
-	//int nnow = msec;
-	//counttime = nnow - inittime;
-	//pertime = (float)-counttime / (float)maxcounttime;
-	//
-	//if (pertime == 0.0f)
-	//{
-	//	changemapflg = true;
-	//}
-	//if(changemapflg == true)
-	//{
-	//	auto msec = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-
-	//	float now = msec;
-	//	inittime = now + maxcounttime;
-	//	changemapflg = false;
-	//	
-	//}
-	//{
-	//	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
-	//	ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
-
-	//	ImGui::Begin("time");
-	//	ImGui::SetNextWindowSize(ImVec2(300, 400));
-	//
-	//	//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
-	//	ImGui::DragInt("time", &counttime);
-	//	ImGui::DragFloat("pertime", &pertime);
-
-	//	ImGui::End();
-	//	ImGui::PopStyleColor();
-	//	ImGui::PopStyleColor();
-	//}
-
-
-
-	static bool music = true;
-
+	//地形の更新
 	g_ground.Update();
+
 	//カメラの位置に光源をセット
 	XMFLOAT3 eye = CCamera::GetInstance()->GetEye();
 	DX11LightUpdate(XMFLOAT4(eye.x, eye.y, eye.z, 1.0f));
 
+	//テクスチャ全更新
 	TexMgr::GetInstance()->Update();
+
+	//マウスサークル更新
 	MouseCircle::GetInstance()->Update();
+
+	//カメラの位置更新
 	XMFLOAT4X4 mat;
 	DX11MtxIdentity(mat);
 	CCamera::GetInstance()->Update(mat);
-	CCamera::GetInstance()->Update(PlayerMgr::GetInstance()->ImPlayer->GetMtx());
-	
+	CCamera::GetInstance()->Update(BoidsAIMgr::GetInstance()->ImBoidsAI->GetMtx());
+
 }
-void Seiha::Draw() 
+
+/// <summary>
+/// 描画関数 
+/// </summary>
+void Seiha::Draw()
 {
+	//スカイボックス描画
+	g_skybox.Draw();
 
-	//int sceannum = static_cast<int>(Game::GetInstance()->GAME_MODE);
-	//sceannum %= 2;
-	if (Game::GetInstance()->GAME_MODE == Game::GAME_SCEAN_ID::S_ID_STAGE1_UPDATE)
-	{
+	//地形描画
+	g_ground.Draw();
 
-		g_skybox.Draw();
+	//ビルボード全描画
+	BillBoardMgr::GetInstance()->Draw();
 
-		g_ground.Draw();
+	//AI全描画
+	BoidsAIMgr::GetInstance()->Draw();
 
-		//BillBoardMgr::GetInstance()->Update();
+	//マウスUI描画
+	MouseCircle::GetInstance()->Draw();
 
-		BillBoardMgr::GetInstance()->Draw();
-
-		PlayerMgr::GetInstance()->Draw();
-
-		MouseCircle::GetInstance()->Draw();
-
-		TexMgr::GetInstance()->Draw();
-	}
+	//テクスチャ―全描画
+	TexMgr::GetInstance()->Draw();
 }
 
+/// <summary>
+/// シーン遷移条件関数
+/// </summary>
+/// <returns></returns>
 bool Seiha::IsAbleChangeScean()
 {
-
+	//スペースで現状変更
 	if (CDirectInput::GetInstance().CheckKeyBufferTrigger(DIK_SPACE))
 	{
 		return true;
@@ -287,48 +226,45 @@ bool Seiha::IsAbleChangeScean()
 
 void  Seiha::Release() {
 
-	// プレイヤ終了処理
-	//Player::GetInstance()->Finalize();
-	//PlayerMgr::GetInstance()->Finsh();
-
-//	g_boundingsphere.Exit();
-
-	//g_skybox.Finalize();
-
-
-	///*g_bsenemy.Exit();
-	//g_s_bsenemy.Exit();
-	//g_bshomis.Exit();
-	//g_bsbullet.Exit();*/
-	//g_ground.Finalize();
-	//MouseCircle::GetInstance()->Finish();
-	//BillBoardMgr::GetInstance()->Finalize();
-
-	//CTexMgr::GetInstance().Finalize();
-	//ModelMgr::GetInstance().Finalize();
+	// プレイヤ終了処理	
+	BoidsAIMgr::GetInstance()->Finsh();
+	//スカイボックス終了処理
+	g_skybox.Finalize();
+	//地形終了処理
+	g_ground.Finalize();
+	//マウスUI終了処理
+	MouseCircle::GetInstance()->Finish();
+	//全ビルボード終了処理
+	BillBoardMgr::GetInstance()->Finalize();
+	//モデル全終了処理
+	ModelMgr::GetInstance().Finalize();
+	//テクスチャ終了処理
 	TexMgr::GetInstance()->Finalize();
-	//Timing_UI::GetInstance()->Finish();
-	// TexMgr::GetInstance()->Draw();
-//	Notes_Arrange::GetInstance()->UnInit();
+	//ノーツ終了処理
+	Timing_UI::GetInstance()->Finish();
+
 }
 
+/// <summary>
+/// カメラ行列計算
+/// </summary>
 void mtx()
 {
 	XMFLOAT4X4 vmtx;
 	XMFLOAT4X4 pmtx;
 
 	pmtx = CCamera::GetInstance()->GetProjectionMatrix();
-	//DX11MtxIdentity(pmtx);
 
 	vmtx = CCamera::GetInstance()->GetCameraMatrix();
-	//	DX11MtxIdentity(vmtx);
 
 	DX11SetTransform::GetInstance()->SetTransform(DX11SetTransform::TYPE::VIEW, vmtx);
 	DX11SetTransform::GetInstance()->SetTransform(DX11SetTransform::TYPE::PROJECTION, pmtx);
 
 }
 
-
+/// <summary>
+/// UI描画処理
+/// </summary>
 void UIDraw() {
 	//2D矩形描画
 	TurnOffZbuffer();//ｚバッファをオフ

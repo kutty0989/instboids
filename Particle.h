@@ -1,23 +1,16 @@
 #pragma once
+//=============================================================================
+//
+// パーティクル生成クラス [Particle.h]
+//
+//=============================================================================
+
 #include<DirectXMath.h>
 #include<d3d11.h>
 #include"DX11util.h"
 #include"Shader.h"
 #include"CTex.h"
 
-//////////////////////////////////
-//ビルボードクラス
-///////////////////////////////
-//
-//// 使用する頂点シェーダー名
-//const char* vsfilenamein[] = {
-//	"shader/instancevs.hlsl"
-//};
-//
-//// 使用するピクセルシェーダー名
-//const char* psfilenamein[] = {
-//	"shader/instanceps.hlsl"
-//};
 
 class Particle {
 	DirectX::XMFLOAT4X4  m_mtx = {};//ビルボード用の行列
@@ -111,11 +104,13 @@ public:
 		m_uv[1] = uv[1];
 		m_uv[2] = uv[2];
 		m_uv[3] = uv[3];
-		//CalcVertex();
+	
 	}
 	Particle() :m_x(0), m_y(0), m_z(0), m_srv(nullptr) {
 
 	}
+
+	//終了処理
 	void Dispose()
 	{
 		if (m_vbuffer != nullptr) {
@@ -166,22 +161,7 @@ public:
 	{
 		Dispose();
 	}
-	//UV座標をセットする
-	//void SetUV(float u[], float v[]) {
-	//	m_Vertex[0].tu = u[0];
-	//	m_Vertex[0].tv = v[0];
 
-	//	m_Vertex[1].tu = u[1];
-	//	m_Vertex[1].tv = v[1];
-
-	//	m_Vertex[2].tu = u[2];
-	//	m_Vertex[2].tv = v[2];
-
-	//	m_Vertex[3].tu = u[3];
-	//	m_Vertex[3].tv = v[3];
-
-	//	CalcVertex();//ビルボード用の頂点データを作成
-	//}
 	//位置を指定
 	void SetPosiotion(float x, float y, float z);
 	void SetScale(float x, float y, float z);

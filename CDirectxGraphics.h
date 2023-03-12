@@ -1,4 +1,8 @@
 #pragma once
+//========================================================
+//CDirectxGraphics.h
+//			ビルボードの生成を行うためのクラス
+//========================================================
 #include	<d3d11.h>
 #include	<wrl/client.h>
 
@@ -18,8 +22,7 @@ private:
 	ComPtr<ID3D11DepthStencilView>	m_depthStencilView;			// Ｚバッファ、ステンシルビュー
 	ComPtr<ID3D11RasterizerState>	m_rasterState;				// ラスターステータス
 	ComPtr<ID3D11RasterizerState>	m_cissorState;				// シザー　ラスターステータス
-//	ID3D11DeviceContext::RSSetScissorRe
-	
+
 	ID3D11ShaderResourceView*       m_pHeightTexture;//テクスチャー
 	ID3D11Resource*					m_pTexture;	
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvd;
@@ -43,11 +46,13 @@ private:
 	int								m_Height = 0;				// バックバッファＹサイズ
 public:
 
+	//コンストラクタ
 	CDirectXGraphics(const CDirectXGraphics&) = delete;
 	CDirectXGraphics& operator=(const CDirectXGraphics&) = delete;
 	CDirectXGraphics(CDirectXGraphics&&) = delete;
 	CDirectXGraphics& operator=(CDirectXGraphics&&) = delete;
 
+	//デストラクタ
 	~CDirectXGraphics() {
 		Exit();
 	}

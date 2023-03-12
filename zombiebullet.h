@@ -1,4 +1,10 @@
 #pragma once
+//=============================================================================
+//
+// ゾンビの弾の生成クラス [zombiebulet.h]
+//
+//=============================================================================
+
 #include<DirectXMath.h>
 #include<vector>
 #include<memory>
@@ -8,7 +14,7 @@
 
 //前方宣言
 class CModel;
-class Player;
+class BoidsAI;
 
 //弾ステータス
 enum class ZOMBIEBSTS {
@@ -42,7 +48,7 @@ public:
 
 	void Draw();
 
-	void Update(std::vector<Player*> playervec);
+	void Update(std::vector<BoidsAI*> BoidsAIvec);
 
 	void Finalize() {};
 

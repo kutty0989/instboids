@@ -1,5 +1,8 @@
 #pragma once
-#pragma once
+//========================================================
+//Dx11Settransform.h
+//			シェーダーの纏め関数クラス
+//========================================================
 #include	<DirectXMath.h>
 #include	"Shader.h"
 #include	"Memory.h"

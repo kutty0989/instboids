@@ -1,7 +1,12 @@
 #pragma once
+//=============================================================================
+//
+// 地形を実際に作り更新するクラス [ground.h]
+//
+//=============================================================================
 #include"CHeight_Map.h"
 #include"gameobject.h"
-#include"player.h"
+#include"BoidsAI.h"
 class Ground:public GameObject
 {
 public:
@@ -15,16 +20,16 @@ public:
 	/// <summary>
 	/// 高さ情報を取る
 	/// </summary>
-	/// <param name="player"></param>
-	void GetPlayerHeight(Player& player);
+	/// <param name="BoidsAI"></param>
+	void GetBoidsAIHeight(BoidsAI& BoidsAI);
 
 
-	Pvector DownBoid(Player& player);
+	Pvector DownBoid(BoidsAI& BoidsAI);
 
-	float AccelBoid(Player& player);
+	float AccelBoid(BoidsAI& BoidsAI);
 
 
-	void DefangleAccel(Player& player,float accel);
+	void DefangleAccel(BoidsAI& BoidsAI,float accel);
 
 	void Finalize();
 

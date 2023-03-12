@@ -1,5 +1,9 @@
 #pragma once
-#pragma once
+//=============================================================================
+//
+// ハイトマップ生成管理クラス[CHeightMgr.h]
+//
+//=============================================================================
 #include <memory>
 #include <wrl/client.h>
 #include<unordered_map>
@@ -13,31 +17,23 @@ private:
 	CHeightMgr() {
 
 	}
-	std::unordered_map<std::string, std::unique_ptr<CHeight_Map>>m_texhashmap;
+	std::unordered_map<std::string, std::unique_ptr<CHeight_Map>>m_texhashmap;//ハイトマップをマップで纏める
 
 public:
 
-	static std::list<CHeight_Map*>spriteList;
-
+	//コンストラクタ
 	CHeightMgr(const CHeightMgr&) = delete;
 	CHeightMgr& operator=(const CHeightMgr&) = delete;
 	CHeightMgr(CHeightMgr&&) = delete;
 	CHeightMgr& operator = (CHeightMgr&&) = delete;
 
-
-	static void Draw()
-	{
-		for (auto& sprite : spriteList)
-		{
-			sprite->Draw();
-		}
-	};
-
+	//シングルトン
 	static CHeightMgr& GetInstance() {
 		static CHeightMgr Instance;
 		return Instance;
 	}
 
+	//デストラクタ　終了処理
 	virtual ~CHeightMgr() {
 		Finalize();
 	}
@@ -47,6 +43,7 @@ public:
 		}
 	}
 
+	//カラー情報に使う画像を配列に格納
 	bool LoadModel(std::string texfilename, std::string vsfinlename, std::string psfilename) {
 		std::unique_ptr<CHeight_Map> p;
 		p = std::make_unique<CHeight_Map>();
@@ -61,6 +58,7 @@ public:
 
 		return true;
 	}
+
 
 	CHeight_Map* GetModelPtr(std::string key) {
 		//存在するかを確かめる

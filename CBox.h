@@ -1,5 +1,9 @@
 #pragma once
-#pragma once
+//=============================================================================
+//
+// ボックス描画処理 [CBox.h]
+//
+//=============================================================================
 #include	<d3d11.h>
 #include	<DirectXMath.h>
 #include	<math.h>
@@ -54,16 +58,19 @@ private:
 		}
 	}
 public:
+	//カラーを設定
 	void SetColor(DirectX::XMFLOAT4 color) {
 		m_color = color;
 		CreateVertex();
 		UpdateVertexBuffer();
 	}
 
+	//カラー取得
 	XMFLOAT4 GetColor() {
 		return m_color;
 	}
 
+	//描画関数
 	void Draw();
 
 	// 初期化

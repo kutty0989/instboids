@@ -1,9 +1,9 @@
-#include	"player.h"
+#include	"BoidsAI.h"
 #include	"drawaxis.h"
 #include    "CCamera.h"
 #include"Notes_Arrange.h"
 #include <cstdlib>
-#include"PlayerMgr.h"
+#include"BoidsAIMgr.h"
 #include"CHeight_Map.h"
 #include"billboardMgr.h"
 #include"BoundingSphere.h"
@@ -41,82 +41,82 @@ float scaling = Ground::GetInstance()->scaling;
 /// </summary>
 
 //分離
-bool Player::hsepflg = false;
+bool BoidsAI::hsepflg = false;
 //整列
-bool Player::haliflg = false;
+bool BoidsAI::haliflg = false;
 //スロープ
-bool Player::slopeflg = false;
+bool BoidsAI::slopeflg = false;
 //ポケット
-bool Player::pocketflg = false;
+bool BoidsAI::pocketflg = false;
 //最高速度
-float Player::hyumanmaxspeed;//1.5
+float BoidsAI::hyumanmaxspeed;//1.5
 
-float Player::hyumanrandspeed;//5
+float BoidsAI::hyumanrandspeed;//5
 //整列の範囲
-float Player::alidist;//40
+float BoidsAI::alidist;//40
 //分離の範囲
-float Player::sepdist;//10
+float BoidsAI::sepdist;//10
 //逃避範囲
-float Player::sepzonbiedist;//30
+float BoidsAI::sepzonbiedist;//30
 //分離速度
-float Player::sepspeed;//2.0
+float BoidsAI::sepspeed;//2.0
 //逃げる時間
-float Player::septime;//30
+float BoidsAI::septime;//30
 
 /// <summary>
 /// 操作プレイヤーの変数
 /// </summary>
-bool Player::zdashflg = false;
-bool Player::zscaflg = false;
-bool Player::zsepflg = false;
-bool Player::zcohflg = false;
-bool Player::zserflg = false;
-bool Player::zawaflg = false;
+bool BoidsAI::zdashflg = false;
+bool BoidsAI::zscaflg = false;
+bool BoidsAI::zsepflg = false;
+bool BoidsAI::zcohflg = false;
+bool BoidsAI::zserflg = false;
+bool BoidsAI::zawaflg = false;
 
-bool Player::dmgflg = false;
-bool Player::changeflg = false;
+bool BoidsAI::dmgflg = false;
+bool BoidsAI::changeflg = false;
 
-bool Player::bbombflg = false;
-bool Player::bserflg = false;
-bool Player::texspeedflg = false;
-bool Player::shootflg = false;
+bool BoidsAI::bbombflg = false;
+bool BoidsAI::bserflg = false;
+bool BoidsAI::texspeedflg = false;
+bool BoidsAI::shootflg = false;
 
 
-float Player::zonbiehp;//２
-float Player::zonbiemaxspeed;//8.5
-float Player::zonbiedownspeed;//0.05f
+float BoidsAI::zonbiehp;//２
+float BoidsAI::zonbiemaxspeed;//8.5
+float BoidsAI::zonbiedownspeed;//0.05f
 //////////////////////////////////////////////
 
 //ユニークな敵の変数
-float Player::bombdist;//100
+float BoidsAI::bombdist;//100
 //zonbiesearch
-int Player::Searchcnt;//70
-float Player::Seachspeed;//0.3f
-float Player::Seachtime;//50
+int BoidsAI::Searchcnt;//70
+float BoidsAI::Seachspeed;//0.3f
+float BoidsAI::Seachtime;//50
 
-float Player::chasedist;//50
-float Player::chasespeed;//1.5
-float Player::chasetime;//30
-float Player::Dashspeed;//3.5f
-float Player::Dashtime;//40
+float BoidsAI::chasedist;//50
+float BoidsAI::chasespeed;//1.5
+float BoidsAI::chasetime;//30
+float BoidsAI::Dashspeed;//3.5f
+float BoidsAI::Dashtime;//40
 
 //zonbiesep
-float Player::Sepdist;//10
-float Player::Sepspeed;//1.
+float BoidsAI::Sepdist;//10
+float BoidsAI::Sepspeed;//1.
 					   
 //集合速度
-float Player::cohspeed;//１．０
+float BoidsAI::cohspeed;//１．０
 
 //zombieaway
-float Player::zombiawayspeed;//1.5
-float Player::zombieawaytime;//１０
+float BoidsAI::zombiawayspeed;//1.5
+float BoidsAI::zombieawaytime;//１０
 
 //ゾンビとのダメージ距離
-float Player::zombirange;//15
-float Player::damage;//１．０
+float BoidsAI::zombirange;//15
+float BoidsAI::damage;//１．０
 
-bool Player::save = false;
-bool Player::load = false;
+bool BoidsAI::save = false;
+bool BoidsAI::load = false;
 
 float length = 200;
 ///////////////////////////////////////////////////////////
@@ -133,7 +133,7 @@ T LeapID(T _go, T _to, float _ratio)
 	return _go * (1.0f - _ratio) + _to * (T)_ratio;
 }
 
-bool Player::Init() {
+bool BoidsAI::Init() {
 
 	// 行列初期化
 	DX11MtxIdentity(m_mtx);
@@ -154,7 +154,7 @@ bool Player::Init() {
 }
 
 
-bool Player::CharengerInit()
+bool BoidsAI::CharengerInit()
 {
 	// 行列初期化
 	DX11MtxIdentity(m_mtx);
@@ -185,7 +185,7 @@ bool Player::CharengerInit()
 /// </summary>
 /// <param name="x"></param>
 /// <param name="y"></param>
-void Player::boid_Init(float x, float y)
+void BoidsAI::boid_Init(float x, float y)
 {
 	//初期値
 	float xx = rand() % 100 - 50.0f;
@@ -217,7 +217,7 @@ void Player::boid_Init(float x, float y)
 /// <param name="x">初期場所</param>
 /// <param name="y"></param>
 /// <param name="nowzombiecnt"></param>
-void Player::zonbie_Init(float x, float y, int nowzombiecnt)
+void BoidsAI::zonbie_Init(float x, float y, int nowzombiecnt)
 {
 
 	acceleration = Pvector(0, 0);
@@ -252,13 +252,13 @@ void Player::zonbie_Init(float x, float y, int nowzombiecnt)
 	}
 }
 
-void Player::boid_player_Init(float x, float y)
+void BoidsAI::boid_BoidsAI_Init(float x, float y)
 {
 
 
 }
 
-void Player::follow_Init()
+void BoidsAI::follow_Init()
 {
 	SetScale(0.1f, 0.1f, 0.1f);
 
@@ -284,9 +284,9 @@ void Player::follow_Init()
 /// <param name="x"></param>
 /// <param name="y"></param>
 /// <param name="z"></param>
-void Player::zombie_reborn(float x, float y,float z)
+void BoidsAI::zombie_reborn(float x, float y,float z)
 {
-	bstatus = Player::BSTATUS::LIVE;
+	bstatus = BoidsAI::BSTATUS::LIVE;
 	hp = zonbiehp;
 	rebornpos.x= x;
 	rebornpos.y =z;
@@ -296,7 +296,7 @@ void Player::zombie_reborn(float x, float y,float z)
 /// <summary>
 /// ｈｐの更新
 /// </summary>
-void Player::UpdateHp() {
+void BoidsAI::UpdateHp() {
 
 	//生きてるＡｉだけ
 	if (follow == Follow::ZONBIE)
@@ -310,14 +310,14 @@ void Player::UpdateHp() {
 /// <summary>
 /// ｘｙｚ軸にラインを引く
 /// </summary>
-void Player::HyumanDrawAxis() {
+void BoidsAI::HyumanDrawAxis() {
 	drawaxis(m_mtx, 5.0f, XMFLOAT3(m_mtx._41, m_mtx._42, m_mtx._43));
 }
 
 /// <summary>
 /// /モデルを描画とラインをxyzに引く
 /// </summary>
-void Player::DrawWithAxis() {
+void BoidsAI::DrawWithAxis() {
 	// モデル描画
 	drawaxis(m_mtx, 200, m_pos);
 }
@@ -330,7 +330,7 @@ struct FLOAT3
 
 
 
-void Player::Update(bool input, std::vector<ZombieBullet*> zbvec) {
+void BoidsAI::Update(bool input, std::vector<ZombieBullet*> zbvec) {
 
 	//ＡＩを倒したときの流れ
 	if (bstatus == BSTATUS::LIVE)
@@ -346,10 +346,10 @@ void Player::Update(bool input, std::vector<ZombieBullet*> zbvec) {
 				if (length > dist)
 				{
 					this->hp = 0;
-					this->m_sts = Player::STATUS::DEAD;
+					this->m_sts = BoidsAI::STATUS::DEAD;
 					zbvec.at(i)->m_sts = ZOMBIEBSTS::DEAD;
 					//スコアを足す
-					PlayerMgr::GetInstance()->ScoreNum += 10;
+					BoidsAIMgr::GetInstance()->ScoreNum += 10;
 					//爆発演出
 					BillBoardMgr::GetInstance()->ExplsionCreate(XMFLOAT3(this->GetMtx()._41, this->GetMtx()._42, this->GetMtx()._43));
 				}
@@ -393,7 +393,7 @@ void Player::Update(bool input, std::vector<ZombieBullet*> zbvec) {
 		scale._33 = 2.0f;
 
 	
-		Ground::GetInstance()->GetPlayerHeight(*this);
+		Ground::GetInstance()->GetBoidsAIHeight(*this);
 		//今回の角度を保存
 		if (slopeflg)
 		{
@@ -439,7 +439,7 @@ void Player::Update(bool input, std::vector<ZombieBullet*> zbvec) {
 /// </summary>
 /// <param name="animenum"></param>
 /// <param name="i"></param>
-void Player::PlayerAIUpdate(int animenum, int i)
+void BoidsAI::BoidsAIAIUpdate(int animenum, int i)
 {
 	if (bstatus == BSTATUS::LIVE)
 	{
@@ -488,7 +488,7 @@ void Player::PlayerAIUpdate(int animenum, int i)
 		else
 		{
 			//高さを求める関数
-			Ground::GetInstance()->GetPlayerHeight(*this);
+			Ground::GetInstance()->GetBoidsAIHeight(*this);
 			
 			//速度を落とさず移動する
 			if (awaycnt > 0)
@@ -561,7 +561,7 @@ void Player::PlayerAIUpdate(int animenum, int i)
 			if (bulletcnt == 30)
 			{
 				//バレット生成
-				PlayerMgr::GetInstance()->ZombieBulletRemake(this->GetMtx(), XMFLOAT3(this->GetMtx()._41, this->GetMtx()._42, this->GetMtx()._43));
+				BoidsAIMgr::GetInstance()->ZombieBulletRemake(this->GetMtx(), XMFLOAT3(this->GetMtx()._41, this->GetMtx()._42, this->GetMtx()._43));
 				bulletcnt = 0;
 			}
 		}
@@ -577,21 +577,21 @@ void Player::PlayerAIUpdate(int animenum, int i)
 /// <summary>
 /// メインキャラの更新　
 /// </summary>
-void Player::FollowUpdate()
+void BoidsAI::FollowUpdate()
 {
 
-	Ground::GetInstance()->GetPlayerHeight(*this);
+	Ground::GetInstance()->GetBoidsAIHeight(*this);
 	//Z軸を取り出す
 	axisZ.x = m_mtx._31;
 	axisZ.y = m_mtx._32;
 	axisZ.z = m_mtx._33;
 	axisZ.w = 0.0f;
-	//angle.y = -PlayerMgr::GetInstance()->pad_rig;
+	//angle.y = -BoidsAIMgr::GetInstance()->pad_rig;
 
-	PlayerMgr::GetInstance()->accel *= 1.0f;//anglecos;
-	if (PlayerMgr::GetInstance()->accel > 6.5f) PlayerMgr::GetInstance()->accel = 6.5f;
+	BoidsAIMgr::GetInstance()->accel *= 1.0f;//anglecos;
+	if (BoidsAIMgr::GetInstance()->accel > 6.5f) BoidsAIMgr::GetInstance()->accel = 6.5f;
 
-	boid_accel = PlayerMgr::GetInstance()->accel;
+	boid_accel = BoidsAIMgr::GetInstance()->accel;
 
 
 	velocity.x = axisZ.x * boid_accel;
@@ -610,13 +610,13 @@ void Player::FollowUpdate()
 
 
 
-void Player::Finalize() {
+void BoidsAI::Finalize() {
 	m_model->Uninit();
 }
 
 
 //加速度を追加
-void Player::applyForce(const Pvector& force)
+void BoidsAI::applyForce(const Pvector& force)
 {
 	acceleration.addVector(force);
 }
@@ -625,25 +625,25 @@ void Player::applyForce(const Pvector& force)
 /// 小さいAIの配列から移動と消去
 /// </summary>
 /// <param name="arraynum"></param>
-/// <param name="player_vector1"></param>
-/// <param name="player_vector2"></param>
-void Player::Move_And_Delete(float arraynum, std::vector<Player*> player_vector1, std::vector<Player*> player_vector2)
+/// <param name="BoidsAI_vector1"></param>
+/// <param name="BoidsAI_vector2"></param>
+void BoidsAI::Move_And_Delete(float arraynum, std::vector<BoidsAI*> BoidsAI_vector1, std::vector<BoidsAI*> BoidsAI_vector2)
 {
 	//1の配列へ２の配列の要素番号を移動
-	player_vector1.push_back(std::move(player_vector2[arraynum]));
+	BoidsAI_vector1.push_back(std::move(BoidsAI_vector2[arraynum]));
 
 	//いた場所の配列を消す
-	player_vector2.erase(player_vector2.begin() + arraynum);
+	BoidsAI_vector2.erase(BoidsAI_vector2.begin() + arraynum);
 
 }
 
-void Player::Delete(float arraynum, std::vector<Player*> Player_Vector1)
+void BoidsAI::Delete(float arraynum, std::vector<BoidsAI*> BoidsAI_Vector1)
 {
-	Player_Vector1.erase(Player_Vector1.begin() + arraynum);
+	BoidsAI_Vector1.erase(BoidsAI_Vector1.begin() + arraynum);
 }
 
 //攻撃関数
-void Player::boids_attack(std::vector<Player*>& player_vector, Player& zonbie, std::vector<UniqueEnemy_Bomb*>& unique_enemy_vector)
+void BoidsAI::boids_attack(std::vector<BoidsAI*>& BoidsAI_vector, BoidsAI& zonbie, std::vector<UniqueEnemy_Bomb*>& unique_enemy_vector)
 {
 	if (changeflg)
 	{
@@ -656,7 +656,7 @@ Pvector des;//計算用の変数
 
 // maxSpeed を制限し、必要な操舵力を見つけ、
 //ベクトルを正規化します
-Pvector Player::boid_seek(const Pvector& v)
+Pvector BoidsAI::boid_seek(const Pvector& v)
 {
 	desired = { 0,0 };
 	desired = desired.subTwoVector(v, location);  //位置からターゲットを指すベクトル
@@ -674,21 +674,21 @@ Pvector Player::boid_seek(const Pvector& v)
 /// <summary>
 /// 視界の範囲を前方90度だけにする
 /// </summary>
-/// <param name="player_vector"></param>
+/// <param name="BoidsAI_vector"></param>
 /// <returns></returns>
-Pvector Player::boid_view(std::vector<Player*> player_vector)
+Pvector BoidsAI::boid_view(std::vector<BoidsAI*> BoidsAI_vector)
 {
 	// How far can it see?
 	float sightDistance = 100;
 	float periphery = PI / 2;
 
-	for (int i = 0; i < player_vector.size(); i++) {
+	for (int i = 0; i < BoidsAI_vector.size(); i++) {
 		// A vector that points to another boid and that angle
 		desired ={0,0};
-		desired = desired.subTwoVector(player_vector.at(i)->location, location);
+		desired = desired.subTwoVector(BoidsAI_vector.at(i)->location, location);
 
 		// How far is it
-		float d = location.distance(player_vector.at(i)->location);
+		float d = location.distance(BoidsAI_vector.at(i)->location);
 		
 		// What is the angle between the other boid and this one's current direction
 		float desireda = velocity.angleBetween(desired);
@@ -696,7 +696,7 @@ Pvector Player::boid_view(std::vector<Player*> player_vector)
 		// If it's within the periphery and close enough to see it
 		if (desireda < periphery && d > 0 && d < sightDistance) {
 			//視野角にいるboidだけで３法則
-			//boid_flock(player_vector,zonbie_vector);
+			//boid_flock(BoidsAI_vector,zonbie_vector);
 		}
 	}
 	return Pvector();
@@ -704,10 +704,10 @@ Pvector Player::boid_view(std::vector<Player*> player_vector)
 
 
 
-//std::vector<Player>> grid[100][100] = { {} };
-void Player::boid_run(std::vector<Player*> player_vector, std::vector<Player*> zonbie_vector)
+//std::vector<BoidsAI>> grid[100][100] = { {} };
+void BoidsAI::boid_run(std::vector<BoidsAI*> BoidsAI_vector, std::vector<BoidsAI*> zonbie_vector)
 {
-	boid_flock(player_vector, zonbie_vector);
+	boid_flock(BoidsAI_vector, zonbie_vector);
 	boid_update();
 
 }
@@ -715,13 +715,13 @@ void Player::boid_run(std::vector<Player*> player_vector, std::vector<Player*> z
 /// <summary>
 /// 操作するAIの全更新
 /// </summary>
-/// <param name="player_vector"></param>
+/// <param name="BoidsAI_vector"></param>
 /// <param name="human_vector"></param>
 /// <param name="mousevec"></param>
 /// <param name="uniquebomb"></param>
-void Player::zonbie_run(std::vector<Player*> player_vector, std::vector<Player*> human_vector, Pvector mousevec, std::vector<UniqueEnemy_Bomb*>& uniquebomb)
+void BoidsAI::zonbie_run(std::vector<BoidsAI*> BoidsAI_vector, std::vector<BoidsAI*> human_vector, Pvector mousevec, std::vector<UniqueEnemy_Bomb*>& uniquebomb)
 {
-	zonbie_flock(player_vector,human_vector, mousevec,uniquebomb);
+	zonbie_flock(BoidsAI_vector,human_vector, mousevec,uniquebomb);
 	boid_update();
 }
 
@@ -737,7 +737,7 @@ Pvector down = { 0,0 };
 
 
 //ボイドの群れに三法則を適用する
-void Player::boid_flock(std::vector<Player*> player_vector, std::vector<Player*> zonbie_vector)
+void BoidsAI::boid_flock(std::vector<BoidsAI*> BoidsAI_vector, std::vector<BoidsAI*> zonbie_vector)
 {
 	sep = { 0,0 };
 	ali = { 0,0 };
@@ -752,14 +752,14 @@ void Player::boid_flock(std::vector<Player*> player_vector, std::vector<Player*>
 		if (alifalse_cnt < -10000)alifalse_cnt = -40;
 		if (hsepflg)
 		{
-			sep = boid_Separation(player_vector, zonbie_vector);
+			sep = boid_Separation(BoidsAI_vector, zonbie_vector);
 		}
 
 		if (haliflg)
 		{
 			if (alifalse_cnt < 0)
 			{
-				ali = boid_Alignment(player_vector);
+				ali = boid_Alignment(BoidsAI_vector);
 			}
 		}
 		if (pocketflg)
@@ -782,7 +782,7 @@ void Player::boid_flock(std::vector<Player*> player_vector, std::vector<Player*>
 
 }
 
-void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player*> human_vector, Pvector mousevec, std::vector<UniqueEnemy_Bomb*>& uniquebomb)
+void BoidsAI::zonbie_flock(std::vector<BoidsAI*> BoidsAI_vector, std::vector<BoidsAI*> human_vector, Pvector mousevec, std::vector<UniqueEnemy_Bomb*>& uniquebomb)
 {
 	//ルールのベクトルの初期化
 	sep = { 0,0 };
@@ -792,7 +792,7 @@ void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player
 	dmg = { 0,0 };
 
 	//分散処理
-	if (PlayerMgr::GetInstance()->scatterflg)
+	if (BoidsAIMgr::GetInstance()->scatterflg)
 	{
 		if (zscaflg)
 		{
@@ -804,24 +804,24 @@ void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player
 	//分散している時とノックバック以外は行う
 	if ((!zombie_scatterflg) && (!knockbackflg))
 	{
-		if ((boid_accel < 0.5f) || (PlayerMgr::GetInstance()->gatherflg))
+		if ((boid_accel < 0.5f) || (BoidsAIMgr::GetInstance()->gatherflg))
 		{
 			if (zsepflg)
 			{
-				sep = boid_inSeparation(player_vector);
+				sep = boid_inSeparation(BoidsAI_vector);
 			}
 		}
 		//集合処理
-		if (PlayerMgr::GetInstance()->gatherflg)
+		if (BoidsAIMgr::GetInstance()->gatherflg)
 		{
 			if (zcohflg)
 			{
 				awaycnt = 0;
-				coh = boid_Gather(player_vector);
+				coh = boid_Gather(BoidsAI_vector);
 			}
 		}
 		//探索処理
-		if ((!PlayerMgr::GetInstance()->gatherflg) && (!PlayerMgr::GetInstance()->scatterflg))
+		if ((!BoidsAIMgr::GetInstance()->gatherflg) && (!BoidsAIMgr::GetInstance()->scatterflg))
 		{
 			if (zserflg)
 			{
@@ -832,7 +832,7 @@ void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player
 			}
 		}
 		//アウェイ処理
-		if (!PlayerMgr::GetInstance()->gatherflg) {
+		if (!BoidsAIMgr::GetInstance()->gatherflg) {
 			if (zawaflg)
 			{
 				if (boid_accel < 0.4f)
@@ -877,7 +877,7 @@ void Player::zonbie_flock(std::vector<Player*> player_vector, std::vector<Player
 
 // 速度、位置を変更し、加速度を次の値でリセットします
 // 三法則で与えられる。
-void Player::boid_update()
+void BoidsAI::boid_update()
 {
 	if (follow == Follow::HYUMAN)
 	{
@@ -898,7 +898,7 @@ void Player::boid_update()
 		{
 
 
-			if (PlayerMgr::GetInstance()->gatherflg)
+			if (BoidsAIMgr::GetInstance()->gatherflg)
 			{
 				this->boid_accel = cohspeed;
 			}
@@ -915,20 +915,20 @@ void Player::boid_update()
 /// <summary>
 /// マップの外に出ないようにする処理
 /// </summary>
-void Player::boid_borders()
+void BoidsAI::boid_borders()
 {
 
-	if (location.x < -PlayerMgr::GetInstance()->window_width * 0.5f)	location.x += PlayerMgr::GetInstance()->window_width;
-	if (location.y < -PlayerMgr::GetInstance()->window_width * 0.5f)	location.y += PlayerMgr::GetInstance()->window_height;
-	if (location.x > PlayerMgr::GetInstance()->window_height * 0.5f)	location.x -= PlayerMgr::GetInstance()->window_width;
-	if (location.y > PlayerMgr::GetInstance()->window_height * 0.5f)	location.y -= PlayerMgr::GetInstance()->window_height;
+	if (location.x < -BoidsAIMgr::GetInstance()->window_width * 0.5f)	location.x += BoidsAIMgr::GetInstance()->window_width;
+	if (location.y < -BoidsAIMgr::GetInstance()->window_width * 0.5f)	location.y += BoidsAIMgr::GetInstance()->window_height;
+	if (location.x > BoidsAIMgr::GetInstance()->window_height * 0.5f)	location.x -= BoidsAIMgr::GetInstance()->window_width;
+	if (location.y > BoidsAIMgr::GetInstance()->window_height * 0.5f)	location.y -= BoidsAIMgr::GetInstance()->window_height;
 }
 
 Pvector steer(0, 0);
 
 // 分離
 // ボイド同士が近づきすぎないようにする
-Pvector Player::boid_Separation(std::vector<Player*> player_vector, std::vector<Player*> zonbie_vector)
+Pvector BoidsAI::boid_Separation(std::vector<BoidsAI*> BoidsAI_vector, std::vector<BoidsAI*> zonbie_vector)
 {
 	// ボイド間分離視野距離
 	//float desiredseparation = 10;//視野　プレイヤーからの距離
@@ -936,10 +936,10 @@ Pvector Player::boid_Separation(std::vector<Player*> player_vector, std::vector<
 	int count = 0;
 	//システム内のすべてのボイドについて、近すぎるかどうかを確認します
 
-	//for (int i = 0; i < sizeof(player_vector)/sizeof(player_vector[0]); i++)//0回
+	//for (int i = 0; i < sizeof(BoidsAI_vector)/sizeof(BoidsAI_vector[0]); i++)//0回
 	if (boid_accel < 2.0f)
 	{
-		for (auto& it : player_vector)
+		for (auto& it : BoidsAI_vector)
 		{
 
 			// 現在のboidから見ているboidまでの距離を計算する
@@ -996,12 +996,12 @@ Pvector Player::boid_Separation(std::vector<Player*> player_vector, std::vector<
 /// <summary>
 /// 避ける関数
 /// </summary>
-/// <param name="player_vector"></param>
+/// <param name="BoidsAI_vector"></param>
 /// <returns></returns>
-Pvector Player::boid_Avoid(std::vector<Player*> player_vector)
+Pvector BoidsAI::boid_Avoid(std::vector<BoidsAI*> BoidsAI_vector)
 {
 	Pvector stt = { 0,0 };
-	for (auto& it : player_vector)
+	for (auto& it : BoidsAI_vector)
 	{
 		XMFLOAT3 diff = XMFLOAT3(it->GetPos().x - this->GetPos().x, 0.0f, it->GetPos().z - this->GetPos().z);//障害物との距離
 
@@ -1082,9 +1082,9 @@ Pvector Player::boid_Avoid(std::vector<Player*> player_vector)
 /// <summary>
 /// 分離関数
 /// </summary>
-/// <param name="player_vector"></param>
+/// <param name="BoidsAI_vector"></param>
 /// <returns></returns>
-Pvector Player::boid_inSeparation(std::vector<Player*> player_vector)
+Pvector BoidsAI::boid_inSeparation(std::vector<BoidsAI*> BoidsAI_vector)
 {
 	// ボイド間分離視野距離
 	if (this->follow == Follow::ZONBIE)
@@ -1093,7 +1093,7 @@ Pvector Player::boid_inSeparation(std::vector<Player*> player_vector)
 		velocity = { 0,0 };
 
 
-		if (PlayerMgr::GetInstance()->gatherflg)
+		if (BoidsAIMgr::GetInstance()->gatherflg)
 		{
 			Sepdist -= 0.1f;
 			
@@ -1103,7 +1103,7 @@ Pvector Player::boid_inSeparation(std::vector<Player*> player_vector)
 				Sepdist = 10.0f;
 			}
 		}
-		else if (!PlayerMgr::GetInstance()->gatherflg)
+		else if (!BoidsAIMgr::GetInstance()->gatherflg)
 		{
 			Sepdist += 0.2f;
 	
@@ -1117,7 +1117,7 @@ Pvector Player::boid_inSeparation(std::vector<Player*> player_vector)
 	steer = { 0,0 };
 	int count = 0;
 	//システム内のすべてのボイドについて、近すぎるかどうかを確認します
-	for (auto& it : player_vector)
+	for (auto& it : BoidsAI_vector)
 	{
 
 		// 現在のboidから見ているboidまでの距離を計算する
@@ -1163,14 +1163,14 @@ Pvector Player::boid_inSeparation(std::vector<Player*> player_vector)
 // 整列
 //視野内のボイドの平均速度を計算し、
 // 一致するように現在のボイドの速度を操作します
-Pvector Player::boid_Alignment(std::vector<Player*> player_vector)
+Pvector BoidsAI::boid_Alignment(std::vector<BoidsAI*> BoidsAI_vector)
 {
 
 	desired = { 0,0 };
 	int count = 0;
 	if (boid_accel < 2.0f)
 	{
-		for (auto& it : player_vector)
+		for (auto& it : BoidsAI_vector)
 		{
 
 			if (it->follow == Follow::HYUMAN)
@@ -1204,7 +1204,7 @@ Pvector Player::boid_Alignment(std::vector<Player*> player_vector)
 
 }
 
-Pvector Player::boid_Down()
+Pvector BoidsAI::boid_Down()
 {
 	angle.y = 0.0f;//角度リセット
 
@@ -1250,13 +1250,13 @@ Pvector Player::boid_Down()
 ///マウスで囲ったキャラをスワイプで操作する
 /// <param name="mousepos"></param>
 /// <returns></returns>
-Pvector Player::boid_zonbieAlignment(Pvector mousepos)
+Pvector BoidsAI::boid_zonbieAlignment(Pvector mousepos)
 {
 
 	//マウスの中にいるか
 	if (insideflg)
 	{
-		if (PlayerMgr::GetInstance()->velocityflg)
+		if (BoidsAIMgr::GetInstance()->velocityflg)
 		{
 			vel = { 0,0 };
 			desired = { 0,0 };
@@ -1281,7 +1281,7 @@ Pvector Player::boid_zonbieAlignment(Pvector mousepos)
 	return ali_vel;
 }
 
-Pvector Player::boid_zonbieAway(std::vector<Player*> player_vector)
+Pvector BoidsAI::boid_zonbieAway(std::vector<BoidsAI*> BoidsAI_vector)
 {// ボイド間分離視野距離
 	//float desiredseparation = chasedist;//視野　プレイヤーからの距離
 	steer = { 0.0f,0.0f };
@@ -1289,18 +1289,18 @@ Pvector Player::boid_zonbieAway(std::vector<Player*> player_vector)
 	
 	float before_distanse = 100.0f;//一番近い距離保存用
 	
-	Pvector nearplayer;//一番近い存在を保存する変数
+	Pvector nearBoidsAI;//一番近い存在を保存する変数
 	
 	if (awayflg == false) {
 
 		// 現在のボイドが捕食者であり、私たちが見ているボイドも捕食者である場合
 		// 捕食者は近づいて、その後わずかに分離
-		for (auto& it : player_vector)
+		for (auto& it : BoidsAI_vector)
 		{
 			float d = location.distance(it->location);
 			if (d < before_distanse) {
 				before_distanse = d;
-				nearplayer = it->location;
+				nearBoidsAI = it->location;
 			}
 		}
 		//一定範囲内か
@@ -1308,7 +1308,7 @@ Pvector Player::boid_zonbieAway(std::vector<Player*> player_vector)
 		{
 	
 			desired = { 0,0 };
-			desired = desired.subTwoVector(location, nearplayer);
+			desired = desired.subTwoVector(location, nearBoidsAI);
 			desired.normalize();
 			desired.mulScalar(-1);
 			desired.divScalar(before_distanse);
@@ -1330,7 +1330,7 @@ Pvector Player::boid_zonbieAway(std::vector<Player*> player_vector)
 /// 近くのAIを探す動きをする
 /// </summary>
 /// <returns></returns>
-Pvector Player::boid_zonbieSearch()
+Pvector BoidsAI::boid_zonbieSearch()
 {
 	//ランダム初期化
 	std::random_device seed_gen;
@@ -1368,12 +1368,12 @@ Pvector Player::boid_zonbieSearch()
 // 結合
 // 近くのボイドの平均位置を見つけ、
 // その方向に移動する操舵力。
-Pvector Player::boid_Cohesion(std::vector<Player*> player_vector)
+Pvector BoidsAI::boid_Cohesion(std::vector<BoidsAI*> BoidsAI_vector)
 {
 	float neighbordist = desCoh;
 	desired = { 0,0 };
 	int count = 0;
-	for (auto& it : player_vector)
+	for (auto& it : BoidsAI_vector)
 	{
 		float d = it->location.distance(this->location);
 		if ((d > 0) && (d < neighbordist)) {
@@ -1396,11 +1396,11 @@ Pvector Player::boid_Cohesion(std::vector<Player*> player_vector)
 /// 分散していく
 /// </summary>
 /// <returns></returns>
-Pvector Player::Zombie_Scatter()
+Pvector BoidsAI::Zombie_Scatter()
 {
 	if (zombie_scatterflg)
 	{
-		if (PlayerMgr::GetInstance()->scatterflg)
+		if (BoidsAIMgr::GetInstance()->scatterflg)
 		{
 			ali_vel = { 0,0 };
 			velocity = { 0,0 };
@@ -1442,7 +1442,7 @@ Pvector Player::Zombie_Scatter()
 /// </summary>
 /// <param name="uniquebomb"></param>
 /// <returns></returns>
-Pvector Player::zonbie_damage(std::vector<UniqueEnemy_Bomb*>& uniquebomb)
+Pvector BoidsAI::zonbie_damage(std::vector<UniqueEnemy_Bomb*>& uniquebomb)
 {
 	for (auto& b : BulletMgr::GetInstance()->g_bullets) {
 		if (b->explosion == true)
@@ -1522,9 +1522,9 @@ Pvector Player::zonbie_damage(std::vector<UniqueEnemy_Bomb*>& uniquebomb)
 /// <summary>
 /// AIの集合操作
 /// </summary>
-/// <param name="player_vector"></param>
+/// <param name="BoidsAI_vector"></param>
 /// <returns></returns>
-Pvector Player::boid_Gather(std::vector<Player*> player_vector)
+Pvector BoidsAI::boid_Gather(std::vector<BoidsAI*> BoidsAI_vector)
 {
 
 	desired = { 0,0 };
@@ -1582,7 +1582,7 @@ Pvector Player::boid_Gather(std::vector<Player*> player_vector)
 /// </summary>
 /// <param name="World_Pos"></param>
 /// <returns></returns>
-XMFLOAT3 Player::Screenpos(XMFLOAT3 World_Pos) {
+XMFLOAT3 BoidsAI::Screenpos(XMFLOAT3 World_Pos) {
 
 	XMFLOAT4X4 g_view = CCamera::GetInstance()->GetViewMatrix();//ビュー変換取得
 	XMFLOAT4X4 g_projection = CCamera::GetInstance()->GetProjectionMatrix();//プロジェクション取得
@@ -1624,7 +1624,7 @@ XMFLOAT3 Player::Screenpos(XMFLOAT3 World_Pos) {
 }
 
 
-void Player::SetAngle()
+void BoidsAI::SetAngle()
 {
 	XMFLOAT4 qtx = {};//クォータニオン
 	XMFLOAT4 qty = {};//クォータニオン
@@ -1655,7 +1655,7 @@ void Player::SetAngle()
 	DX11MtxFromQt(rot, tempqt2);
 }
 
-XMFLOAT3 Player::GetAngle()
+XMFLOAT3 BoidsAI::GetAngle()
 {
 	return angle;
 }
@@ -1664,7 +1664,7 @@ XMFLOAT3 Player::GetAngle()
 /// <summary>
 /// guiの変数を表示する
 /// </summary>
-void Player::CheckBox()
+void BoidsAI::CheckBox()
 {
 	{
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
@@ -1739,7 +1739,7 @@ void Player::CheckBox()
 }
 
 //ルールを初期化する
-void Player::UnCheckBox()
+void BoidsAI::UnCheckBox()
 {
 	hsepflg = false;
 	haliflg = false;
@@ -1766,7 +1766,7 @@ void Player::UnCheckBox()
 /// <summary>
 /// ルールのセーブ機能
 /// </summary>
-void Player::SaveNum()
+void BoidsAI::SaveNum()
 {
 
 
@@ -1804,7 +1804,7 @@ void Player::SaveNum()
 
 
 //aiの値のロード
-void Player::LoadNum()
+void BoidsAI::LoadNum()
 {
 	Save::GetInstance()->save2 = Save::GetInstance()->Loadvin2("assets/boids.dat");
 
@@ -1836,7 +1836,7 @@ void Player::LoadNum()
 	Searchcnt = Save::GetInstance()->save2.data50;
 }
 
-void Player::Gui()
+void BoidsAI::Gui()
 {
 	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
 	ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
@@ -1922,7 +1922,7 @@ void Player::Gui()
 	ImGui::PopStyleColor();
 }
 
-void Player::SetNum()
+void BoidsAI::SetNum()
 {
 
 	//人間の速さ
@@ -1972,74 +1972,74 @@ void Player::SetNum()
 	 damage = 1.0f;//１．０
 }
 
-int Player::GetHp()
+int BoidsAI::GetHp()
 {
 	return hp;
 }
 
-float Player::boid_angle(const Pvector& v)
+float BoidsAI::boid_angle(const Pvector& v)
 {
 	// 内積の定義から
 	float angle = (float)(atan2(v.x, -v.y) * 180 / PI);
 	return angle;
 }
 
-float Player::getDesSep() const
+float BoidsAI::getDesSep() const
 {
 	return desSep;
 }
 
-float Player::getDesAli() const
+float BoidsAI::getDesAli() const
 {
 	return desAli;
 }
 
-float Player::getDesCoh() const
+float BoidsAI::getDesCoh() const
 {
 	return desCoh;
 }
 
-float Player::getSepW() const
+float BoidsAI::getSepW() const
 {
 	return SepW;
 }
 
-float Player::getAliW() const
+float BoidsAI::getAliW() const
 {
 	return AliW;
 }
 
-float Player::getCohW() const
+float BoidsAI::getCohW() const
 {
 	return CohW;
 }
 
-void Player::setDesSep(float x)
+void BoidsAI::setDesSep(float x)
 {
 	desSep += x;
 }
 
-void Player::setDesAli(float x)
+void BoidsAI::setDesAli(float x)
 {
 	desAli += x;
 }
 
-void Player::setDesCoh(float x)
+void BoidsAI::setDesCoh(float x)
 {
 	desCoh += x;
 }
 
-void Player::setSepW(float x)
+void BoidsAI::setSepW(float x)
 {
 	SepW += x;
 }
 
-void Player::setAliW(float x)
+void BoidsAI::setAliW(float x)
 {
 	AliW += x;
 }
 
-void Player::setCohW(float x)
+void BoidsAI::setCohW(float x)
 {
 	CohW += x;
 }

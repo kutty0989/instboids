@@ -1,3 +1,9 @@
+//=============================================================================
+//
+// ”š’e¶¬ƒNƒ‰ƒX [Explsion.cpp]
+//
+//=============================================================================
+
 #include "Explsion.h"
 #include"CBillboardMgr.h"
 #include"Scean.h"
@@ -15,14 +21,7 @@ void Explsion::Init()
 	SetTexture(CBillBoardMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_btexlist[static_cast<int>(Scean::BCGID::EXPLSION)].cgname));
 	m_bill->Init(0, 0, 0, 300.0f, 300.0f, firecol);
 	m_bill->angle = -90.0f;
-	//m_bill->LoadTexTure("assets/UI/circle.png");
-	//XMFLOAT2 fireUV[] =
-	//{
-	//	{0,0},
-	//	{0,1},
-	//	{1,0},
-	//	{1,1}
-	//};
+
 	m_bill->PartMax(5, 4);
 	//m_bill->SetUV(fireUV);
 

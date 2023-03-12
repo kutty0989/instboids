@@ -1,9 +1,17 @@
+//=============================================================================
+//
+// ボックス描画処理 [CBox.cpp]
+//
+//=============================================================================
+
 #include	"CBox.h"
 #include	"CDirectxGraphics.h"
 
 const float PI = XM_PI;
 
-// インデックスデータを作成
+ /// <summary>
+ ///  インデックスデータを作成
+ /// </summary>
 void CBox::CreateIndex() {
 	m_face[0].idx[0] = 0;		// 手前  ok
 	m_face[0].idx[1] = 1;
@@ -115,6 +123,13 @@ void CBox::Draw() {
 		0);										// 頂点バッファの最初から使う
 }
 
+/// <summary>
+/// 頂点初期化処理
+/// </summary>
+/// <param name="width">横幅</param>
+/// <param name="height">高さ</param>
+/// <param name="depth">奥行き</param>
+/// <returns>成否</returns>
 bool CBox::Init(
 	float width,
 	float height,
@@ -195,6 +210,9 @@ bool CBox::Init(
 	return true;
 }
 
+/// <summary>
+/// 各シェーダー解放
+/// </summary>
 void CBox::Exit() {
 
 	// ピクセルシェーダー解放

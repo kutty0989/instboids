@@ -1,4 +1,8 @@
 #pragma once
+//========================================================
+//Dx11util.h
+//			Dxのレンダラー関数クラス
+//========================================================
 #include	<d3d11.h>
 #include	<DirectXMath.h>
 #include	"CDirectxGraphics.h"
@@ -10,11 +14,12 @@ IDXGISwapChain* GetDX11SwapChain();
 ID3D11SamplerState* GetDX11SampState();
 
 
-void DX11LightInit(DirectX::XMFLOAT4 lightpos);
-void DX11LightUninit();
-void DX11LightUpdate(DirectX::XMFLOAT4 lpos);
 
-bool DX11Init(HWND hwnd, int width, int height, bool fullscreen);
+void DX11LightInit(DirectX::XMFLOAT4 lightpos);//ライティング初期処理
+void DX11LightUninit();//ライティング解放処理
+void DX11LightUpdate(DirectX::XMFLOAT4 lpos);//ライティング更新
+
+bool DX11Init(HWND hwnd, int width, int height, bool fullscreen);//ｄｘ初期処理
 void DX11Uninit();
 void DX11BeforeRender(float ClearColor[]);
 void DX11AfterRender();

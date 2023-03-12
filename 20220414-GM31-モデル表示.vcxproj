@@ -146,14 +146,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationDataAssimp.cpp" />
-    <ClCompile Include="AnimeSprite.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="assimpscene.cpp" />
     <ClCompile Include="billboardMgr.cpp" />
     <ClCompile Include="BoidsHP.cpp" />
     <ClCompile Include="Bone.cpp" />
     <ClCompile Include="BoundingSphere.cpp" />
-    <ClCompile Include="build.cpp" />
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="BulletMgr.cpp" />
     <ClCompile Include="CBBoxGenerater.cpp" />
@@ -190,7 +188,6 @@
     <ClCompile Include="IMgui\imgui_impl_win32.cpp" />
     <ClCompile Include="IMgui\imgui_tables.cpp" />
     <ClCompile Include="IMgui\imgui_widgets.cpp" />
-    <ClCompile Include="instan.cpp" />
     <ClCompile Include="CTexInstance.cpp" />
     <ClCompile Include="line.cpp" />
     <ClCompile Include="Long_Notes.cpp" />
@@ -205,8 +202,8 @@
     <ClCompile Include="Notes_Object.cpp" />
     <ClCompile Include="obb.cpp" />
     <ClCompile Include="Particle.cpp" />
-    <ClCompile Include="player.cpp" />
-    <ClCompile Include="PlayerMgr.cpp" />
+    <ClCompile Include="BoidsAI.cpp" />
+    <ClCompile Include="BoidsAIMgr.cpp" />
     <ClCompile Include="Save.cpp" />
     <ClCompile Include="Scean.cpp" />
     <ClCompile Include="Score.cpp" />
@@ -216,8 +213,6 @@
     <ClCompile Include="Skeleton.cpp" />
     <ClCompile Include="skybox.cpp" />
     <ClCompile Include="sphere.cpp" />
-    <ClCompile Include="sprite.cpp" />
-    <ClCompile Include="SpriteMgr.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="StageHit.cpp" />
     <ClCompile Include="S_Clear.cpp" />
@@ -239,12 +234,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationDataAssimp.h" />
-    <ClInclude Include="AnimeSprite.h" />
     <ClInclude Include="billboardMgr.h" />
     <ClInclude Include="BoidsHp.h" />
     <ClInclude Include="Bone.h" />
     <ClInclude Include="Bpm_Data.h" />
-    <ClInclude Include="build.h" />
     <ClInclude Include="BulletMgr.h" />
     <ClInclude Include="CBBoxGenerater.h" />
     <ClInclude Include="CBillboardMgr.h" />
@@ -255,7 +248,6 @@
     <ClInclude Include="ColTrees.h" />
     <ClInclude Include="CTex.h" />
     <ClInclude Include="CTexMgr.h" />
-    <ClInclude Include="Data.h" />
     <ClInclude Include="DatFile.h" />
     <ClInclude Include="DatFileLoader.h" />
     <ClInclude Include="DIController.h" />
@@ -263,7 +255,6 @@
     <ClInclude Include="Explsion.h" />
     <ClInclude Include="granate.h" />
     <ClInclude Include="ground.h" />
-    <ClInclude Include="instan.h" />
     <ClInclude Include="CTexInstance.h" />
     <ClInclude Include="InstanceModelMgr.h" />
     <ClInclude Include="MeshData.h" />
@@ -274,7 +265,7 @@
     <ClInclude Include="obb.h" />
     <ClInclude Include="OctreeMain.h" />
     <ClInclude Include="Particle.h" />
-    <ClInclude Include="PlayerMgr.h" />
+    <ClInclude Include="BoidsAIMgr.h" />
     <ClInclude Include="Save.h" />
     <ClInclude Include="Score.h" />
     <ClInclude Include="Seiha.h" />
@@ -320,7 +311,7 @@
     <ClInclude Include="Notes_Arrange.h" />
     <ClInclude Include="Notes_Data.h" />
     <ClInclude Include="Notes_Object.h" />
-    <ClInclude Include="player.h" />
+    <ClInclude Include="BoidsAI.h" />
     <ClInclude Include="Scean.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="shaderhashmap.h" />
@@ -328,8 +319,6 @@
     <ClInclude Include="Skeleton.h" />
     <ClInclude Include="skybox.h" />
     <ClInclude Include="sphere.h" />
-    <ClInclude Include="sprite.h" />
-    <ClInclude Include="SpriteMgr.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="StageHit.h" />
     <ClInclude Include="SmartPtr.h" />

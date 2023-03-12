@@ -1,38 +1,53 @@
+
+//=============================================================================
+//
+// スコア処理 [Score.cpp]
+//
+//=============================================================================
 #include "Score.h"
 #include"CTexMgr.h"
 #include"Scean.h"
-#include"PlayerMgr.h"
+#include"BoidsAIMgr.h"
 #include"Application.h"
 #include"CDirectInput.h"
 #include"IMgui/imgui.h"
 
 
+/// <summary>
+/// スコアの初期化処理
+/// </summary>
+/// <param name="pos">1桁目のポジション</param>
 void Score::Init(XMFLOAT3 pos)
 {
+	
 	m_texture = new CTex();
 	
-	//SetTexture(CTexMgr::GetInstance().GetModelPtr(Scean::GetInstance()->g_texlist[static_cast<int>(Scean::CGID::NUM)].cgname));
-
+	//テクスチャをセット
 	m_texture->LoadTexture("assets/UI/suuzi.png");
 
+	//初期値の大きさをセット
 	m_texture->Init(50, 50, XMFLOAT3(1.0f, 1.0f, 1.0f));
 
+	//大きさをセット
 	bscale = myscale;
 	////ロングノーツの先頭テクスチャをセット
 	m_texture->SetScale(1.0, 1.0, 1.0f);
 	
+	//現在のポジション
 	bpos = pos;
 	mypos = pos;
-
-
 	
+	//分割数
 	m_texture->PartMax(5, 5);
 	m_texture->SetPosition(pos.x, pos.y, pos.z);
+	
+	//スコア初期値
 	b_num = 0;
 }
 
 void Score::Update(int num,int kurai)
 {
+	//UVアニメーション
 	XMFLOAT2 c_uv[4] =
 	{
 		{0.0f,0.0f},
@@ -40,9 +55,11 @@ void Score::Update(int num,int kurai)
 		{0.0f,1.0f},
 		{1.0f,1.0f},
 	};	
+	//アニメーション
 	m_texture->SetUV(c_uv);
 
-
+	//////////////////////////////////////////////
+	//数字が変更されたらアニメーションさせる
 	if (b_num != num)
 	{
 		bpos.y = mypos.y+0.01;
@@ -76,12 +93,17 @@ void Score::Update(int num,int kurai)
 		bscale.x = bscale.x + 0.1f;
 		bscale.y = bscale.y + 0.1f;
 	}
-	
+	////////////////////////////////////////////////////////
+
+
+
+	//位置、スケール調整	
 	m_texture->SetPosition(bpos.x, bpos.y, bpos.z);
 	m_texture->SetScale(bscale.x, bscale.y, bscale.z);
-//	m_texture->SetRotation(angle);
+
 	b_num = num;
 
+	//値によって数字を描画
 	switch (num)
 	{
 	case 0:
@@ -144,15 +166,23 @@ void Score::Update(int num,int kurai)
 
 }
 
+
+/// <summary>
+/// 描画処理
+/// </summary>
 void Score::Draw()
 {
-	
+	//頂点更新
 	m_texture->updateVertex(50,50,XMFLOAT3(1.0f,1.0f,1.0f));
 	m_texture->updateVbuffer();
 
+	//テクスチャ描画
 	m_texture->Draw();
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void Score::Finish()
 {
 	m_texture->UnInit();

@@ -1,3 +1,9 @@
+//=============================================================================
+//
+// テクスチャー生成クラス [CTex.h]
+//
+//=============================================================================
+
 #include	"CTex.h"
 
 // comptr
@@ -13,7 +19,13 @@ const char* pstexfilename[] = {
 	"shader/pstexcol.hlsl"
 };
 
-// 矩形の初期化
+/// <summary>
+/// 矩形の初期化
+/// </summary>
+/// <param name="width">横幅</param>
+/// <param name="height">立幅</param>
+/// <param name="color">色</param>
+/// <returns></returns>
 bool CTex::Init(uint32_t width,
 	uint32_t height,
 	DirectX::XMFLOAT3 color) {
@@ -78,17 +90,15 @@ bool CTex::Init(uint32_t width,
 		return false;
 	}
 
-
-
 	// ビューポートサイズセット
 	SetViewPortSize(DX11GetScreenWidth(), DX11GetScreenHeight());
-
-
 
 	return true;
 }
 
-// 描画
+/// <summary>
+/// 描画処理
+/// </summary>
 void CTex::Draw() {
 
 	TurnOffZbuffer();
@@ -106,8 +116,7 @@ void CTex::Draw() {
 	// テクスチャをセット
 	devcontext->PSSetShaderResources(0, 1, m_srv.GetAddressOf());
 
-	//DX11SetTransform::GetInstance()->SetTransform(DX11SetTransform::TYPE::VIEW, vmtx);
-	//DX11SetTransform::GetInstance()->SetTransform(DX11SetTransform::TYPE::PROJECTION, pmtx);
+	//行列計算
 	DX11MtxIdentity(p_mtx);
 	DX11MtxIdentity(s_mtx);
 	DX11MtxIdentity(o_mtx);
@@ -118,7 +127,6 @@ void CTex::Draw() {
 	DX11MtxIdentity(mtx);
 	DX11MtxMultiply(mtx, s_mtx, o_mtx);
 	DX11MtxMultiply(mtx, mtx, p_mtx);//スケール　＊　回転　＊　移動
-   // DX11MtxMultiply(m_worldmtx, o_mtx, m_worldmtx);
 
 
 	// 座標変換用の行列をセット
@@ -155,6 +163,7 @@ void CTex::Draw() {
 	ID3D11InputLayout* layout;
 	layout = ShaderHashmap::GetInstance()->GetVertexLayout(vstexfilename[0]);
 
+	//各シェーダーにセット
 	devcontext->VSSetShader(vs, nullptr, 0);
 	//devcontext->GSSetShader(nullptr, nullptr, 0);
 	//devcontext->HSSetShader(nullptr, nullptr, 0);
@@ -172,38 +181,39 @@ void CTex::Draw() {
 		0);						// 基準頂点インデックス
 
 	TurnOnZbuffer();
-	
-//	TurnOffScissor();
-	
+
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void CTex::UnInit() {
-	ID3D11VertexShader* vs;
-	vs = ShaderHashmap::GetInstance()->GetVertexShader(vstexfilename[0]);
-	ID3D11PixelShader* ps;
-	ps = ShaderHashmap::GetInstance()->GetPixelShader(pstexfilename[0]);
+	//ID3D11VertexShader* vs;
+	//vs = ShaderHashmap::GetInstance()->GetVertexShader(vstexfilename[0]);
+	//ID3D11PixelShader* ps;
+	//ps = ShaderHashmap::GetInstance()->GetPixelShader(pstexfilename[0]);
 
-	// 頂点レイアウト取得
-	ID3D11InputLayout* layout;
-	layout = ShaderHashmap::GetInstance()->GetVertexLayout(vstexfilename[0]);
+	//// 頂点レイアウト取得
+	//ID3D11InputLayout* layout;
+	//layout = ShaderHashmap::GetInstance()->GetVertexLayout(vstexfilename[0]);
 
-	// 頂点シェーダー解放
-	if (vs) {
-		vs->Release();
-		vs = nullptr;
-	}
+	//// 頂点シェーダー解放
+	//if (vs) {
+	//	vs->Release();
+	//	vs = nullptr;
+	//}
 
-	// ピクセルシェーダー解放
-	if (ps) {
-		ps->Release();
-		ps = nullptr;
-	}
+	//// ピクセルシェーダー解放
+	//if (ps) {
+	//	ps->Release();
+	//	ps = nullptr;
+	//}
 
-	// 頂点レイアウト解放
-	if (layout) {
-		layout->Release();
-		layout = nullptr;
-	}
+	//// 頂点レイアウト解放
+	//if (layout) {
+	//	layout->Release();
+	//	layout = nullptr;
+	//}
 }
 
 // 拡大、縮小

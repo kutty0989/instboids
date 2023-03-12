@@ -1,13 +1,13 @@
 #pragma once
+//========================================================
+//CBillBoard.h
+//			ビルボードの生成を行うためのクラス
+//========================================================
 #include<DirectXMath.h>
 #include<d3d11.h>
 #include"DX11util.h"
 #include"Shader.h"
 #include"CTex.h"
-
-//////////////////////////////////
-//ビルボードクラス
-///////////////////////////////
 
 
 class CBillBoard {
@@ -174,6 +174,9 @@ public:
 
 		return true;
 	}
+	/// <summary>
+	/// シェーダーの解放処理
+	/// </summary>
 	void Dispose()
 	{
 		if (m_vbuffer != nullptr) {

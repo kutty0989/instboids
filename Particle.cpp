@@ -1,3 +1,8 @@
+//=============================================================================
+//
+// パーティクル生成クラス [Particle.cpp]
+//
+//=============================================================================
 #include "Particle.h"
 #include"Shader.h"
 #include"dx11mathutil.h"
@@ -5,6 +10,16 @@
 #include"DX11util.h"
 
 
+/// <summary>
+/// パーティクル初期生成
+/// </summary>
+/// <param name="x"></param>
+/// <param name="y"></param>
+/// <param name="z"></param>
+/// <param name="xsize">ｘの大きさ</param>
+/// <param name="ysize">ｙの大きさ</param>
+/// <param name="color">色</param>
+/// <returns></returns>
 bool Particle::Init(float x, float y, float z, float xsize, float ysize, DirectX::XMFLOAT4 color)
 {
 	DXGI_SWAP_CHAIN_DESC scd = { 0 };
@@ -15,27 +30,6 @@ bool Particle::Init(float x, float y, float z, float xsize, float ysize, DirectX
 	ID3D11Device* dev;
 	dev = GetDX11Device();
 
-
-	//// シェーダの設定
-	//ID3DBlob* pCompileVS = NULL;
-	//ID3DBlob* pCompilePS = NULL;
-	//D3DCompileFromFile(L"shader/instancevs.hlsl", NULL, NULL, "VS", "vs_5_0", NULL, 0, &pCompileVS, NULL);
-	//dev->CreateVertexShader(pCompileVS->GetBufferPointer(), pCompileVS->GetBufferSize(), NULL, &m_pVertexShader);
-	//D3DCompileFromFile(L"shader/instancevs.hlsl", NULL, NULL, "PS", "ps_5_0", NULL, 0, &pCompilePS, NULL);
-	//dev->CreatePixelShader(pCompilePS->GetBufferPointer(), pCompilePS->GetBufferSize(), NULL, &m_pPixelShader);
-
-
-
-	//m_x = x;
-	//m_y = y;
-	//m_z = z;
-	//m_XSize = xsize;
-	//m_YSize = ysize;
-	//m_Color = color;
-	////デバイス取得
-	//ID3D11Device* dev = GetDX11Device();
-	////デバイスコンテキスト取得
-	//ID3D11DeviceContext* devcontext = GetDX11DeviceContext();
 
 	//頂点データの定義
 	D3D11_INPUT_ELEMENT_DESC layout[] =
@@ -105,14 +99,6 @@ bool Particle::Init(float x, float y, float z, float xsize, float ysize, DirectX
 	InitData.pSysMem = vertices;
 	dev->CreateBuffer(&bd, &InitData, &m_vbuffer);
 	
-	////バーテックスバッファーをセット
-	//UINT stride = sizeof(SimpleVertex);
-	//UINT offset = 0;
-	//m_pDeviceContext->IASetVertexBuffers(0, 1, &m_vbuffer, &stride, &offset);
-
-
-//	CalcVertex();//ビルボード用の頂点データを作成
-
 	CreateBlendStateSrcAlpha();//アルファブレンディング用のブレンドステートを生成
 	CreateBlendStateOne();//加算合成用ブレンドステート生成
 	CreateBelndStateDefault();//でファルとのブレンドステート生成
@@ -134,61 +120,6 @@ bool Particle::Init(float x, float y, float z, float xsize, float ysize, DirectX
 
 	return true;
 }
-
-
-//ビルボードの頂点座標を計算
-//void Particle::CalcVertex()
-//{
-//	m_Vertex[0].x = -m_XSize / 2;
-//	m_Vertex[0].y = m_YSize / 2;
-//	m_Vertex->z = 0.0f;
-//	m_Vertex[0].color = m_Color;
-//	m_Vertex[0].tu = m_uv[0].x;
-//	m_Vertex[0].tv = m_uv[0].y;
-//
-//	m_Vertex[1].x = m_XSize / 2;
-//	m_Vertex[1].y = m_YSize / 2;
-//	m_Vertex->z = 0.0f;
-//	m_Vertex[1].color = m_Color;
-//	m_Vertex[1].tu = m_uv[1].x;
-//	m_Vertex[1].tv = m_uv[1].y;
-//
-//	m_Vertex[2].x = -m_XSize / 2;
-//	m_Vertex[2].y = -m_YSize / 2;
-//	m_Vertex->z = 0.0f;
-//	m_Vertex[2].color = m_Color;
-//	m_Vertex[2].tu = m_uv[2].x;
-//	m_Vertex[2].tv = m_uv[2].y;
-//
-//	m_Vertex[3].x = m_XSize / 2;
-//	m_Vertex[3].y = -m_YSize / 2;
-//	m_Vertex->z = 0.0f;
-//	m_Vertex[3].color = m_Color;
-//	m_Vertex[3].tu = m_uv[3].x;
-//	m_Vertex[3].tv = m_uv[3].y;
-//
-//	if (m_vbuffer == nullptr) {
-//		ID3D11Device* dev;
-//		dev = GetDX11Device();
-//
-//		//頂点バッファ作成（後で変更可能な）
-//		bool sts = CreateVertexBufferWrite(dev, sizeof(MyVertex), 4, m_Vertex, &m_vbuffer);
-//		if (!sts) {
-//			MessageBox(nullptr, "create vertex buffer erro(Particle)", "error", MB_OK);
-//		}
-//	}
-//	else {
-//		//作成済みなら内容を書き換える
-//		D3D11_MAPPED_SUBRESOURCE pData;
-//		ID3D11DeviceContext* devcontext;
-//		devcontext = GetDX11DeviceContext();
-//		HRESULT hr = devcontext->Map(m_vbuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData);
-//		if (SUCCEEDED(hr)) {
-//			memcpy_s(pData.pData, pData.RowPitch, (void*)(m_Vertex), sizeof(MyVertex) * 4);
-//			devcontext->Unmap(m_vbuffer, 0);
-//		}
-//	}
-//}
 
 //サイズをセット
 void Particle::SetSize(float x, float y)
@@ -243,8 +174,6 @@ void Particle::CalParticleMatrix(const DirectX::XMFLOAT4X4& cameramat)
 //描画
 void Particle::Draw()
 {
-	//Zバッファ無効化
-  //  TurnOnAlphablend();
 	TurnOffZbuffer();
 
 	ID3D11DeviceContext* devcontext;
@@ -285,9 +214,7 @@ void Particle::Draw()
 	devcontext->Draw(4, 0);
 
 	TurnOnZbuffer();
-	//TurnOffAlphablend();
-	//Zバッファを有効か
-	//TurnOnZbuffer();
+
 
 }
 

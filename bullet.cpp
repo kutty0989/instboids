@@ -1,3 +1,9 @@
+//=============================================================================
+//
+// 基底の弾の生成クラス [bullet.cpp]
+//
+//=============================================================================
+
 #include  <memory>
 #include  "bullet.h"
 #include  "dx11mathutil.h"
@@ -10,15 +16,14 @@
 #include"CCamera.h"
 #include"billboardMgr.h"
 
-constexpr float BULLETSPEED = 15.0f;
-constexpr uint32_t BULLETLIFE = 60;
+constexpr float BULLETSPEED = 15.0f;//バレットの速さ
+constexpr uint32_t BULLETLIFE = 60;//生存時間
 #define debuglog(a) std::cout<<a<<std::endl;
-time_t t;
-time_t ta;
-long cpu_time;
-double sec;
-double asec;
 
+/// <summary>
+/// 弾の初期化処理
+/// </summary>
+/// <returns>成否</returns>
 bool Bullet::Init() {
 	bool sts = true;
 
@@ -29,17 +34,20 @@ bool Bullet::Init() {
 	//sec = (double)cpu_time / CLOCKS_PER_SEC;*/
 	m_sts = BULLETSTATUS::DEAD;
 
-	XMFLOAT4X4 s_mtx;//スケール
+	XMFLOAT4X4 s_mtx;//スケール用の変数
 
 	SetScale(1.1f, 1.1f, 1.1f);
 	DX11MtxScale(m_scale.x, m_scale.y, m_scale.z, s_mtx);//スケール行列
-	//DX11MtxIdentity(m_mtx);
-	DX11MtxMultiply(m_mtx, m_mtx, s_mtx);//スケール
+	
+	//行列掛け算
+	DX11MtxMultiply(m_mtx, m_mtx, s_mtx);
 	return sts;
-
-
 }
 
+/// <summary>
+/// 弾の再生成関数　呼び出すと引数の場所に生成
+/// </summary>
+/// <param name="pos">生成したい場所</param>
 void Bullet::Remake(XMFLOAT3 pos)
 {
 	m_life = 60;
@@ -48,9 +56,12 @@ void Bullet::Remake(XMFLOAT3 pos)
 	nowpos = m_pos;
 }
 
+/// <summary>
+/// 描画
+/// </summary>
 void Bullet::Draw() {
 
-	//モデル描画
+	//生きている弾だけ描画
 	if (m_sts == BULLETSTATUS::LIVE) {
 	
 		m_pmodel->Draw(m_mtx);
@@ -65,51 +76,58 @@ T LeapID(T _go, T _to, float _ratio)
 	return _go * (1.0f - _ratio) + _to * (T)_ratio;
 }
 
+/// <summary>
+/// 弾の更新
+/// </summary>
 void Bullet::Update()
 {
+	//爆発エフェクトの更新
 	BillBoardExplosion();
 	explosion = false;
+
+	//生きている弾だけ更新
 	if (m_sts == BULLETSTATUS::LIVE) {
 
+		//行列計算
 		DX11MtxIdentity(scale);
 		DX11MtxIdentity(trans);
 		DX11MtxIdentity(rot);
 		DX11MtxIdentity(world);
 
-	
-
+		//スケールセット
 		scale._11 = 2.2f;
 		scale._22 = 2.2f;
 		scale._33 = 2.2f;
 
+		//爆発までのカウントダウン
 		m_life--;
 		explocnt -= 1;
 
-		// debuglog(asec - sec);
-
-		//SetScale(0.1f, 0.1f, 0.1f);
+		//弾が生きていれば
 		if (m_life > 0) {
 			//発射方向に向けてスピード分　等速運動
 
 			float time = m_life / 60.0f;
 
+			//場所を目的地まで補完
 			time = abs(1 - time);
 			float posx = LeapID<float>(nowpos.x, enemypos.x, time);
 			float posy = LeapID<float>(nowpos.y, enemypos.y, time);
 			float posz = LeapID<float>(nowpos.z, enemypos.z, time);
 
-			
-
+			//場所を更新
 			trans._41 = posx;
 			trans._42 = posy + 4.0f;
 			trans._43 = posz;
 
+			//向きベクトルを取得
 			XMFLOAT2 angley;
 			angley.x = enemypos.x - nowpos.x;
 			angley.y = enemypos.z - nowpos.z;
 
 			angle.y = 0.0f;
 
+			//向きを変更
 			angle.y = -GetKakudo(angley.x, angley.y);
 			angle.y -= 90.0f;
 
@@ -126,12 +144,8 @@ void Bullet::Update()
 			axisY.z = m_mtx._23;
 			axisY.w = 0.0f;
 
-			//DX11GetQtfromMatrix(m_mtx, qt);
-
 			//指定軸回転のクォータニオンを生成
-		
 			DX11QtRotationAxis(qty, axisY, angle.y);
-	
 
 			//クォータニオンをノーマライズ
 			DX11QtNormalize(qty, qty);
@@ -143,19 +157,16 @@ void Bullet::Update()
 
 			DX11MtxMultiply(world, scale, rot);
 
-
-
+			//行列をセット
 			world._41 = trans._41;
 			world._42 = trans._42;
 			world._43 = trans._43;
 
-
 			m_mtx = world;
-
-
 		}
 		if (m_life == 1)
 		{
+			//爆発処理
 			explocnt = 100;
 			goalpoint = true;
 		}
@@ -171,6 +182,9 @@ void Bullet::Update()
 	}
 }
 
+/// <summary>
+/// 爆発を呼び出す為の関数
+/// </summary>
 void Bullet::BillBoardExplosion()
 {
 	if (explosion)

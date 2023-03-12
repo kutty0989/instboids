@@ -1,3 +1,9 @@
+//=============================================================================
+//
+// 全Gameシーン処理 [Game.cpp]
+//
+//=============================================================================
+
 #include <cinttypes>
 #include "dx11util.h"
 #include "CModel.h"
@@ -7,7 +13,7 @@
 #include "Application.h"
 #include "CDirectInput.h"
 #include "Seiha.h"
-#include"game.h"
+#include"Game.h"
 #include"IMgui/imgui.h"
 #include"IMgui/imgui_impl_win32.h"
 #include"IMgui/imgui_impl_dx11.h"
@@ -22,9 +28,11 @@
 
 Scean* Game::mScean;
 
-bool StageClear_Flg = false;//updateで結果をboolで返してもらいリザルトへ
-
+/// <summary>
+/// シーン初期化
+/// </summary>
 void Game::GameInit() {
+
 	// DX11初期化
 	DX11Init(
 		Application::Instance()->GetHWnd(),
@@ -33,7 +41,7 @@ void Game::GameInit() {
 		false);
 
 	// ここからImGui初期化------------
-// バージョンチェック
+	// バージョンチェック
 	IMGUI_CHECKVERSION();
 
 	// ImGuiのコンテキスト作成
@@ -61,7 +69,7 @@ void Game::GameInit() {
 	// カメラが必要
 	DirectX::XMFLOAT3 eye(0, 100, -50);		// カメラの位置
 	DirectX::XMFLOAT3 lookat(0, -10, 0);		// 注視点
-	DirectX::XMFLOAT3 up(0,  1, 0);			// カメラの上向きベクトル
+	DirectX::XMFLOAT3 up(0, 1, 0);			// カメラの上向きベクトル
 
 	CCamera::GetInstance()->Init(
 		10.0f,							// ニアクリップ
@@ -88,59 +96,24 @@ void Game::GameInit() {
 
 	srand(GetTickCount());//乱数を最初に一回だけ設定
 
-
-
-	//	//空中戦で使用するモデルを全て読み込む
-	//for (int i = 0; i < Scean::GetInstance()->g_modellist.size(); i++)
-	//{
-	//	ModelMgr::GetInstance().LoadModel(
-	//		Scean::GetInstance()->g_modellist[i].modelname,
-	//		Scean::GetInstance()->g_modellist[i].vsfilenamename,
-	//		Scean::GetInstance()->g_modellist[i].psfilename,
-	//		Scean::GetInstance()->g_modellist[i].texfoldername
-	//	);
-
-	//}
-	//for (int i = 0; i < Scean::GetInstance()->g_modelinstancelist.size(); i++)
-	//{
-	//	InstanceModelMgr::GetInstance().LoadInstanceModel(
-	//		Scean::GetInstance()->g_modelinstancelist[i].num,
-	//		Scean::GetInstance()->g_modelinstancelist[i].modelname,
-	//		Scean::GetInstance()->g_modelinstancelist[i].vsfilenamename,
-	//		Scean::GetInstance()->g_modelinstancelist[i].psfilename,
-	//		Scean::GetInstance()->g_modelinstancelist[i].texfoldername
-
-	//	);
-
-	//}
-	//for (int i = 0; i < Scean::GetInstance()->g_texlist.size(); i++)
-	//{
-	//	CTexMgr::GetInstance().LoadModel(
-	//		Scean::GetInstance()->g_texlist[i].cgname,
-	//		Scean::GetInstance()->g_texlist[i].vsfilename,
-	//		Scean::GetInstance()->g_texlist[i].psfilename
-	//	);
-	//}
-	//for (int i = 0; i < Scean::GetInstance()->g_btexlist.size(); i++)
-	//{
-	//	CBillBoardMgr::GetInstance().LoadModel(
-	//		Scean::GetInstance()->g_btexlist[i].cgname,
-	//		Scean::GetInstance()->g_btexlist[i].vsfilename,
-	//		Scean::GetInstance()->g_btexlist[i].psfilename
-	//	);
-	//}
-
-
-
 }
 
+/// <summary>
+/// インプット更新
+/// </summary>
+/// <param name="dt"></param>
 void Game::GameInput(uint64_t dt) {
 	CDirectInput::GetInstance().GetKeyBuffer();
 	XIController::Update();
 }
 
+/// <summary>
+/// ゲームシーン更新
+/// </summary>
+/// <param name="dt"></param>
 void Game::GameUpdate(uint64_t dt) {
 
+	//FPS表示GUI
 	{
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
@@ -148,9 +121,8 @@ void Game::GameUpdate(uint64_t dt) {
 		ImGui::Begin("FPS");
 		ImGui::SetNextWindowSize(ImVec2(300, 400));
 		float dlet = dt;
-		dlet =16.666 /dlet;
+		dlet = 16.666 / dlet;
 		dlet = 60 * dlet;
-		//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
 		ImGui::DragFloat("FPS", &dlet);
 
 		ImGui::End();
@@ -158,12 +130,12 @@ void Game::GameUpdate(uint64_t dt) {
 		ImGui::PopStyleColor();
 	}
 
-
+	//シーン遷移
 	switch (Game::GetInstance()->GAME_MODE)
 	{
 	case S_ID_TITLE_INI:
 	{
-		mScean = new S_Title();//タイトルシーン読み込み
+		mScean = new S_Title();//タイトルシーン初期化読み込み
 		mScean->Initialize();
 		Game::GetInstance()->GAME_MODE = S_ID_TITLE_UPDATE;
 
@@ -177,21 +149,21 @@ void Game::GameUpdate(uint64_t dt) {
 		{
 			mScean->Release();
 
-			Game::GetInstance()->GAME_MODE = S_ID_STAGE1_INI;
+			Game::GetInstance()->GAME_MODE = S_ID_STAGE1_INI;//デモシーン移動
 		}
 
 		break;
 	}
-
+	//デモシーン初期化
 	case S_ID_STAGE1_INI:
 	{
-		mScean = new Seiha();
+		mScean = new Seiha();//デモシーン初期化読み込み
 		mScean->Initialize();
 		Game::GetInstance()->GAME_MODE = S_ID_STAGE1_UPDATE;
 
 		break;
 	}
-
+	//デモシーン更新
 	case S_ID_STAGE1_UPDATE:
 	{
 		mScean->Update(dt);
@@ -203,37 +175,16 @@ void Game::GameUpdate(uint64_t dt) {
 		}
 		break;
 	}
-	case S_ID_CLEAR_INI:
-	{
-		mScean = new S_Clear();
-		mScean->Initialize();
-		Game::GetInstance()->GAME_MODE = S_ID_CLEAR_UPDATE;
 
-		break;
 	}
-
-	case S_ID_CLEAR_UPDATE:
-	{
-		mScean->Update(dt);
-		if (mScean->IsAbleChangeScean())
-		{
-			mScean->Release();
-
-			Game::GetInstance()->GAME_MODE = S_ID_TITLE_INI;
-		}
-		break;
-	}
-
-	
-	}
-
-	// 空中戦更新
-	//AirFightUpdate();
 
 }
 
 
-
+/// <summary>
+/// ゲーム秒描画
+/// </summary>
+/// <param name="dt"></param>
 void Game::GameRender(uint64_t dt) {
 
 	float col[4] = { 1,0,0,1 };
@@ -253,14 +204,8 @@ void Game::GameRender(uint64_t dt) {
 
 
 	mScean->Draw();
-	
-	// テスト表示ここから---------------------------------
 
-	imgui::GetInstance()->draw();
-
-	// テスト表示ここまで---------------------------------
-
-	// ImGuiの描画実行呼び出しここから
+	//ImGuiの描画実行呼び出しここから
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	// ここまで
@@ -269,6 +214,9 @@ void Game::GameRender(uint64_t dt) {
 	DX11AfterRender();
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void Game::GameDispose() {
 
 	// ここからImGuiの解放処理------------------

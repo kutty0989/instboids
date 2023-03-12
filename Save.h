@@ -1,4 +1,9 @@
 #pragma once
+//=============================================================================
+//
+// バイナリー保存処理 [Save.h]
+//
+//=============================================================================
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -7,12 +12,11 @@
 #define debuglog(a) std::cout<<a<<std::endl;
 using namespace std;
 
-
 class Save
 {
 public:
 
-
+	//保存する変数の構造体
 	struct SaveData {
 		std::string name;
 		float fdata;
@@ -24,6 +28,7 @@ public:
 		int lngth[1000];
 	};
 	
+	//AIの変数セーブ用
 	struct SaveData2 {
 		float data1;
 		float data2;

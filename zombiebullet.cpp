@@ -1,7 +1,13 @@
+//=============================================================================
+//
+// É]ÉìÉrÇÃíeÇÃê∂ê¨ÉNÉâÉX [zombiebulet.cpp]
+//
+//=============================================================================
+
 #include "zombiebullet.h"
 #include"CModel.h"
-#include"player.h"
-#include"PlayerMgr.h"
+#include"BoidsAI.h"
+#include"BoidsAIMgr.h"
 bool ZombieBullet::Init()
 {
 	bool sts = true;
@@ -46,20 +52,20 @@ void ZombieBullet::Draw()
 
 
 
-void ZombieBullet::Update(std::vector<Player*> playervec)
+void ZombieBullet::Update(std::vector<BoidsAI*> BoidsAIvec)
 {
 	if (m_sts == ZOMBIEBSTS::LIVE) {
 
-	/*	for (int i = 0; i < playervec.size(); i++)
+	/*	for (int i = 0; i < BoidsAIvec.size(); i++)
 		{
-			float disx = this->GetMtx()._41 - playervec.at(i)->location.x;
-			float disy = this->GetMtx()._43 - playervec.at(i)->location.y;
+			float disx = this->GetMtx()._41 - BoidsAIvec.at(i)->location.x;
+			float disy = this->GetMtx()._43 - BoidsAIvec.at(i)->location.y;
 			float dist = disx * disx + disy * disy;
 			if (length > dist)
 			{
 				m_sts = ZOMBIEBSTS::DEAD;
-				playervec.at(i)->m_sts = Player::STATUS::DEAD;
-				playervec.at(i)->hp = 0;
+				BoidsAIvec.at(i)->m_sts = BoidsAI::STATUS::DEAD;
+				BoidsAIvec.at(i)->hp = 0;
 			}
 		}*/
 
@@ -71,25 +77,25 @@ void ZombieBullet::Update(std::vector<Player*> playervec)
 		m_pos.y -= m_mtx._32 * m_bulletspeed;
 		m_pos.z -= m_mtx._33 * m_bulletspeed;
 
-		if (m_pos.x < -PlayerMgr::GetInstance()->window_width * 0.5f)
+		if (m_pos.x < -BoidsAIMgr::GetInstance()->window_width * 0.5f)
 		{
 			m_pos.y = -1000;
 			m_pos.x = 0;
 			m_life = 0;
 		}
-		if (m_pos.z < -PlayerMgr::GetInstance()->window_width * 0.5f)
+		if (m_pos.z < -BoidsAIMgr::GetInstance()->window_width * 0.5f)
 		{
 			m_pos.y = -1000;
 			m_life = 0;
 			m_pos.z = 0;
 		}
-		if (m_pos.x > PlayerMgr::GetInstance()->window_height * 0.5f)
+		if (m_pos.x > BoidsAIMgr::GetInstance()->window_height * 0.5f)
 		{
 			m_pos.y = -1000;
 			m_life = 0;
 			m_pos.x = 0;
 		}
-		if (m_pos.z > PlayerMgr::GetInstance()->window_height * 0.5f)
+		if (m_pos.z > BoidsAIMgr::GetInstance()->window_height * 0.5f)
 		{
 			m_pos.y = -1000;
 			m_pos.z = 0;

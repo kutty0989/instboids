@@ -1,10 +1,16 @@
+//========================================================
+//CBillBoard.h
+//			ビルボードの生成を行うためのクラス
+//========================================================
 #include"CBillBoard.h"
 #include"Shader.h"
 #include"dx11mathutil.h"
 #include"DX11Settransform.h"
 #include"DX11util.h"
 
-//ビルボードの頂点座標を計算
+/// <summary>
+/// ビルボードの頂点座標を計算
+/// </summary>
 void CBillBoard::CalcVertex()
 {
 	m_Vertex[0].x = -m_XSize / 2;
@@ -76,6 +82,12 @@ void CBillBoard::SetPosiotion(float x, float y, float z)
 	m_z = z;
 }
 
+/// <summary>
+/// 大きさをセット
+/// </summary>
+/// <param name="x"></param>
+/// <param name="y"></param>
+/// <param name="z"></param>
 void CBillBoard::SetScale(float x, float y, float z)
 {
 	scale.x = x;
@@ -83,7 +95,11 @@ void CBillBoard::SetScale(float x, float y, float z)
 	scale.z = z;
 }
 
-//ビルボード用の行列を生成
+
+/// <summary>
+/// ビルボード用の行列を生成
+/// </summary>
+/// <param name="cameramat">カメラ行列</param>
 void CBillBoard::CalcBillBoardMatrix(const DirectX::XMFLOAT4X4& cameramat)
 {
 	m_mtx._11 = cameramat._11;
@@ -112,17 +128,17 @@ void CBillBoard::CalcBillBoardMatrix(const DirectX::XMFLOAT4X4& cameramat)
 void CBillBoard::Draw()
 {
 	//Zバッファ無効化
-  //  TurnOnAlphablend();
 	TurnOffZbuffer();
 
-	
-
+	//デバイス取得
 	ID3D11DeviceContext* devcontext;
 	devcontext = GetDX11DeviceContext();
 
 
 	//シェーダーリソースビューをピクセルシェーダーへセット
 	devcontext->PSSetShaderResources(5, 1, &m_srv);
+
+	//行列計算
 	DX11MtxIdentity(t_mtx);
 	DX11MtxIdentity(s_mtx);
 	DX11MtxTranslation(XMFLOAT3(m_x,m_y,m_z), t_mtx);
@@ -134,7 +150,6 @@ void CBillBoard::Draw()
 
 	DX11MtxMultiply(mtx,s_mtx, o_mtx);
 	DX11MtxMultiply(m_mtx,mtx, m_mtx);
-	//DX11MtxMultiply(m_mtx,mtx, m_mtx);
 
 	//ワールド変換行列
 	DX11SetTransform::GetInstance()->SetTransform(DX11SetTransform::TYPE::WORLD,m_mtx);
@@ -146,9 +161,8 @@ void CBillBoard::Draw()
 
 	//頂点バッファをセット
 	devcontext->IASetVertexBuffers(0, 1, &m_vbuffer, &stride, &offset);
-	//インデックスバッファをセット
-	//m_devcontext->IASetIndexBuffers(nullptr,DXGI_FORMAT_R32_UINT,0);
-	//とぽろーじーをセット
+
+	//トポロジーを設定
 	devcontext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 	//頂点フォーマットをセット
@@ -161,12 +175,8 @@ void CBillBoard::Draw()
 	devcontext->DSSetShader(nullptr, nullptr, 0);
 	devcontext->PSSetShader(m_pPixelShader, nullptr, 0);//ピクセルシェーダーをせっと
 	devcontext->Draw(4, 0);
-
-	TurnOnZbuffer();
-	//TurnOffAlphablend();
 	//Zバッファを有効か
-	//TurnOnZbuffer();
-
+	TurnOnZbuffer();
 }
 
 //ビルボードを描画
@@ -174,14 +184,9 @@ void CBillBoard::DrawBillBoard(const XMFLOAT4X4& cameramat) {
 	//カメラ行列からビルボード用のマトリックスを作成
 	CalcBillBoardMatrix(cameramat);
 
-	//αブレンディングをセットする
-//	SetBlendStrateAlpha();
-
 	//描画
 	Draw();
 
-	//αブレンディングをセット
-//SetBlendStrateDefault();
 }
 
 //ビルボードを描画
@@ -198,8 +203,10 @@ void CBillBoard::DrawBillBoardAdd(const XMFLOAT4X4& cameramat) {
 	//アルファブレンディングをセット
 	SetBlendStateDefault();
 }
-//
 
+/// <summary>
+/// ブレンドをデフォルトの設定にする
+/// </summary>
 void CBillBoard::SetBlendStateDefault()
 {
 	float blendFactor[4] = { 0.0f,0.0f,0.0f,0.0f };
@@ -208,6 +215,7 @@ void CBillBoard::SetBlendStateDefault()
 	devcontext->OMSetBlendState(m_pBlendStateDefault, blendFactor, 0xffffffff);
 
 }
+
 
 void CBillBoard::SetBlendStateSrcAlpha()
 {

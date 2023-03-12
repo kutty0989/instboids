@@ -1,7 +1,7 @@
 //#include"Notes_Arrange.h"
 //#include"CTexMgr.h"
 //#include"Scean.h"
-//#include"player.h"
+//#include"BoidsAI.h"
 //#include"Notes_Data.h"
 //#include<string.h>
 //#include<stdio.h>

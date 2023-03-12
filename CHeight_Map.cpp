@@ -1,16 +1,24 @@
+//=============================================================================
+//
+// ヘイトマップ生成クラス [CHeight_Map.cpp]
+//
+//=============================================================================
 #include"CHeight_Map.h"
 #include"Application.h"
 #include"Seiha.h"
 #include"noise.h"
-#include"player.h"
+#include"BoidsAI.h"
 #define debuglog(a) std::cout<<a<<std::endl;
 
-float CHeight_Map::g_hight;
-float CHeight_Map::g_tesselationamount;
-float CHeight_Map::g_col;
-bool CHeight_Map::mapsave = false;
-bool CHeight_Map::mapload = false;
-float CHeight_Map::ScaleMap = 2.0f;
+
+float CHeight_Map::g_hight;//高さ
+float CHeight_Map::g_tesselationamount;//分割数
+float CHeight_Map::g_col;//ブレンド枚数
+bool CHeight_Map::mapsave = false;//セーブ用の変数
+bool CHeight_Map::mapload = false;//ロード用の変数
+float CHeight_Map::ScaleMap = 2.0f;//スケーリング
+
+//解像度格納
 std::vector<std::vector<double> > CHeight_Map::vData;
 std::vector<std::vector<double> > CHeight_Map::gData;
 std::vector<byte> CHeight_Map::bufsrc;
@@ -37,10 +45,12 @@ const char* dsfilename[] = {
 	"shader/DSTess+Disp.hlsl"
 };
 
-//float cosC;
-//float sinC;
 
-// 矩形の初期化
+/// <summary>
+/// ヘイトマップの初期処理
+/// </summary>
+/// <param name="color"></param>
+/// <returns></returns>
 bool CHeight_Map::Init(DirectX::XMFLOAT3 color) {
 
 
@@ -197,6 +207,7 @@ bool CHeight_Map::Init(DirectX::XMFLOAT3 color) {
 		}
 	}
 	gData = vecData;
+
 	//パーリンノイズ計算結果をテクスチャに反映
 	std::vector<byte> srcData(iPixSize * iPixSize * 4, 0);//srcData[iPixSize * iPixSize * 4] = {0};//ビットマップを黒で初期化
 	for (int x = 0; x < iPixSize; x++)
@@ -213,7 +224,7 @@ bool CHeight_Map::Init(DirectX::XMFLOAT3 color) {
 
 	
 	vData = vecData;//ピクセル情報保存
-	//gData = vData;
+;
 	memcpy(msr.pData, &srcData.front(), srcData.size());
 	devcontext->Unmap(D3DTexture.Get(), 0);
 
@@ -235,6 +246,7 @@ bool CHeight_Map::Init(DirectX::XMFLOAT3 color) {
 	updateVertex(color);
 	return true;
 }
+
 static int blendtex = 0;
 static bool noiseCreateflg = false;
 
@@ -251,6 +263,7 @@ void CHeight_Map::Draw() {
 	ID3D11DeviceContext* devcontext;
 	devcontext = GetDX11DeviceContext();
 
+	//imguiの表示
 	{
 		ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
 		ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.0f, 0.3f, 0.1f, 1.0f));
@@ -284,11 +297,11 @@ void CHeight_Map::Draw() {
 		ImGui::PopStyleColor();
 	}
 
+	//行列計算
 	DX11MtxScale(m_scale.x, m_scale.y, m_scale.z, s_mtx);
 	DX11MtxTranslation(m_pos, p_mtx);
 	DX11MtxRotationX(m_angle.x, o_mtx);//回転行列
-	//DX11MtxRotationY(m_angle.y, o_mtx);//回転行列
-	//DX11MtxRotationZ(m_angle.z, o_mtx);//回転行列
+
 	DirectX::XMFLOAT4X4 mtx;
 	DX11MtxMultiply(mtx, s_mtx, o_mtx);
 	DX11MtxMultiply(m_worldmtx, mtx, p_mtx);//スケール　＊　回転　＊　移動
@@ -328,9 +341,9 @@ void CHeight_Map::Draw() {
 
 	SetTexture();
 
+	//高さ画像をPSに送る
 	devcontext->PSSetShaderResources(0, 1, D3DShaderResourceView.GetAddressOf());///画像１ををPSセット　描画する
 
-	//devcontext->PSSetShaderResources(4, 1, m_srv[3].GetAddressOf());///パーリーノイズをPSセット　描画する
 	//ドメインシェーダーにTXTUREE　SRVをセット
 	devcontext->DSSetShaderResources(0, 1, D3DShaderResourceView.GetAddressOf());//パーリノイズをDSにセット高さを作る
 
@@ -353,6 +366,7 @@ void CHeight_Map::Draw() {
 	devcontext->PSSetSamplers(0, 1, CDirectXGraphics::GetInstance()->GetSampState());
 
 
+
 	ConstantBuffer cb;
 	cb.tessellationAmount = g_tesselationamount;//分割数を渡す
 	cb.gcol = g_col;//分割数を渡す
@@ -360,7 +374,7 @@ void CHeight_Map::Draw() {
 	devcontext->HSSetConstantBuffers(7, 1, &g_pConstantBuffer);				// HULLシェーダーへコンスタントバッファをb0レジスタへセット
 	devcontext->PSSetConstantBuffers(7, 1, &g_pConstantBuffer);				// HULLシェーダーへコンスタントバッファをb0レジスタへセット
 
-
+	//高さを渡す
 	ConstantBuffer2 cb2;
 	cb2.hight = g_hight;
 	devcontext->UpdateSubresource(g_pConstantBuffer2, 0, nullptr, &cb2, 0, 0);		// コンスタントバッファ更新
@@ -383,6 +397,9 @@ void CHeight_Map::Draw() {
 	TurnOnZbuffer();
 }
 
+/// <summary>
+/// 終了処理
+/// </summary>
 void CHeight_Map::UnInit() {
 	ID3D11VertexShader* vs;
 	vs = ShaderHashmap::GetInstance()->GetVertexShader(vsfilename[0]);
@@ -471,7 +488,10 @@ void CHeight_Map::SetAlpha(float a)
 
 
 
-// 頂点データ更新
+/// <summary>
+/// 頂点データ更新
+/// </summary>
+/// <param name="color"></param>
 void CHeight_Map::updateVertex(DirectX::XMFLOAT3 color) {
 
 	CHeight_Map::Vertex	v[4] = {
@@ -595,36 +615,36 @@ void CHeight_Map::LoadMap(std::vector<std::vector<double>> loadmap)
 
 void CHeight_Map::BlendMap(std::vector<std::vector<double>> loadmap)
 {
-	ID3D11DeviceContext* devcontext;
-	devcontext = GetDX11DeviceContext();
+	//ID3D11DeviceContext* devcontext;
+	//devcontext = GetDX11DeviceContext();
 
 
-	//テクスチャ書き替え
-	D3D11_MAPPED_SUBRESOURCE msr;
-	devcontext->Map(D3DTexture.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+	////テクスチャ書き替え
+	//D3D11_MAPPED_SUBRESOURCE msr;
+	//devcontext->Map(D3DTexture.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
 
 
-	std::vector<byte> srcData(iPixSize * iPixSize * 4, 0);//srcData[iPixSize * iPixSize * 4] = {0};//ビットマップを黒で初期化
-	for (int x = 0; x < iPixSize; x++)
-	{
-		for (int y = 0; y < iPixSize; y++)
-		{
-			//2枚の地面の高さ情報を時間で線形補完
-			auto blendcolor = LeapID<double>(static_cast<byte>(vData[x][y]*255), static_cast<byte>(loadmap[x][y]*255),Seiha::pertime);
-			srcData[(x + y * iPixSize) * 4] = blendcolor;//Red
-		
-			gData[x][y] = blendcolor;
-		}
-	}
+	//std::vector<byte> srcData(iPixSize * iPixSize * 4, 0);//srcData[iPixSize * iPixSize * 4] = {0};//ビットマップを黒で初期化
+	//for (int x = 0; x < iPixSize; x++)
+	//{
+	//	for (int y = 0; y < iPixSize; y++)
+	//	{
+	//		//2枚の地面の高さ情報を時間で線形補完
+	//		auto blendcolor = LeapID<double>(static_cast<byte>(vData[x][y]*255), static_cast<byte>(loadmap[x][y]*255),Seiha::pertime);
+	//		srcData[(x + y * iPixSize) * 4] = blendcolor;//Red
+	//	
+	//		gData[x][y] = blendcolor;
+	//	}
+	//}
 
 
-	if (Seiha::pertime == 0.0f)
-	{
-		vData = gData;
-		
-	}
-	memcpy(msr.pData, &srcData.front(), srcData.size());
-	devcontext->Unmap(D3DTexture.Get(), 0);
+	//if (Seiha::pertime == 0.0f)
+	//{
+	//	vData = gData;
+	//	
+	//}
+	//memcpy(msr.pData, &srcData.front(), srcData.size());
+	//devcontext->Unmap(D3DTexture.Get(), 0);
 }
 
 void CHeight_Map::ChangeMap()
@@ -692,7 +712,7 @@ void CHeight_Map::SetTexture()
 
 			ImGui::Begin("BaseTex_One");
 			ImGui::SetNextWindowSize(ImVec2(300, 400));
-			//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
+			//	int it = BoidsAI::GetInstance()->iseconds % BoidsAI::GetInstance()->judge_seconds;
 
 			ImGui::Checkbox("soil", &soil);
 			ImGui::Checkbox("snow", &snow);
@@ -734,7 +754,7 @@ void CHeight_Map::SetTexture()
 
 				ImGui::Begin("BaseTex_One");
 				ImGui::SetNextWindowSize(ImVec2(300, 400));
-				//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
+				//	int it = BoidsAI::GetInstance()->iseconds % BoidsAI::GetInstance()->judge_seconds;
 
 				ImGui::Checkbox("soil", &soil);
 				ImGui::Checkbox("snow", &snow);
@@ -777,7 +797,7 @@ void CHeight_Map::SetTexture()
 
 				ImGui::Begin("BaseTex_TWO");
 				ImGui::SetNextWindowSize(ImVec2(300, 400));
-				//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
+				//	int it = BoidsAI::GetInstance()->iseconds % BoidsAI::GetInstance()->judge_seconds;
 
 				ImGui::Checkbox("soil", &soil);
 				ImGui::Checkbox("snow", &snow);
@@ -864,17 +884,17 @@ void CHeight_Map::SetTexture()
 
 }
 
-double CHeight_Map::GetHeightColor(XMFLOAT2 playerpos)
+double CHeight_Map::GetHeightColor(XMFLOAT2 BoidsAIpos)
 {
-	int p_posx = (int)playerpos.x;//配列探索するためにキャストで桁を落とす
-	int p_posy = (int)playerpos.y;
+	int p_posx = (int)BoidsAIpos.x;//配列探索するためにキャストで桁を落とす
+	int p_posy = (int)BoidsAIpos.y;
 
 	double col = vData[p_posx][p_posy];//落とした値で見てくる
 	double xcol = vData[p_posx+1][p_posy];//ｘ成分の１つ次
 	double ycol = vData[p_posx][p_posy+1];//ｙ成分の１つ次
 	
-	float xf = playerpos.x;
-	float yf = playerpos.y;
+	float xf = BoidsAIpos.x;
+	float yf = BoidsAIpos.y;
 
 	float xx = xf - p_posx;//桁落ちした値を見てくる
 	float yy = yf - p_posy;
@@ -890,10 +910,10 @@ double CHeight_Map::GetHeightColor(XMFLOAT2 playerpos)
 }
 
 
-double CHeight_Map::GetGoHeightColor(XMFLOAT2 playerpos,float anglex, float angley)
+double CHeight_Map::GetGoHeightColor(XMFLOAT2 BoidsAIpos,float anglex, float angley)
 {
-	float to_pposx = playerpos.x + anglex;
-	float to_pposy = playerpos.y - angley;
+	float to_pposx = BoidsAIpos.x + anglex;
+	float to_pposy = BoidsAIpos.y - angley;
 	double tocol =  GetHeightColor(XMFLOAT2(to_pposx,to_pposy));//行先のカラー　高さ
 
 	return tocol;

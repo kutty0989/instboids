@@ -1,21 +1,25 @@
 #pragma once
+//=============================================================================
+//
+// バレットマネージャー [BulletMgr.h]
+//
+//=============================================================================
+
 #include"bullet.h"
-#include<list>
-#include<DirectXMath.h>
-#include"zombiebullet.h"
+
 class BulletMgr
 {
 public:
 
-	void Init();
+	void Init();//バレットの生成まとめ
 
-	void Remake(DirectX::XMFLOAT4X4 mtx,XMFLOAT3 pos);
-	
-	void Update();
+	void Remake(DirectX::XMFLOAT4X4 mtx, XMFLOAT3 pos);//新しく弾を作り直す
 
-	void Draw();
+	void Update();//場所を更新
 
-	void Finalize();
+	void Draw();//描画
+
+	void Finalize();//終了処理
 
 
 	static BulletMgr* GetInstance()
@@ -25,12 +29,11 @@ public:
 	}
 
 
-	void BulletCreate();
-	
+	void BulletCreate();//バレットの生成
 
-	std::list <std::unique_ptr<Bullet>> g_bullets;//弾の配列
-	
+	std::list<std::unique_ptr<Bullet>> g_bullets;//弾の配列
+
 private:
 
-	
+
 };

@@ -1,4 +1,9 @@
 #pragma once
+//=============================================================================
+//
+// ビルボード管理クラス [CBillboard.h]
+//
+//=============================================================================
 #include <memory>
 #include <wrl/client.h>
 #include<unordered_map>
@@ -25,6 +30,7 @@ public:
 		return Instance;
 	}
 
+	//デストラクタ終了処理
 	virtual ~CBillBoardMgr() {
 		Finalize();
 	}
@@ -34,6 +40,7 @@ public:
 		}
 	}
 
+	//画像読み込み
 	bool LoadModel(std::string texfilename, std::string vsfinlename, std::string psfilename) {
 		std::unique_ptr<CBillBoard> p;
 		p = std::make_unique<CBillBoard>();

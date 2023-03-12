@@ -1,16 +1,16 @@
 #pragma once
 #pragma once
-#include"player.h"
+#include"BoidsAI.h"
 #include"CModelInstance.h"
 #include"UniqueBombHp.h"
-class UniqueEnemy_Bomb :public Player
+class UniqueEnemy_Bomb :public BoidsAI
 {
 
 	XMFLOAT4 axisX;//Xé≤
 	XMFLOAT4 axisY;//Yé≤
 	XMFLOAT4 axisZ;//Zé≤
 	UniqueBombHp uniquebombhp;
-	Pvector nearplayer;//àÍî‘ãﬂÇ¢ë∂ç›Çï€ë∂Ç∑ÇÈïœêî
+	Pvector nearBoidsAI;//àÍî‘ãﬂÇ¢ë∂ç›Çï€ë∂Ç∑ÇÈïœêî
 	XMFLOAT3 zpos;
 	bool zonbienearflg = false;
 	int bombcnt = 0;
@@ -28,29 +28,29 @@ public:
 
 	bool Init();
 
-	void Draw(std::vector<Player>& zonbie_vector);
+	void Draw(std::vector<BoidsAI>& zonbie_vector);
 
-	void Update(std::vector<Player*>& pvec, std::vector<ZombieBullet*>& zbvec);
+	void Update(std::vector<BoidsAI*>& pvec, std::vector<ZombieBullet*>& zbvec);
 
-	void UEnemy_run(std::vector<Player*>& zonbie_vector);
+	void UEnemy_run(std::vector<BoidsAI*>& zonbie_vector);
 
-	void UEnemy_flock(std::vector<Player*>& zonbie_vector);
+	void UEnemy_flock(std::vector<BoidsAI*>& zonbie_vector);
 
 	void UEnemy_update();
 
 	Pvector UEnemy_Search();
 
-	Pvector UEnemy_Separation(std::vector<Player>& zonbie_vector);
+	Pvector UEnemy_Separation(std::vector<BoidsAI>& zonbie_vector);
 
-	Pvector UEnemy_Attack(std::vector<Player*>& zonbie_vector);
+	Pvector UEnemy_Attack(std::vector<BoidsAI*>& zonbie_vector);
 	
-	Pvector UEnemy_Escape(std::vector<Player>& zonbie_vector);
+	Pvector UEnemy_Escape(std::vector<BoidsAI>& zonbie_vector);
 	
-	void UEnemy_Dmg(std::vector<Player*>& zonbie_vector);
+	void UEnemy_Dmg(std::vector<BoidsAI*>& zonbie_vector);
 
 	int UEnemy_GetAnime();
 
-	void  UEDelete(float arraynum, std::vector<UniqueEnemy_Bomb>& Player_Vector1);
+	void  UEDelete(float arraynum, std::vector<UniqueEnemy_Bomb>& BoidsAI_Vector1);
 
 	void UpdateHP();
 

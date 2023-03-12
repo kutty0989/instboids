@@ -19,9 +19,6 @@
     <Filter Include="ソース ファイル\game\gameobject">
       <UniqueIdentifier>{add4dd74-ba31-4960-b723-cb77d62e5691}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\game\gameobject\player">
-      <UniqueIdentifier>{e5aa1be0-5275-4f40-9c76-2163adaaebc1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\shader">
       <UniqueIdentifier>{d410be42-9770-49c4-abb8-7bcb6c490972}</UniqueIdentifier>
     </Filter>
@@ -39,9 +36,6 @@
     </Filter>
     <Filter Include="ソース ファイル\game\gameobject\hommingmissaile">
       <UniqueIdentifier>{cc50ae50-b916-43c6-b2c6-cde674e51744}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\game\Stage">
-      <UniqueIdentifier>{70ff3feb-ded9-4370-9855-5285c35b409c}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\game\GAME">
       <UniqueIdentifier>{c38d54dc-3eaa-4e90-9c15-8013ca05c36b}</UniqueIdentifier>
@@ -63,9 +57,6 @@
     </Filter>
     <Filter Include="ソース ファイル\game\Scean\Title">
       <UniqueIdentifier>{ddf51d4c-b46e-4230-8bbd-e8f0674a4068}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\game\util">
-      <UniqueIdentifier>{fc87b590-c7bc-439b-a24e-8683200d3574}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\game\Scean\CLEAR">
       <UniqueIdentifier>{8944c494-2b79-4c89-a5a2-d274e36cd439}</UniqueIdentifier>
@@ -91,12 +82,6 @@
     <Filter Include="ソース ファイル\system\DX11\util\IMGUI">
       <UniqueIdentifier>{9b9aa7f2-34b4-490a-8f93-65d1abd9572d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\system\DX11\util\CCamera">
-      <UniqueIdentifier>{0eeb1224-6909-45e3-a105-7b9c4891f642}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\system\DX11\Sprite">
-      <UniqueIdentifier>{a663667e-df7e-456d-a8e4-4fba6d37a57d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\system\model">
       <UniqueIdentifier>{3a6e9366-9952-4ae7-9bbd-e48626c793d1}</UniqueIdentifier>
     </Filter>
@@ -114,12 +99,6 @@
     </Filter>
     <Filter Include="ソース ファイル\game\noise">
       <UniqueIdentifier>{6db19ffb-d883-4352-bd88-8588e95e7469}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\system\DX11\util\StageHit">
-      <UniqueIdentifier>{70438f50-6826-4190-a91b-6a39840aa22d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\system\DX11\util\collision">
-      <UniqueIdentifier>{78b77b57-5ba2-4281-96f3-3c861e2ec367}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\game\gameobject\Ground">
       <UniqueIdentifier>{640304e2-25b5-4800-b425-f53cba90ce41}</UniqueIdentifier>
@@ -139,38 +118,14 @@
     <Filter Include="ソース ファイル\voids">
       <UniqueIdentifier>{5f6a85ca-6586-426c-9f46-da9a0efed595}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\game\gameobject\player\boids">
-      <UniqueIdentifier>{2e9a56b7-7022-403b-b6e0-b2480b4ffad9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\game\gameobject\player\PlayerMgr">
-      <UniqueIdentifier>{88884179-f203-4f02-8d2c-a549b55bcba8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\game\gameobject\enemy\S_Enemy">
       <UniqueIdentifier>{d068c68e-a795-4a0b-b573-f2aa693e1a2c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\game\GAME\Seiha">
-      <UniqueIdentifier>{6eaaa7bc-0bc9-45de-a69e-0b6d95e14895}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\game\UI\GUI">
       <UniqueIdentifier>{c0fdba15-0242-4a5d-a0fc-c175eae6e3a5}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\system\DX11\util\myutil">
       <UniqueIdentifier>{c7641baa-005b-41ca-b4f5-aa036dad8d7d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\game\gameobject\drawobj">
-      <UniqueIdentifier>{20460b2c-343f-4a99-a1e0-60590d3c77d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\game\gameobject\drawobj\circle">
-      <UniqueIdentifier>{ee12302b-3cc5-464a-820f-6e275187a005}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\game\gameobject\drawobj\Sphere">
-      <UniqueIdentifier>{04b6197a-e877-46bd-aa32-64d828d9e594}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\game\gameobject\drawobj\line">
-      <UniqueIdentifier>{aa0e75ae-0c71-4641-b8b8-ecd96e69419c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソース ファイル\game\gameobject\Build">
-      <UniqueIdentifier>{1c06d24b-7a96-4a3b-aef4-0ed11379278e}</UniqueIdentifier>
     </Filter>
     <Filter Include="ソース ファイル\system\model\modeldata">
       <UniqueIdentifier>{c9d77124-dd7f-4640-9119-c21899495422}</UniqueIdentifier>
@@ -196,8 +151,89 @@
     <Filter Include="ソース ファイル\game\UI\HP">
       <UniqueIdentifier>{8a16f6cd-1fc9-4bde-bdad-5eeceac60e3f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ソース ファイル\game\gameobject\enemy\NewFilter1">
-      <UniqueIdentifier>{2b142af1-a53e-4969-bfab-dae48017d3e3}</UniqueIdentifier>
+    <Filter Include="ソース ファイル\system\collision">
+      <UniqueIdentifier>{78b77b57-5ba2-4281-96f3-3c861e2ec367}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\system\Sprite">
+      <UniqueIdentifier>{a663667e-df7e-456d-a8e4-4fba6d37a57d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\system\collision\StageHit">
+      <UniqueIdentifier>{70438f50-6826-4190-a91b-6a39840aa22d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\system\DX11\util\Dx11MathUtil">
+      <UniqueIdentifier>{2e6cd8b6-e1e9-490f-a6c0-f40812345703}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\system\shader">
+      <UniqueIdentifier>{050a8487-04bc-4954-a906-ee5f16ad8fe7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\game\Scean\Stage">
+      <UniqueIdentifier>{70ff3feb-ded9-4370-9855-5285c35b409c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\game\UI\Granate">
+      <UniqueIdentifier>{87b8288d-2034-453d-ad69-5296628a2247}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\game\UI\MouseCircle">
+      <UniqueIdentifier>{41390833-1f4e-46ae-919d-6f642b4aab84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\game\UI\Score">
+      <UniqueIdentifier>{119ebdf8-2a08-4363-bb4e-2470e8509369}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\game\gameobject\UniqueEnemy">
+      <UniqueIdentifier>{544d9d67-f75b-4997-9954-e599ff3ab43d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\game\Scean\Seiha">
+      <UniqueIdentifier>{6eaaa7bc-0bc9-45de-a69e-0b6d95e14895}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\game\drawobj">
+      <UniqueIdentifier>{20460b2c-343f-4a99-a1e0-60590d3c77d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\game\drawobj\circle">
+      <UniqueIdentifier>{ee12302b-3cc5-464a-820f-6e275187a005}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\game\drawobj\Sphere">
+      <UniqueIdentifier>{04b6197a-e877-46bd-aa32-64d828d9e594}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\game\drawobj\line">
+      <UniqueIdentifier>{aa0e75ae-0c71-4641-b8b8-ecd96e69419c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\system\CCamera">
+      <UniqueIdentifier>{0eeb1224-6909-45e3-a105-7b9c4891f642}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\system\DX11\util\util">
+      <UniqueIdentifier>{fc87b590-c7bc-439b-a24e-8683200d3574}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\system\Light">
+      <UniqueIdentifier>{d60e9ab5-3ab2-4221-bdb9-20350885463b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\system\DX11\Input">
+      <UniqueIdentifier>{69ac688e-1873-43c3-936d-8b4a22a1790a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\system\DX11\Graphics">
+      <UniqueIdentifier>{32767431-22c2-470b-97f0-cd26f365aba9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\system\Sprite\Heightmap">
+      <UniqueIdentifier>{1e55e4cb-0054-450d-9625-1dfd3647cb73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\system\Sprite\2DTex">
+      <UniqueIdentifier>{f5d944c2-fa23-4ba6-916c-fcb3848fd1d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\system\Sprite\DataFile">
+      <UniqueIdentifier>{dd050251-5354-44e9-8ac0-821571e4f685}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\system\Sprite\Particle">
+      <UniqueIdentifier>{477cc800-b339-4cd4-bc0f-d876a27d14e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\system\Sprite\Billboard">
+      <UniqueIdentifier>{aebc8fe2-3d18-4ab8-9b57-db64acd63f5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\game\gameobject\AI">
+      <UniqueIdentifier>{e5aa1be0-5275-4f40-9c76-2163adaaebc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\game\gameobject\AI\PlayerMgr">
+      <UniqueIdentifier>{88884179-f203-4f02-8d2c-a549b55bcba8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\game\gameobject\AI\BoidsAI">
+      <UniqueIdentifier>{17992403-9c66-4624-9ac5-d2159cb40211}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -206,24 +242,6 @@
     </ClCompile>
     <ClCompile Include="WinMain.cpp">
       <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="dx11mathutil.cpp">
-      <Filter>ソース ファイル\system\DX11\util</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>ソース ファイル\system\DX11\util</Filter>
-    </ClCompile>
-    <ClCompile Include="dx11util.cpp">
-      <Filter>ソース ファイル\system\DX11\util</Filter>
-    </ClCompile>
-    <ClCompile Include="CDirectXGraphics.cpp">
-      <Filter>ソース ファイル\system\DX11</Filter>
-    </ClCompile>
-    <ClCompile Include="DDSTextureLoader.cpp">
-      <Filter>ソース ファイル\system\model</Filter>
-    </ClCompile>
-    <ClCompile Include="WICTextureLoader.cpp">
-      <Filter>ソース ファイル\system\model</Filter>
     </ClCompile>
     <ClCompile Include="utftosjisconv.cpp">
       <Filter>ソース ファイル\system\model</Filter>
@@ -234,29 +252,20 @@
     <ClCompile Include="CWindowCallback.cpp">
       <Filter>ソース ファイル\system\window</Filter>
     </ClCompile>
-    <ClCompile Include="player.cpp">
-      <Filter>ソース ファイル\game\gameobject\player</Filter>
-    </ClCompile>
     <ClCompile Include="drawaxis.cpp">
-      <Filter>ソース ファイル\game\util</Filter>
+      <Filter>ソース ファイル\system\DX11\util\util</Filter>
     </ClCompile>
     <ClCompile Include="skybox.cpp">
       <Filter>ソース ファイル\game\gameobject\skybox</Filter>
     </ClCompile>
     <ClCompile Include="line.cpp">
-      <Filter>ソース ファイル\game\gameobject\drawobj\line</Filter>
+      <Filter>ソース ファイル\game\drawobj\line</Filter>
     </ClCompile>
     <ClCompile Include="BoundingSphere.cpp">
       <Filter>ソース ファイル\game\gameobject\BoundingSphere</Filter>
     </ClCompile>
     <ClCompile Include="sphere.cpp">
-      <Filter>ソース ファイル\game\gameobject\drawobj\Sphere</Filter>
-    </ClCompile>
-    <ClCompile Include="updatespherecamera.cpp">
-      <Filter>ソース ファイル\system\DX11\util</Filter>
-    </ClCompile>
-    <ClCompile Include="enemy.cpp">
-      <Filter>ソース ファイル\game\gameobject\enemy</Filter>
+      <Filter>ソース ファイル\game\drawobj\Sphere</Filter>
     </ClCompile>
     <ClCompile Include="bullet.cpp">
       <Filter>ソース ファイル\game\gameobject\Bullet</Filter>
@@ -268,7 +277,7 @@
       <Filter>ソース ファイル\system\model\CBillBoard</Filter>
     </ClCompile>
     <ClCompile Include="Stage.cpp">
-      <Filter>ソース ファイル\game\Stage</Filter>
+      <Filter>ソース ファイル\game\Scean\Stage</Filter>
     </ClCompile>
     <ClCompile Include="IMgui\imgui_widgets.cpp">
       <Filter>ソース ファイル\system\DX11\util\IMGUI</Filter>
@@ -301,7 +310,7 @@
       <Filter>ソース ファイル\game\audio</Filter>
     </ClCompile>
     <ClCompile Include="CCamera.cpp">
-      <Filter>ソース ファイル\system\DX11\util\CCamera</Filter>
+      <Filter>ソース ファイル\system\CCamera</Filter>
     </ClCompile>
     <ClCompile Include="Timing_UI.cpp">
       <Filter>ソース ファイル\game\UI\Timing_UI</Filter>
@@ -319,16 +328,7 @@
       <Filter>ソース ファイル\game\Scean\Title</Filter>
     </ClCompile>
     <ClCompile Include="Seiha.cpp">
-      <Filter>ソース ファイル\game\GAME\Seiha</Filter>
-    </ClCompile>
-    <ClCompile Include="sprite.cpp">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
-    </ClCompile>
-    <ClCompile Include="SpriteMgr.cpp">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
-    </ClCompile>
-    <ClCompile Include="CHeight_Map.cpp">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
+      <Filter>ソース ファイル\game\Scean\Seiha</Filter>
     </ClCompile>
     <ClCompile Include="S_Clear.cpp">
       <Filter>ソース ファイル\game\Scean\CLEAR</Filter>
@@ -339,23 +339,17 @@
     <ClCompile Include="XIController.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DIController.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="BulletMgr.cpp">
       <Filter>ソース ファイル\game\gameobject\Bullet\BulletMgr</Filter>
-    </ClCompile>
-    <ClCompile Include="CTex.cpp">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="noise.cpp">
       <Filter>ソース ファイル\game\noise</Filter>
     </ClCompile>
     <ClCompile Include="StageHit.cpp">
-      <Filter>ソース ファイル\system\DX11\util\StageHit</Filter>
+      <Filter>ソース ファイル\system\collision\StageHit</Filter>
     </ClCompile>
     <ClCompile Include="collision.cpp">
-      <Filter>ソース ファイル\system\DX11\util\collision</Filter>
+      <Filter>ソース ファイル\system\collision</Filter>
     </ClCompile>
     <ClCompile Include="ground.cpp">
       <Filter>ソース ファイル\game\gameobject\Ground</Filter>
@@ -372,8 +366,8 @@
     <ClCompile Include="short_notes.cpp">
       <Filter>ソース ファイル\game\UI\Notes\short_notes</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerMgr.cpp">
-      <Filter>ソース ファイル\game\gameobject\player\PlayerMgr</Filter>
+    <ClCompile Include="BoidsAIMgr.cpp">
+      <Filter>ソース ファイル\game\gameobject\AI\PlayerMgr</Filter>
     </ClCompile>
     <ClCompile Include="voids.cpp">
       <Filter>ソース ファイル\voids</Filter>
@@ -382,13 +376,7 @@
       <Filter>ソース ファイル\system\DX11\util\myutil</Filter>
     </ClCompile>
     <ClCompile Include="circle.cpp">
-      <Filter>ソース ファイル\game\gameobject\drawobj\circle</Filter>
-    </ClCompile>
-    <ClCompile Include="build.cpp">
-      <Filter>ソース ファイル\game\gameobject\Build</Filter>
-    </ClCompile>
-    <ClCompile Include="MouseCircle.cpp">
-      <Filter>ソース ファイル\game\UI</Filter>
+      <Filter>ソース ファイル\game\drawobj\circle</Filter>
     </ClCompile>
     <ClCompile Include="ModelData.cpp">
       <Filter>ソース ファイル\system\model\modeldata</Filter>
@@ -420,38 +408,14 @@
     <ClCompile Include="MeshData.cpp">
       <Filter>ソース ファイル\system\model\mesh</Filter>
     </ClCompile>
-    <ClCompile Include="UniqueEnemy.cpp">
-      <Filter>ソース ファイル\game\gameobject\player\PlayerMgr</Filter>
-    </ClCompile>
-    <ClCompile Include="UniqueEnemy_bomb.cpp">
-      <Filter>ソース ファイル\game\gameobject\player\PlayerMgr</Filter>
-    </ClCompile>
     <ClCompile Include="BoidsHP.cpp">
       <Filter>ソース ファイル\game\UI\HP</Filter>
     </ClCompile>
     <ClCompile Include="billboardMgr.cpp">
       <Filter>ソース ファイル\game\UI</Filter>
     </ClCompile>
-    <ClCompile Include="AnimeSprite.cpp">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
-    </ClCompile>
-    <ClCompile Include="granate.cpp">
-      <Filter>ソース ファイル\game\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="CTexInstance.cpp">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
-    </ClCompile>
-    <ClCompile Include="instan.cpp">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
-    </ClCompile>
     <ClCompile Include="CModelInstance.cpp">
       <Filter>ソース ファイル\system\model\Cmodel</Filter>
-    </ClCompile>
-    <ClCompile Include="DatFile.cpp">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
-    </ClCompile>
-    <ClCompile Include="DatFileLoader.cpp">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="Save.cpp">
       <Filter>ソース ファイル\system\Save</Filter>
@@ -459,48 +423,81 @@
     <ClCompile Include="zombiebullet.cpp">
       <Filter>ソース ファイル\game\gameobject\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="Explsion.cpp">
-      <Filter>ソース ファイル\game\UI</Filter>
-    </ClCompile>
     <ClCompile Include="UniqueBombHp.cpp">
       <Filter>ソース ファイル\game\UI\HP</Filter>
     </ClCompile>
-    <ClCompile Include="Score.cpp">
-      <Filter>ソース ファイル\game\UI</Filter>
+    <ClCompile Include="dx11mathutil.cpp">
+      <Filter>ソース ファイル\system\DX11\util\Dx11MathUtil</Filter>
     </ClCompile>
-    <ClCompile Include="TexMgr.cpp">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
+    <ClCompile Include="dx11util.cpp">
+      <Filter>ソース ファイル\system\DX11\util\Dx11MathUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="granate.cpp">
+      <Filter>ソース ファイル\game\UI\Granate</Filter>
+    </ClCompile>
+    <ClCompile Include="Explsion.cpp">
+      <Filter>ソース ファイル\game\UI\Granate</Filter>
+    </ClCompile>
+    <ClCompile Include="MouseCircle.cpp">
+      <Filter>ソース ファイル\game\UI\MouseCircle</Filter>
+    </ClCompile>
+    <ClCompile Include="Score.cpp">
+      <Filter>ソース ファイル\game\UI\Score</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy.cpp">
+      <Filter>ソース ファイル\game\gameobject\enemy\S_Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="UniqueEnemy.cpp">
+      <Filter>ソース ファイル\game\gameobject\UniqueEnemy</Filter>
+    </ClCompile>
+    <ClCompile Include="UniqueEnemy_bomb.cpp">
+      <Filter>ソース ファイル\game\gameobject\UniqueEnemy</Filter>
+    </ClCompile>
+    <ClCompile Include="updatespherecamera.cpp">
+      <Filter>ソース ファイル\system\CCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="CDirectXGraphics.cpp">
+      <Filter>ソース ファイル\system\DX11\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="DDSTextureLoader.cpp">
+      <Filter>ソース ファイル\system\DX11\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="WICTextureLoader.cpp">
+      <Filter>ソース ファイル\system\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>ソース ファイル\system\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="CHeight_Map.cpp">
+      <Filter>ソース ファイル\system\Sprite\Heightmap</Filter>
+    </ClCompile>
+    <ClCompile Include="CTex.cpp">
+      <Filter>ソース ファイル\system\Sprite\2DTex</Filter>
+    </ClCompile>
+    <ClCompile Include="CTexInstance.cpp">
+      <Filter>ソース ファイル\system\Sprite\2DTex</Filter>
+    </ClCompile>
+    <ClCompile Include="DatFile.cpp">
+      <Filter>ソース ファイル\system\Sprite\DataFile</Filter>
+    </ClCompile>
+    <ClCompile Include="DatFileLoader.cpp">
+      <Filter>ソース ファイル\system\Sprite\DataFile</Filter>
     </ClCompile>
     <ClCompile Include="Particle.cpp">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
+      <Filter>ソース ファイル\system\Sprite\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="TexMgr.cpp">
+      <Filter>ソース ファイル\system\Sprite\2DTex</Filter>
+    </ClCompile>
+    <ClCompile Include="DIController.cpp">
+      <Filter>ソース ファイル\system\DX11\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="BoidsAI.cpp">
+      <Filter>ソース ファイル\game\gameobject\AI\BoidsAI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dx11mathutil.h">
-      <Filter>ソース ファイル\system\DX11\util</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11Settransform.h">
-      <Filter>ソース ファイル\system\DX11\util</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>ソース ファイル\system\DX11\util</Filter>
-    </ClInclude>
-    <ClInclude Include="DX11util.h">
-      <Filter>ソース ファイル\system\DX11\util</Filter>
-    </ClInclude>
-    <ClInclude Include="CDirectInput.h">
-      <Filter>ソース ファイル\system\DX11</Filter>
-    </ClInclude>
-    <ClInclude Include="CDirectxGraphics.h">
-      <Filter>ソース ファイル\system\DX11</Filter>
-    </ClInclude>
-    <ClInclude Include="CLight.h">
-      <Filter>ソース ファイル\system\DX11</Filter>
-    </ClInclude>
     <ClInclude Include="utftosjisconv.h">
-      <Filter>ソース ファイル\system\model</Filter>
-    </ClInclude>
-    <ClInclude Include="vertexproto.h">
       <Filter>ソース ファイル\system\model</Filter>
     </ClInclude>
     <ClInclude Include="CWindow.h">
@@ -518,38 +515,29 @@
     <ClInclude Include="macro.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="player.h">
-      <Filter>ソース ファイル\game\gameobject\player</Filter>
-    </ClInclude>
     <ClInclude Include="shaderhashmap.h">
       <Filter>ソース ファイル\system\util</Filter>
     </ClInclude>
     <ClInclude Include="drawaxis.h">
-      <Filter>ソース ファイル\game\util</Filter>
+      <Filter>ソース ファイル\system\DX11\util\util</Filter>
     </ClInclude>
     <ClInclude Include="line.h">
-      <Filter>ソース ファイル\game\util</Filter>
+      <Filter>ソース ファイル\system\DX11\util\util</Filter>
     </ClInclude>
     <ClInclude Include="skybox.h">
       <Filter>ソース ファイル\game\gameobject\skybox</Filter>
     </ClInclude>
     <ClInclude Include="lineh.h">
-      <Filter>ソース ファイル\game\gameobject\drawobj\line</Filter>
+      <Filter>ソース ファイル\game\drawobj\line</Filter>
     </ClInclude>
     <ClInclude Include="BoundingSphere.h">
       <Filter>ソース ファイル\game\gameobject\BoundingSphere</Filter>
     </ClInclude>
     <ClInclude Include="sphere.h">
-      <Filter>ソース ファイル\game\gameobject\drawobj\Sphere</Filter>
-    </ClInclude>
-    <ClInclude Include="updatespherecamera.h">
-      <Filter>ソース ファイル\system\DX11\util</Filter>
+      <Filter>ソース ファイル\game\drawobj\Sphere</Filter>
     </ClInclude>
     <ClInclude Include="ModelMgr.h">
       <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="enemy.h">
-      <Filter>ソース ファイル\game\gameobject\enemy</Filter>
     </ClInclude>
     <ClInclude Include="bullet.h">
       <Filter>ソース ファイル\game\gameobject\Bullet</Filter>
@@ -561,10 +549,10 @@
       <Filter>ソース ファイル\system\model\CBillBoard</Filter>
     </ClInclude>
     <ClInclude Include="Seiha.h">
-      <Filter>ソース ファイル\game\GAME\Seiha</Filter>
+      <Filter>ソース ファイル\game\Scean\Seiha</Filter>
     </ClInclude>
     <ClInclude Include="Stage.h">
-      <Filter>ソース ファイル\game\Stage</Filter>
+      <Filter>ソース ファイル\game\Scean\Stage</Filter>
     </ClInclude>
     <ClInclude Include="IMgui\imstb_rectpack.h">
       <Filter>ソース ファイル\system\DX11\util\IMGUI</Filter>
@@ -603,7 +591,7 @@
       <Filter>ソース ファイル\game\audio</Filter>
     </ClInclude>
     <ClInclude Include="CCamera.h">
-      <Filter>ソース ファイル\system\DX11\util\CCamera</Filter>
+      <Filter>ソース ファイル\system\CCamera</Filter>
     </ClInclude>
     <ClInclude Include="Timing_UI.h">
       <Filter>ソース ファイル\game\UI\Timing_UI</Filter>
@@ -617,23 +605,11 @@
     <ClInclude Include="S_Title.h">
       <Filter>ソース ファイル\game\Scean\Title</Filter>
     </ClInclude>
-    <ClInclude Include="sprite.h">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="SpriteMgr.h">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="CHeightMgr.h">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="CHeight_Map.h">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
-    </ClInclude>
     <ClInclude Include="S_Clear.h">
       <Filter>ソース ファイル\game\Scean\CLEAR</Filter>
     </ClInclude>
     <ClInclude Include="uncopyable.h">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
+      <Filter>ソース ファイル\system\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="Notes_Arrange.h">
       <Filter>ソース ファイル\game\UI\Notes\Notes_Arrange</Filter>
@@ -653,23 +629,14 @@
     <ClInclude Include="BulletMgr.h">
       <Filter>ソース ファイル\game\gameobject\Bullet\BulletMgr</Filter>
     </ClInclude>
-    <ClInclude Include="gameobject.h">
-      <Filter>ソース ファイル\game\UI\Notes</Filter>
-    </ClInclude>
-    <ClInclude Include="CTex.h">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="CTexMgr.h">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
-    </ClInclude>
     <ClInclude Include="noise.h">
       <Filter>ソース ファイル\game\noise</Filter>
     </ClInclude>
     <ClInclude Include="StageHit.h">
-      <Filter>ソース ファイル\system\DX11\util\StageHit</Filter>
+      <Filter>ソース ファイル\system\collision\StageHit</Filter>
     </ClInclude>
     <ClInclude Include="collision.h">
-      <Filter>ソース ファイル\system\DX11\util\collision</Filter>
+      <Filter>ソース ファイル\system\collision</Filter>
     </ClInclude>
     <ClInclude Include="ground.h">
       <Filter>ソース ファイル\game\gameobject\Ground</Filter>
@@ -686,8 +653,8 @@
     <ClInclude Include="short_notes.h">
       <Filter>ソース ファイル\game\UI\Notes\short_notes</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerMgr.h">
-      <Filter>ソース ファイル\game\gameobject\player\PlayerMgr</Filter>
+    <ClInclude Include="BoidsAIMgr.h">
+      <Filter>ソース ファイル\game\gameobject\AI\PlayerMgr</Filter>
     </ClInclude>
     <ClInclude Include="voids.h">
       <Filter>ソース ファイル\voids</Filter>
@@ -696,22 +663,16 @@
       <Filter>ソース ファイル\system\DX11\util\myutil</Filter>
     </ClInclude>
     <ClInclude Include="circle.h">
-      <Filter>ソース ファイル\game\gameobject\drawobj\circle</Filter>
+      <Filter>ソース ファイル\game\drawobj\circle</Filter>
     </ClInclude>
     <ClInclude Include="ColTrees.h">
-      <Filter>ソース ファイル\game\gameobject\player</Filter>
+      <Filter>ソース ファイル\game\gameobject\AI</Filter>
     </ClInclude>
     <ClInclude Include="OctreeMain.h">
-      <Filter>ソース ファイル\game\gameobject\player</Filter>
+      <Filter>ソース ファイル\game\gameobject\AI</Filter>
     </ClInclude>
     <ClInclude Include="SmartPtr.h">
-      <Filter>ソース ファイル\game\gameobject\player</Filter>
-    </ClInclude>
-    <ClInclude Include="build.h">
-      <Filter>ソース ファイル\game\gameobject\Build</Filter>
-    </ClInclude>
-    <ClInclude Include="MouseCircle.h">
-      <Filter>ソース ファイル\game\UI</Filter>
+      <Filter>ソース ファイル\game\gameobject\AI</Filter>
     </ClInclude>
     <ClInclude Include="ModelData.h">
       <Filter>ソース ファイル\system\model\modeldata</Filter>
@@ -730,9 +691,6 @@
     </ClInclude>
     <ClInclude Include="CBBoxGenerater.h">
       <Filter>ソース ファイル\system\model\CBox</Filter>
-    </ClInclude>
-    <ClInclude Include="Data.h">
-      <Filter>ソース ファイル\system\model</Filter>
     </ClInclude>
     <ClInclude Include="NonCopyable.h">
       <Filter>ソース ファイル\system\model\Cmodel</Filter>
@@ -755,41 +713,14 @@
     <ClInclude Include="MeshData.h">
       <Filter>ソース ファイル\system\model\mesh</Filter>
     </ClInclude>
-    <ClInclude Include="UniqueEnemy.h">
-      <Filter>ソース ファイル\game\gameobject\player\PlayerMgr</Filter>
-    </ClInclude>
-    <ClInclude Include="UniqueEnemy_Bomb.h">
-      <Filter>ソース ファイル\game\gameobject\player\PlayerMgr</Filter>
-    </ClInclude>
     <ClInclude Include="BoidsHp.h">
       <Filter>ソース ファイル\game\UI\HP</Filter>
-    </ClInclude>
-    <ClInclude Include="CBillboardMgr.h">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="billboardMgr.h">
       <Filter>ソース ファイル\game\UI</Filter>
     </ClInclude>
-    <ClInclude Include="AnimeSprite.h">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="granate.h">
-      <Filter>ソース ファイル\game\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="CTexInstance.h">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="instan.h">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
-    </ClInclude>
     <ClInclude Include="CModelInstance.h">
       <Filter>ソース ファイル\system\model\Cmodel</Filter>
-    </ClInclude>
-    <ClInclude Include="DatFile.h">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="DatFileLoader.h">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="InstanceModelMgr.h">
       <Filter>ヘッダー ファイル</Filter>
@@ -797,20 +728,92 @@
     <ClInclude Include="zombiebullet.h">
       <Filter>ソース ファイル\game\gameobject\Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="Explsion.h">
-      <Filter>ソース ファイル\game\UI</Filter>
-    </ClInclude>
     <ClInclude Include="UniqueBombHp.h">
       <Filter>ソース ファイル\game\UI\HP</Filter>
     </ClInclude>
-    <ClInclude Include="Score.h">
-      <Filter>ソース ファイル\game\UI</Filter>
+    <ClInclude Include="dx11mathutil.h">
+      <Filter>ソース ファイル\system\DX11\util\Dx11MathUtil</Filter>
     </ClInclude>
-    <ClInclude Include="TexMgr.h">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
+    <ClInclude Include="DX11util.h">
+      <Filter>ソース ファイル\system\DX11\util\Dx11MathUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="granate.h">
+      <Filter>ソース ファイル\game\UI\Granate</Filter>
+    </ClInclude>
+    <ClInclude Include="Explsion.h">
+      <Filter>ソース ファイル\game\UI\Granate</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseCircle.h">
+      <Filter>ソース ファイル\game\UI\MouseCircle</Filter>
+    </ClInclude>
+    <ClInclude Include="Score.h">
+      <Filter>ソース ファイル\game\UI\Score</Filter>
+    </ClInclude>
+    <ClInclude Include="enemy.h">
+      <Filter>ソース ファイル\game\gameobject\enemy\S_Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="UniqueEnemy.h">
+      <Filter>ソース ファイル\game\gameobject\UniqueEnemy</Filter>
+    </ClInclude>
+    <ClInclude Include="UniqueEnemy_Bomb.h">
+      <Filter>ソース ファイル\game\gameobject\UniqueEnemy</Filter>
+    </ClInclude>
+    <ClInclude Include="updatespherecamera.h">
+      <Filter>ソース ファイル\system\CCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="CLight.h">
+      <Filter>ソース ファイル\system\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="CDirectInput.h">
+      <Filter>ソース ファイル\system\DX11\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="CDirectxGraphics.h">
+      <Filter>ソース ファイル\system\DX11\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="vertexproto.h">
+      <Filter>ソース ファイル\system\model\Skeleton</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>ソース ファイル\system\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Settransform.h">
+      <Filter>ソース ファイル\system\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="CHeight_Map.h">
+      <Filter>ソース ファイル\system\Sprite\Heightmap</Filter>
+    </ClInclude>
+    <ClInclude Include="CHeightMgr.h">
+      <Filter>ソース ファイル\system\Sprite\Heightmap</Filter>
+    </ClInclude>
+    <ClInclude Include="CTexMgr.h">
+      <Filter>ソース ファイル\system\Sprite\2DTex</Filter>
+    </ClInclude>
+    <ClInclude Include="CTexInstance.h">
+      <Filter>ソース ファイル\system\Sprite\2DTex</Filter>
+    </ClInclude>
+    <ClInclude Include="CTex.h">
+      <Filter>ソース ファイル\system\Sprite\2DTex</Filter>
+    </ClInclude>
+    <ClInclude Include="DatFile.h">
+      <Filter>ソース ファイル\system\Sprite\DataFile</Filter>
+    </ClInclude>
+    <ClInclude Include="DatFileLoader.h">
+      <Filter>ソース ファイル\system\Sprite\DataFile</Filter>
     </ClInclude>
     <ClInclude Include="Particle.h">
-      <Filter>ソース ファイル\system\DX11\Sprite</Filter>
+      <Filter>ソース ファイル\system\Sprite\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="TexMgr.h">
+      <Filter>ソース ファイル\system\Sprite\2DTex</Filter>
+    </ClInclude>
+    <ClInclude Include="CBillboardMgr.h">
+      <Filter>ソース ファイル\system\Sprite\Billboard</Filter>
+    </ClInclude>
+    <ClInclude Include="gameobject.h">
+      <Filter>ソース ファイル\game\gameobject</Filter>
+    </ClInclude>
+    <ClInclude Include="BoidsAI.h">
+      <Filter>ソース ファイル\game\gameobject\AI\BoidsAI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

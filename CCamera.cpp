@@ -1,6 +1,11 @@
+//=============================================================================
+//
+// ƒJƒƒ‰‚Ì¶¬ŠÇ—ƒNƒ‰ƒX [CCamera.cpp]
+//
+//=============================================================================
 #include"CCamera.h"
 #include"IMgui/imgui.h"
-#include"PlayerMgr.h"
+#include"BoidsAIMgr.h"
 #include"CDirectInput.h"
 
 bool CCamera::blowflg = false;
@@ -132,7 +137,7 @@ void CCamera::TPSCamera(XMFLOAT3 pos, XMFLOAT3 axisz, XMFLOAT3 axisy)
 		b -= 10.0f;
 	}
 
-	/*bool rhythm = PlayerMgr::GetInstance()->rhythm_checker;
+	/*bool rhythm = BoidsAIMgr::GetInstance()->rhythm_checker;
 	if (rhythm)
 	{
 		max_camera = 400.0f;
@@ -188,10 +193,10 @@ void CCamera::TopCamera(XMFLOAT3 pos, XMFLOAT3 axisz, XMFLOAT3 axisy) {
 		ImGui::Begin("config 3");
 
 		ImGui::SetNextWindowSize(ImVec2(300, 400));
-		//	int it = Player::GetInstance()->iseconds % Player::GetInstance()->judge_seconds;
+		//	int it = BoidsAI::GetInstance()->iseconds % BoidsAI::GetInstance()->judge_seconds;
 
 		float pos[3] = { a ,b,c };
-		//float pos[3] = { Player::GetInstance()->GetPos().x, Player::GetInstance()->GetPos().y, Player::GetInstance()->GetPos().z};
+		//float pos[3] = { BoidsAI::GetInstance()->GetPos().x, BoidsAI::GetInstance()->GetPos().y, BoidsAI::GetInstance()->GetPos().z};
 		ImGui::DragFloat3("CAMERA ANGLE", pos);
 		//ImGui::DragInt("notes", &it);
 		a = pos[0];

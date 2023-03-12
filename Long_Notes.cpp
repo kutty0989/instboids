@@ -130,7 +130,7 @@
 //
 //	//float notesa = Notes_Object::Notes_Object_Update();
 //
-//	////debuglog(Player::GetInstance()->judge_flg);
+//	////debuglog(BoidsAI::GetInstance()->judge_flg);
 //
 //
 //	//

@@ -1,27 +1,38 @@
 #pragma once
+//========================================================
+//CLight.h
+//			ライティングを設定するクラス
+//========================================================
+
 #include	<DirectXMath.h>
 #include	"memory.h"
 #include	"Shader.h"
 #include	"DX11util.h"
 
 class CLight {
+
+	//ライトの変数
 	ALIGN16 struct ConstantBufferLight {
 		DirectX::XMFLOAT4 LightDirection;
 		DirectX::XMFLOAT4 EyePos;
 		DirectX::XMFLOAT4 Ambient;
 	};
 
+	//ライトの種類
 	enum class LightType {
 		DIRECTIONAL,
 		POINT,
 		SPOT
 	};
+
 	LightType			m_type;
-	DirectX::XMFLOAT3	m_eyepos;
+	DirectX::XMFLOAT3	m_eyepos;//カメラの場所
 	DirectX::XMFLOAT4	m_lightpos;		// w=0の時は方向 w=1の時は位置
 	ID3D11Buffer*       m_pConstantBufferLight = nullptr;
-	DirectX::XMFLOAT4	m_ambient;
+	DirectX::XMFLOAT4	m_ambient;//アンビエント
 public:
+
+	//ライトの初期処理
 	bool Init(DirectX::XMFLOAT3 eyepos,DirectX::XMFLOAT4 lightpos) {
 		m_lightpos = lightpos;
 		m_eyepos = eyepos;
@@ -70,6 +81,7 @@ public:
 
 	}
 
+	//ライト解放処理
 	void Uninit() {
 		if (m_pConstantBufferLight) {
 			m_pConstantBufferLight->Release();
@@ -77,14 +89,16 @@ public:
 		}
 	}
 
+	//カメラの場所を設定
 	void SetEyePos(DirectX::XMFLOAT3 eyepos) {
 		m_eyepos = eyepos;
 	}
 
+	//ライトの場所を設定
 	void SetLightPos(DirectX::XMFLOAT4 lightpos) {
 		m_lightpos = lightpos;
 	}
-
+	//環境光を設定
 	void SetAmbient(DirectX::XMFLOAT4 amb) {
 		m_ambient = amb;
 	}

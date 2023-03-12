@@ -1,3 +1,9 @@
+//=============================================================================
+//
+// モデル情報からアニメーションさせるためのクラス [ModelData.cpp]
+//
+//=============================================================================
+
 #include <assimp\Importer.hpp>
 #include <assimp\scene.h>
 #include <assimp\postprocess.h>
@@ -77,10 +83,7 @@ std::vector<Texture> ModelData::loadMaterialTextures(
 				bool sts = CreateSRVfromFile(
 					filename.c_str(),
 					dev, devcon, &tex.texres, &tex.texture);
-			/*	if (!sts) {
-					MessageBox(nullptr, "Texture couldn't be loaded", "Error!", MB_ICONERROR | MB_OK);
-					tex.texture = nullptr;
-				}*/
+		
 			}
 
 			tex.type = typeName;
@@ -210,11 +213,6 @@ void ModelData::LoadMaterial() {
 
 void ModelData::Draw(ID3D11DeviceContext* devcon, XMFLOAT4X4& mtxworld)
 {
-	//// アニメーションデータを持っているか？
-	//if (m_assimpscene.HasAnimation())
-	//{	// ボーン行列を定数バッファに反映させる
-	//	UpdateBoneMatrixConstantBuffer();
-	//}
 
 	for (int i = 0; i < m_meshes.size(); i++)
 	{   
@@ -224,23 +222,6 @@ void ModelData::Draw(ID3D11DeviceContext* devcon, XMFLOAT4X4& mtxworld)
 		m_meshes[i].Draw(devcon);
 	}
 }
-//test
-//void ModelData::Drawinstance(ID3D11DeviceContext* devcon)
-//{
-//	// アニメーションデータを持っているか？
-//	if (m_assimpscene.HasAnimation())
-//	{	// ボーン行列を定数バッファに反映させる
-//		UpdateBoneMatrixConstantBuffer();
-//	}
-//
-//	for (int i = 0; i < m_meshes.size(); i++)
-//	{
-//		// ワールド変換行列
-//	//	DX11SetTransform::GetInstance()->SetTransform(DX11SetTransform::TYPE::WORLD, mtxworld);
-//		// 定数バッファセット処理
-//		m_meshes[i].Drawinstance(devcon);
-//	}
-//}
 
 
 void ModelData::DrawOBB() {
@@ -406,81 +387,6 @@ void ModelData::UpdateBoneMatrix(aiNode* node, aiMatrix4x4 matrix)
 
 
 
-//void ModelData::Update(
-//	int m_Frame, int m_preFrame, float m_factor, int animecnt,
-//	const XMFLOAT4X4& mtxworld,
-//	unsigned int animfileno,
-//	std::vector<AnimationDataAssimp*>& animationcontainer) {
-//
-//	// 0番目のシーンを取り出し
-//	const aiScene* s = animationcontainer[animecnt]->GetScene();
-//	
-//	// アニメーションデータを持っているか？
-//	if (s->HasAnimations())
-//	{
-//		//アニメーションデータからボーンマトリクス算出
-//		aiAnimation* animation = s->mAnimations[0];
-//
-//		auto it = animation;
-//		animationreset = false;
-//		// ボーンの数だけループ
-//		for (unsigned int c = 0; c < animation->mNumChannels; c++)
-//		{
-//			aiNodeAnim* nodeAnim = animation->mChannels[c];
-//
-//			// ボーン存在チェック(アニメーションにのみ存在するボーンがあった場合は無視する)
-//			auto itr = m_Bone.find(nodeAnim->mNodeName.C_Str());
-//
-//	
-//			if (itr != m_Bone.end()) {
-//				BONE* bone = &m_Bone[nodeAnim->mNodeName.C_Str()];
-//
-//				int f1, f2;
-//
-//				f1 = m_Frame % nodeAnim->mNumRotationKeys;//簡易実装   
-//				aiQuaternion rot1 = nodeAnim->mRotationKeys[f1].mValue; // クオータニオン
-//
-//				f1 = m_Frame % nodeAnim->mNumPositionKeys;//簡易実装
-//				aiVector3D pos1 = nodeAnim->mPositionKeys[f1].mValue;
-//
-//				f2 = m_preFrame % nodeAnim->mNumRotationKeys;//簡易実装  
-//				aiQuaternion rot2 = nodeAnim->mRotationKeys[f2].mValue; // クオータニオン
-//
-//				f2 = m_preFrame % nodeAnim->mNumPositionKeys;//簡易実装	
-//				aiVector3D pos2 = nodeAnim->mPositionKeys[f2].mValue;
-//
-//				// 補間
-//				rot1.Interpolate(rot1, rot1, rot2, m_factor);
-//				pos1.x = pos1.x * (1.0f - m_factor) + pos2.x * (m_factor);
-//				pos1.y = pos1.y * (1.0f - m_factor) + pos2.y * (m_factor);
-//				pos1.z = pos1.z * (1.0f - m_factor) + pos2.z * (m_factor);
-//
-//				bone->AnimationMatrix = aiMatrix4x4(aiVector3D(1.0f, 1.0f, 1.0f), rot1, pos1);
-//			}
-//			
-//		}
-//	
-//
-//		//再帰的にボーンマトリクスを更新
-//		UpdateBoneMatrix(m_assimpscene.GetScene()->mRootNode, aiMatrix4x4());
-//
-//		// メッシュのOBB更新
-////		for (int i = 0; i < m_meshes.size(); i++)
-////		{
-////			m_meshes[i].UpdateOBB(m_Bone,mtxworld);
-////		}
-//
-//	
-//		if (m_Frame >= animation->mDuration)
-//		{
-//			animationreset = true;
-//			m_Frame = 0;
-//		}
-//
-//
-//	}
-//
-//}
 
 void ModelData::Update2(int animecnt, const XMFLOAT4X4& mtxworld, unsigned int animfileno, std::vector<AnimationDataAssimp*>& animationcontainer)
 {// 0番目のシーンを取り出し

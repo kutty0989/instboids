@@ -1,8 +1,13 @@
+//=============================================================================
+//
+// 地形を作り更新するクラス [ground.cpp]
+//
+//=============================================================================
 #include "ground.h"
 #include"CDirectInput.h"
 #include<iostream>
-#include"PlayerMgr.h"
-#include"player.h"
+#include"BoidsAIMgr.h"
+#include"BoidsAI.h"
 #include"Seiha.h"
 //go 元の座標値
 //to　行先の座標値
@@ -140,12 +145,12 @@ void Ground::Update()
 }
  
 
-void Ground::GetPlayerHeight(Player& player)
+void Ground::GetBoidsAIHeight(BoidsAI& BoidsAI)
 {
 	//プレイヤーのポジションを元に、画像の解像度で高さを出す
-	col = g_heightmap->GetHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling));
+	col = g_heightmap->GetHeightColor(XMFLOAT2(BoidsAI.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - BoidsAI.GetPos().z / scaling));
 
-	player.SetPos(XMFLOAT3(player.GetPos().x, col * CHeight_Map::GetInstance()->g_hight, player.GetPos().z));//プレイヤーのｙの高さを変えてる
+	BoidsAI.SetPos(XMFLOAT3(BoidsAI.GetPos().x, col * CHeight_Map::GetInstance()->g_hight, BoidsAI.GetPos().z));//プレイヤーのｙの高さを変えてる
 
 }
 
@@ -154,24 +159,24 @@ void Ground::GetPlayerHeight(Player& player)
 
 
 
-Pvector Ground::DownBoid(Player& player)
+Pvector Ground::DownBoid(BoidsAI& BoidsAI)
 {
 
 	gocol = 0.0;
 
 	//少し前の高さをだす
-	gocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-		player.angley.x * 7.0f, player.angley.y * 7.0f);
-	gocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-		player.angley.x * 14.0f, player.angley.y * 14.0f);
-	gocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-		player.angley.x * 21.0f, player.angley.y * 21.0f);
+	gocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(BoidsAI.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - BoidsAI.GetPos().z / scaling),
+		BoidsAI.angley.x * 7.0f, BoidsAI.angley.y * 7.0f);
+	gocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(BoidsAI.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - BoidsAI.GetPos().z / scaling),
+		BoidsAI.angley.x * 14.0f, BoidsAI.angley.y * 14.0f);
+	gocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(BoidsAI.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - BoidsAI.GetPos().z / scaling),
+		BoidsAI.angley.x * 21.0f, BoidsAI.angley.y * 21.0f);
 
 	gocol /= 3.0f;
 
 	nowcol = gocol;
 
-	if (player.follow == Player::Follow::HYUMAN)
+	if (BoidsAI.follow == BoidsAI::Follow::HYUMAN)
 	{
 		//数フレームに一度、角度を変更
 		if (anglecnt == 0)
@@ -179,34 +184,34 @@ Pvector Ground::DownBoid(Player& player)
 			lgocol = 0.0;
 
 			//左前方の高さを出す
-			lgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-				player.left_vec.x * 7.0f, player.left_vec.y * 7.0f);
-			lgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-				player.left_vec.x * 14.0f, player.left_vec.y * 14.0f);
-			lgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-				player.left_vec.x * 21.0f, player.left_vec.y * 21.0f);
+			lgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(BoidsAI.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - BoidsAI.GetPos().z / scaling),
+				BoidsAI.left_vec.x * 7.0f, BoidsAI.left_vec.y * 7.0f);
+			lgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(BoidsAI.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - BoidsAI.GetPos().z / scaling),
+				BoidsAI.left_vec.x * 14.0f, BoidsAI.left_vec.y * 14.0f);
+			lgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(BoidsAI.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - BoidsAI.GetPos().z / scaling),
+				BoidsAI.left_vec.x * 21.0f, BoidsAI.left_vec.y * 21.0f);
 
 			lgocol /= 3.0f;
 
 			rgocol = 0.0;
 			//右前方の高さを出す
-			rgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-				player.right_vec.x * 7.0f, player.right_vec.y * 7.0f);
-			rgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-				player.right_vec.x * 14.0f, player.right_vec.y * 14.0f);
-			rgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-				player.right_vec.x * 21.0f, player.right_vec.y * 21.0f);
+			rgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(BoidsAI.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - BoidsAI.GetPos().z / scaling),
+				BoidsAI.right_vec.x * 7.0f, BoidsAI.right_vec.y * 7.0f);
+			rgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(BoidsAI.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - BoidsAI.GetPos().z / scaling),
+				BoidsAI.right_vec.x * 14.0f, BoidsAI.right_vec.y * 14.0f);
+			rgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(BoidsAI.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - BoidsAI.GetPos().z / scaling),
+				BoidsAI.right_vec.x * 21.0f, BoidsAI.right_vec.y * 21.0f);
 
 			rgocol /= 3.0f;
 
 			bgocol = 0.0;
 
-			bgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-				player.opposite_vec.x * 7.0f, player.opposite_vec.y * 7.0f);
-			bgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-				player.opposite_vec.x * 14.0f, player.opposite_vec.y * 14.0f);
-			bgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-				player.opposite_vec.x * 21.0f, player.opposite_vec.y * 21.0f);
+			bgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(BoidsAI.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - BoidsAI.GetPos().z / scaling),
+				BoidsAI.opposite_vec.x * 7.0f, BoidsAI.opposite_vec.y * 7.0f);
+			bgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(BoidsAI.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - BoidsAI.GetPos().z / scaling),
+				BoidsAI.opposite_vec.x * 14.0f, BoidsAI.opposite_vec.y * 14.0f);
+			bgocol += CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(BoidsAI.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - BoidsAI.GetPos().z / scaling),
+				BoidsAI.opposite_vec.x * 21.0f, BoidsAI.opposite_vec.y * 21.0f);
 
 			bgocol /= 3.0;
 
@@ -243,7 +248,7 @@ Pvector Ground::DownBoid(Player& player)
 				float anglescale = CHeight_Map::GetInstance()->g_hight;
 				anglescale /= 100;
 				anglescale *= 0.4f;
-				float angle = player.angle.y += anglescale;//角度を変更
+				float angle = BoidsAI.angle.y += anglescale;//角度を変更
 				float rad = angle * (3.1415926535 / 180.0f);
 				Pvector returnvec;
 				returnvec.x = cosf(rad);
@@ -257,7 +262,7 @@ Pvector Ground::DownBoid(Player& player)
 				float anglescale = CHeight_Map::GetInstance()->g_hight;
 				anglescale /= 100;
 				anglescale *= 0.4f;
-				float angle = player.angle.y -= anglescale;
+				float angle = BoidsAI.angle.y -= anglescale;
 				float rad = angle * (3.1415926535 / 180.0f);
 				Pvector returnvec;
 				returnvec.x = cosf(rad);
@@ -280,19 +285,19 @@ Pvector Ground::DownBoid(Player& player)
 	}
 
 }
-float Ground::AccelBoid(Player& player)
+float Ground::AccelBoid(BoidsAI& BoidsAI)
 {
-	col = g_heightmap->GetHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling));//プレイヤーが画像のどこにいて、その足元のカラー情報
+	col = g_heightmap->GetHeightColor(XMFLOAT2(BoidsAI.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - BoidsAI.GetPos().z / scaling));//プレイヤーが画像のどこにいて、その足元のカラー情報
 
 
-	gocol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-		player.velocity.x * 10.0f, player.velocity.y * 10.0f);
+	gocol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(BoidsAI.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - BoidsAI.GetPos().z / scaling),
+		BoidsAI.velocity.x * 10.0f, BoidsAI.velocity.y * 10.0f);
 
 
 	nowcol = gocol;
 
-	//nowcol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-	//	player.angley.x * 10.0f, player.angley.y * 10.0f);
+	//nowcol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(BoidsAI.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - BoidsAI.GetPos().z / scaling),
+	//	BoidsAI.angley.x * 10.0f, BoidsAI.angley.y * 10.0f);
 
 	defcol = nowcol - col;
 
@@ -304,22 +309,22 @@ float Ground::AccelBoid(Player& player)
 
 
 	//高さの差を出すための底辺を算出
-	float teihen = sqrtf((player.velocity.x * 10.0f * player.velocity.x * 10.0f) + (player.velocity.y * 10.0f * player.velocity.y * 10.0f));
+	float teihen = sqrtf((BoidsAI.velocity.x * 10.0f * BoidsAI.velocity.x * 10.0f) + (BoidsAI.velocity.y * 10.0f * BoidsAI.velocity.y * 10.0f));
 
 	//高さを元に角度を出す
 	goangle = GetAtan(teihen, defcol * 90.0f);
 
 
-	float boid_accel = player.boid_accel;
+	float boid_accel = BoidsAI.boid_accel;
 
-	if (player.groundcnt == 0)
+	if (BoidsAI.groundcnt == 0)
 	{
 		if (goangle >= 0)
 		{
 			boid_accel *= cos(3.14 * goangle / 180);
-			if (player.follow == Player::Follow::HYUMAN)
+			if (BoidsAI.follow == BoidsAI::Follow::HYUMAN)
 			{
-				if (Player::GetInstance()->texspeedflg)
+				if (BoidsAI::GetInstance()->texspeedflg)
 				{
 					boid_accel = TexSpeed(boid_accel);
 				}
@@ -329,9 +334,9 @@ float Ground::AccelBoid(Player& player)
 		{
 			goangle = abs(goangle);
 			boid_accel *= 1 + sin(3.14 * goangle / 180);
-			if (player.follow == Player::Follow::HYUMAN)
+			if (BoidsAI.follow == BoidsAI::Follow::HYUMAN)
 			{
-				if (Player::GetInstance()->texspeedflg)
+				if (BoidsAI::GetInstance()->texspeedflg)
 				{
 					boid_accel = TexSpeed(boid_accel);
 				}
@@ -339,59 +344,59 @@ float Ground::AccelBoid(Player& player)
 		}
 	}
 
-	player.groundcnt++;
-	if (player.groundcnt > 5)
+	BoidsAI.groundcnt++;
+	if (BoidsAI.groundcnt > 5)
 	{
-		player.groundcnt = 0;
+		BoidsAI.groundcnt = 0;
 	}
 
 
 	return boid_accel;
 }
 //
-//void Ground::DefangleAccel(Player& player)
+//void Ground::DefangleAccel(BoidsAI& BoidsAI)
 //{
-//	col = g_heightmap->GetHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling));
+//	col = g_heightmap->GetHeightColor(XMFLOAT2(BoidsAI.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - BoidsAI.GetPos().z / scaling));
 //
-//	if (PlayerMgr::GetInstance()->Getpad_rig_flg())
+//	if (BoidsAIMgr::GetInstance()->Getpad_rig_flg())
 //	{
-//		//debuglog(player.GetPos().x + GetWidthHeight() / 2);
-//		//debuglog(player.Getpad_rig().x);
-//		gocol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(player.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - player.GetPos().z / scaling),
-//		PlayerMgr::GetInstance()->Getpad_rig().x, PlayerMgr::GetInstance()->Getpad_rig().y);
+//		//debuglog(BoidsAI.GetPos().x + GetWidthHeight() / 2);
+//		//debuglog(BoidsAI.Getpad_rig().x);
+//		gocol = CHeight_Map::GetInstance()->GetGoHeightColor(XMFLOAT2(BoidsAI.GetPos().x / scaling + (GetWidthHeight() / 2), (GetWidthHeight() / 2) - BoidsAI.GetPos().z / scaling),
+//		BoidsAIMgr::GetInstance()->Getpad_rig().x, BoidsAIMgr::GetInstance()->Getpad_rig().y);
 //		
 //		defcol = gocol - col;
 //		
 //		if (cnt == 0)
 //		{
-//			//player.SetAPower(cosvalues[(int)goangle]);
+//			//BoidsAI.SetAPower(cosvalues[(int)goangle]);
 //			if (goangle >= 0)
 //			{
 //				accel* cosC;
-//				//player.SetAPower(cosC);
+//				//BoidsAI.SetAPower(cosC);
 //			}
 //			if (goangle < 0)
 //			{
 //				sinC = sinC + 1.0f;
 //				//float value = abs(goangle);
 //				//value = sinvalues[(int)value] + 1;*/
-//			//	player.SetAPower(sinC);
+//			//	BoidsAI.SetAPower(sinC);
 //				accel* sinC;
 //			}
 //		}
 //		else
 //		{
-//			player.SetAPower(1.0f);
+//			BoidsAI.SetAPower(1.0f);
 //		}
 //	}
-//	//float teihen = sqrtf((PlayerMgr::GetInstance()->Getpad_rig().x * PlayerMgr::GetInstance()->Getpad_rig().x) + (PlayerMgr::GetInstance()->Getpad_rig().y * PlayerMgr::GetInstance()->Getpad_rig().y));
+//	//float teihen = sqrtf((BoidsAIMgr::GetInstance()->Getpad_rig().x * BoidsAIMgr::GetInstance()->Getpad_rig().x) + (BoidsAIMgr::GetInstance()->Getpad_rig().y * BoidsAIMgr::GetInstance()->Getpad_rig().y));
 //	//goangle = GetAtan(teihen * 0.05f, defcol * CHeight_Map::GetInstance()->g_hight);
 //	//
 //	//
 //	//cosC = GetcosC(teihen * 0.05f, defcol * CHeight_Map::GetInstance()->g_hight);
 //	//sinC = GetsinC(teihen * 0.05f, defcol * CHeight_Map::GetInstance()->g_hight);
 //
-//	player.SetPos(XMFLOAT3(player.GetPos().x, col * CHeight_Map::GetInstance()->g_hight, player.GetPos().z));
+//	BoidsAI.SetPos(XMFLOAT3(BoidsAI.GetPos().x, col * CHeight_Map::GetInstance()->g_hight, BoidsAI.GetPos().z));
 //
 //
 //	cnt++;

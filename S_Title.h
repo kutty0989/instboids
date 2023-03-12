@@ -1,4 +1,9 @@
 #pragma once
+//=============================================================================
+//
+// タイトルシーンクラス [S_Title.h]
+//
+//=============================================================================
 #include"Scean.h"
 #include"CTexMgr.h"
 #include"CHeightMgr.h"
@@ -23,7 +28,7 @@ public:
 	{
 		Titlepng = tex;
 	}
-	std::shared_ptr<Player> Im;
+	std::shared_ptr<BoidsAI> Im;
 
 private:
 	CHeight_Map* Titlepng = nullptr;

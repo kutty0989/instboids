@@ -1,9 +1,11 @@
+
 #include "UniqueEnemy_Bomb.h"
 #include"ground.h"
 #include"CDirectInput.h"
 #include"BulletMgr.h"
-#include"player.h"
+#include"BoidsAI.h"
 #include"billboardMgr.h"
+#include"zombiebullet.h"
 
 const int INTERPOLATENUM = 4;			// 補間数
 
@@ -62,7 +64,7 @@ bool UniqueEnemy_Bomb::Init()
 	return true;
 }
 
-void UniqueEnemy_Bomb::Draw(std::vector<Player>& zonbie_vector)
+void UniqueEnemy_Bomb::Draw(std::vector<BoidsAI>& zonbie_vector)
 {
 	
 	manime.animecnt = 0;
@@ -77,7 +79,7 @@ void UniqueEnemy_Bomb::Draw(std::vector<Player>& zonbie_vector)
 
 int leng = 500;
 
-void UniqueEnemy_Bomb::Update(std::vector<Player*>& pvec, std::vector<ZombieBullet*>& zbvec)
+void UniqueEnemy_Bomb::Update(std::vector<BoidsAI*>& pvec, std::vector<ZombieBullet*>& zbvec)
 {
 	if (ubstatus == UBSTATUS::LIVE)
 	{
@@ -101,7 +103,7 @@ void UniqueEnemy_Bomb::Update(std::vector<Player*>& pvec, std::vector<ZombieBull
 		}
 		for (int i = 0; i < pvec.size(); i++)
 		{
-			if (pvec.at(i)->m_sts == Player::STATUS::LIVE)
+			if (pvec.at(i)->m_sts == BoidsAI::STATUS::LIVE)
 			{
 				float disx = this->GetMtx()._41 - pvec.at(i)->GetMtx()._41;
 				float disy = this->GetMtx()._43 - pvec.at(i)->GetMtx()._43;
@@ -121,7 +123,7 @@ void UniqueEnemy_Bomb::Update(std::vector<Player*>& pvec, std::vector<ZombieBull
 	if (hp > 0)
 	{
 		boid_borders();
-		Ground::GetInstance()->GetPlayerHeight(*this);
+		Ground::GetInstance()->GetBoidsAIHeight(*this);
 
 		//Z軸を取り出す
 		axisZ.x = m_mtx._31;
@@ -236,7 +238,7 @@ void UniqueEnemy_Bomb::Update(std::vector<Player*>& pvec, std::vector<ZombieBull
 	}
 }
 
-void UniqueEnemy_Bomb::UEnemy_run(std::vector<Player*>& zonbie_vector)
+void UniqueEnemy_Bomb::UEnemy_run(std::vector<BoidsAI*>& zonbie_vector)
 {
 	if (hp > 0)
 	{
@@ -250,7 +252,7 @@ void UniqueEnemy_Bomb::UEnemy_run(std::vector<Player*>& zonbie_vector)
 }
 
 
-void UniqueEnemy_Bomb::UEnemy_flock(std::vector<Player*>& zonbie_vector)
+void UniqueEnemy_Bomb::UEnemy_flock(std::vector<BoidsAI*>& zonbie_vector)
 {
 	ueser = { 0,0 };
 	uesep = { 0,0 };
@@ -325,7 +327,7 @@ Pvector UniqueEnemy_Bomb::UEnemy_Search()
 	return uedesired;
 }
 
-Pvector UniqueEnemy_Bomb::UEnemy_Separation(std::vector<Player>& zonbie_vector)
+Pvector UniqueEnemy_Bomb::UEnemy_Separation(std::vector<BoidsAI>& zonbie_vector)
 {
 	// ボイド間分離視野距離
 	float desiredseparation = 10;//視野　プレイヤーからの距離
@@ -362,7 +364,7 @@ Pvector UniqueEnemy_Bomb::UEnemy_Separation(std::vector<Player>& zonbie_vector)
 	return uesteer;
 }
 
-Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<Player*>& zonbie_vector)
+Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<BoidsAI*>& zonbie_vector)
 {
 	// ボイド間分離視野距離
 	float desiredseparation = 100;//視野　プレイヤーからの距離
@@ -374,12 +376,12 @@ Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<Player*>& zonbie_vector)
 	{
 		for (auto& it : zonbie_vector)
 		{
-			if (it->bstatus == Player::BSTATUS::LIVE)
+			if (it->bstatus == BoidsAI::BSTATUS::LIVE)
 			{
 				float d = location.distance(it->location);
 				if (d < before_distanse) {
 					before_distanse = d;
-					nearplayer = it->location;
+					nearBoidsAI = it->location;
 					zpos = XMFLOAT3(it->m_mtx._41, it->m_mtx._42, it->m_mtx._43);
 
 				}
@@ -389,7 +391,7 @@ Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<Player*>& zonbie_vector)
 		if (before_distanse < desiredseparation)
 		{
 			uedesired = { 0,0 };
-			uedesired = uedesired.subTwoVector(location, nearplayer);
+			uedesired = uedesired.subTwoVector(location, nearBoidsAI);
 			uedesired.normalize();
 			uedesired.mulScalar(-1);
 			uedesired.divScalar(before_distanse);
@@ -408,12 +410,12 @@ Pvector UniqueEnemy_Bomb::UEnemy_Attack(std::vector<Player*>& zonbie_vector)
 	return uedesired;
 }
 
-Pvector UniqueEnemy_Bomb::UEnemy_Escape(std::vector<Player>& zonbie_vector)
+Pvector UniqueEnemy_Bomb::UEnemy_Escape(std::vector<BoidsAI>& zonbie_vector)
 {
 	return Pvector();
 }
 
-void UniqueEnemy_Bomb::UEnemy_Dmg(std::vector<Player*>& zonbie_vector)
+void UniqueEnemy_Bomb::UEnemy_Dmg(std::vector<BoidsAI*>& zonbie_vector)
 {
 	float desiredseparation = 10;//視野　プレイヤーからの距離
 
@@ -437,9 +439,9 @@ int UniqueEnemy_Bomb::UEnemy_GetAnime()
 }
 
 
-void  UniqueEnemy_Bomb::UEDelete(float arraynum, std::vector<UniqueEnemy_Bomb>& Player_Vector1)
+void  UniqueEnemy_Bomb::UEDelete(float arraynum, std::vector<UniqueEnemy_Bomb>& BoidsAI_Vector1)
 {
-	Player_Vector1.erase(Player_Vector1.begin() + arraynum);
+	BoidsAI_Vector1.erase(BoidsAI_Vector1.begin() + arraynum);
 }
 
 void UniqueEnemy_Bomb::UpdateHP()

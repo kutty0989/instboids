@@ -1,8 +1,14 @@
 #pragma once
+//=============================================================================
+//
+// ビルボード管理クラス [billboardMgr.h]
+//
+//=============================================================================
 #include<list>
 #include<DirectXMath.h>
 #include"granate.h"
 #include"Explsion.h"
+
 
 class BillBoardMgr
 {

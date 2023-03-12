@@ -1,6 +1,6 @@
 #pragma once
-#include	<directxmath.h>
-#include    "DX11Settransform.h"
+#include<DirectXMath.h>
+#include  "DX11Settransform.h"
 #include"IMgui/imgui.h"
 #include<iostream>
 #include <math.h>
@@ -8,33 +8,39 @@
 #include"Bpm_Data.h"
 #include"dx11mathutil.h"
 #include"Save.h"
+#include  "CDirectInput.h"
+#include <time.h>
+#include  "ModelMgr.h"
+#include"CModelInstance.h"
+
+#define debuglog(a) std::cout<<a<<std::endl;
 
 class GameObject {
-	
+
 protected:
 	DirectX::XMFLOAT3 m_pos{};				// オブジェクトの位置
 	DirectX::XMFLOAT4 m_rotation{};				// オブジェクトの位置
-	
+
 	DirectX::XMFLOAT4 m_color{};              //カラー/
 	unsigned int			m_id;			// ＩＤ
 
 
 public:
-	 void Init() {
+	void Init() {
 		DirectX::XMFLOAT3 p = { 0, 0, 0 };
 		SetPosition(p);
 		DX11QtIdentity(m_rotation);
 	}
 
-	 void Uninit() {
+	void Uninit() {
 
 	}
 
-	 void Draw() {
+	void Draw() {
 
 	}
 
-	 void Update(const DirectX::XMFLOAT4& q, const DirectX::XMFLOAT3& pos) {
+	void Update(const DirectX::XMFLOAT4& q, const DirectX::XMFLOAT3& pos) {
 	}
 
 	DirectX::XMFLOAT4X4 m_mtx{};				// 姿勢
@@ -61,14 +67,14 @@ public:
 		DEAD
 	};
 
-	
+
 
 	void SetPosition(const DirectX::XMFLOAT3& pos) {
 		m_pos = pos;
 	}
 
 	void SetRotation(const DirectX::XMFLOAT4& qt) {
-		
+
 		m_rotation = qt;
 	}
 

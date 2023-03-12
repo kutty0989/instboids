@@ -1,7 +1,7 @@
 //#include"Notes.h"
 //#include"CCamera.h"
 //#include"CDirectxGraphics.h"
-//#include"player.h"
+//#include"BoidsAI.h"
 //#include"Scean.h"
 //#include"CTexMgr.h"
 //#include"Notes_Arrange.h"

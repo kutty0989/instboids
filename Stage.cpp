@@ -43,7 +43,7 @@
 //
 //bool Stage::Create() {
 //	m_model.Init(
-//		"assets/dice/PlayerBox.x",//ファイル名
+//		"assets/dice/BoidsAIBox.x",//ファイル名
 //		"shader/vs.hlsl",          //頂点シェーダー
 //		"shader/ps.hlsl",          //ピクセルシェーダー
 //		"assets/dice/"//テクスチャの格納フォルダ

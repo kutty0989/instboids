@@ -1,11 +1,16 @@
 #pragma once
-
+//=============================================================================
+//
+// ハイトマップ生成クラス [CHeight_Map.h]
+//
+//=============================================================================
 #include	"uncopyable.h"
 #include"ModelData.h"
 // comptr
 using Microsoft::WRL::ComPtr;
 
-// 矩形クラス
+
+// ヘイトマップクラス
 class CHeight_Map : public Uncopyable {
 public:
 	// 頂点データ
@@ -15,10 +20,7 @@ public:
 		DirectX::XMFLOAT2 tex;		// テクスチャ
 	};
 
-
-
-
-	// 定数バッファ
+	// 分割数定数バッファ
 	struct ConstantBuffer
 	{
 		float tessellationAmount;
@@ -26,7 +28,7 @@ public:
 		float padding[2];
 	};
 
-	// 定数バッファ
+	// 高さ定数バッファ
 	struct ConstantBuffer2
 	{
 
@@ -35,6 +37,7 @@ public:
 
 	};
 
+	//ブレンド用のテクスチャ構造体
 	struct BlendBuffer
 	{
 		float blendone;
@@ -100,12 +103,9 @@ public:
 		}
 
 
-
-
 		ConstantBufferViewPort cb;
 		cb.Width[0] = width;
 		cb.Height[0] = height;
-
 
 
 		D3D11_MAPPED_SUBRESOURCE pData;
@@ -152,17 +152,17 @@ public:
 
 	void SetTexture();
 
-	double GetHeightColor(XMFLOAT2 playerpos);
+	double GetHeightColor(XMFLOAT2 BoidsAIpos);
 	
 	/// <summary>
 	/// 少し前のカラー情報
 	/// padの角度の行先のカラー情報を返す
 	/// </summary>
-	/// <param name="playerpos"></param>
+	/// <param name="BoidsAIpos"></param>
 	/// <param name="pad_rigx"></param>
 	/// <param name="pad_rigy"></param>
 	/// <returns></returns>
-	double GetGoHeightColor(XMFLOAT2 playerpos,float anglex,float angley);
+	double GetGoHeightColor(XMFLOAT2 BoidsAIpos,float anglex,float angley);
 
 
 
@@ -233,7 +233,7 @@ public:
 		return &instance;
 	}
 
-
+	//透明度
 	float m_Alpha = 1.0f;
 
 
